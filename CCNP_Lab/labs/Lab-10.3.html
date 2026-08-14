@@ -1,0 +1,2207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 10.3 - RIP v1, v2 & RIPng - Iconic InfoSec Training</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+width: 100%;
+max-width: 100%;
+height: auto;
+border: 2px solid #667eea;
+border-radius: 8px;
+margin: 20px 0;
+display: block;
+}
+
+.step-box {
+background: #f8f9fa;
+padding: 15px;
+margin: 15px 0;
+border-left: 4px solid #28a745;
+border-radius: 4px;
+}
+
+.config-section {
+background: #f0f8ff;
+padding: 15px;
+margin: 15px 0;
+border-left: 4px solid #667eea;
+border-radius: 4px;
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Routing Protocol Laboratory Setup & Configuration</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<div id="protectedBody" class="protected-element">
+
+<div class="content-wrapper">
+
+<div class="lab-title">🔧 Lab 10.3: RIP - Routing Information Protocol (v1, v2 & RIPng)</div>
+<div class="lab-description">Complete RIP Configuration: RIPv1, RIPv2, and RIPng for IPv6</div>
+
+<div class="lab-metadata">
+<strong>Lab Description | Password Protected</strong><br>
+<strong>Topics:</strong> RIP Version 1, RIP Version 2, RIPng (RIP next generation for IPv6), Classful vs Classless Routing, Authentication<br>
+<strong>Duration:</strong> 120-150 minutes | <strong>Difficulty Level:</strong> Intermediate | <strong>Lab Version:</strong> 1.0<br>
+<strong>CCNP Alignment:</strong> CCNP 350-401 (ENCOR) Topic 3.2 - Layer 3 Routing Protocols | CCNP 300-410 (ENARSI) Topic 2.1-2.3
+</div>
+
+<div class="section-title">🎯 Lab Objective</div>
+<div class="alert alert-info">
+<strong>ℹ️ Learning Objectives:</strong><br>
+By the end of this lab, you will be able to:<br>
+• Understand RIP fundamentals and distance-vector routing protocols<br>
+• Configure RIP Version 1 (classful routing protocol)<br>
+• Configure RIP Version 2 with classless routing and VLSM support<br>
+• Implement RIP authentication (MD5) for security<br>
+• Configure RIPng (RIP next generation) for IPv6 networks<br>
+• Compare and contrast RIPv1, RIPv2, and RIPng<br>
+• Troubleshoot RIP routing issues and verify convergence<br>
+• Understand RIP timers, metrics, and limitations<br>
+• Implement route summarization and passive interfaces
+</div>
+
+<div class="section-title">🗺️ Network Topology</div>
+<p><strong>Lab Topology Description:</strong></p>
+<p>This lab features a three-router topology (R1, R2, R3) connected in series. The design allows you to observe RIP behavior across multiple hops, understand routing updates, and test various RIP features including version differences, authentication, and IPv6 support.</p>
+
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/RIP.jpg" alt="Lab 10.3 RIP Topology" class="topology-image">
+
+<div class="alert alert-info">
+<strong>🔌 Physical Cable Connections:</strong><br>
+• R1 GigabitEthernet0/0 ↔ R2 GigabitEthernet0/0 (Link 1)<br>
+• R2 GigabitEthernet0/1 ↔ R3 GigabitEthernet0/1 (Link 2)<br>
+<br>
+<strong>Topology Characteristics:</strong><br>
+• Serial topology (R1 -- R2 -- R3)<br>
+• Each router has loopback interfaces for testing<br>
+• Demonstrates multi-hop RIP behavior<br>
+• Supports both IPv4 (RIPv1/v2) and IPv6 (RIPng) configuration
+</div>
+
+<div class="section-title">📊 IPv4 Address Allocation Table</div>
+<p><strong>Network Addressing Scheme:</strong></p>
+
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IPv4 Address</th>
+<th>Subnet Mask</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet0/0</td>
+<td>10.1.12.1</td>
+<td>255.255.255.0</td>
+<td>Link to R2</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>Loopback0</td>
+<td>10.1.1.1</td>
+<td>255.255.255.0</td>
+<td>R1 LAN Network</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>Loopback1</td>
+<td>10.1.11.1</td>
+<td>255.255.255.0</td>
+<td>R1 Additional Network</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/0</td>
+<td>10.1.12.2</td>
+<td>255.255.255.0</td>
+<td>Link to R1</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/1</td>
+<td>10.2.23.2</td>
+<td>255.255.255.0</td>
+<td>Link to R3</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Loopback0</td>
+<td>10.2.2.2</td>
+<td>255.255.255.0</td>
+<td>R2 LAN Network</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>GigabitEthernet0/1</td>
+<td>10.2.23.3</td>
+<td>255.255.255.0</td>
+<td>Link to R2</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>Loopback0</td>
+<td>10.3.3.3</td>
+<td>255.255.255.0</td>
+<td>R3 LAN Network</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>Loopback1</td>
+<td>10.3.33.3</td>
+<td>255.255.255.0</td>
+<td>R3 Additional Network</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🌐 IPv6 Address Allocation Table (for RIPng)</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IPv6 Address</th>
+<th>Prefix</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet0/0</td>
+<td>2001:DB8:12::1</td>
+<td>/64</td>
+<td>Link to R2</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>Loopback0</td>
+<td>2001:DB8:1::1</td>
+<td>/64</td>
+<td>R1 LAN Network</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/0</td>
+<td>2001:DB8:12::2</td>
+<td>/64</td>
+<td>Link to R1</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/1</td>
+<td>2001:DB8:23::2</td>
+<td>/64</td>
+<td>Link to R3</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Loopback0</td>
+<td>2001:DB8:2::2</td>
+<td>/64</td>
+<td>R2 LAN Network</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>GigabitEthernet0/1</td>
+<td>2001:DB8:23::3</td>
+<td>/64</td>
+<td>Link to R2</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>Loopback0</td>
+<td>2001:DB8:3::3</td>
+<td>/64</td>
+<td>R3 LAN Network</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">📋 Lab Prerequisites</div>
+<div class="alert alert-warning">
+<strong>⚠️ Before Starting This Lab:</strong><br>
+✓ Understanding of IP addressing and subnetting<br>
+✓ Knowledge of distance-vector routing protocol concepts<br>
+✓ Familiarity with Cisco IOS CLI and configuration modes<br>
+✓ Understanding of routing table operations<br>
+✓ Basic knowledge of IPv6 addressing (for RIPng section)<br>
+✓ Access to Cisco routers (physical or GNS3/EVE-NG/Packet Tracer)<br>
+✓ Console or SSH access to all devices<br>
+✓ All devices should be in clean configuration state
+</div>
+
+<div class="section-title">📖 Lab Scenario</div>
+<p><strong>Business Context:</strong></p>
+<p>Your organization is running a small branch network with three routers. The network team has decided to implement RIP as the interior gateway protocol (IGP). You are tasked with:</p>
+
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Implementing RIPv1 to understand classful routing behavior</li>
+<li>Migrating to RIPv2 for classless routing and VLSM support</li>
+<li>Securing RIP updates with MD5 authentication</li>
+<li>Deploying RIPng for IPv6 network connectivity</li>
+<li>Optimizing RIP with passive interfaces and summarization</li>
+<li>Documenting the differences between RIP versions</li>
+</ul>
+
+<div class="section-title">🎓 Understanding RIP - Theory Overview</div>
+
+<div class="config-section">
+<h4>What is RIP (Routing Information Protocol)?</h4>
+<p>RIP is one of the oldest distance-vector routing protocols, defined in RFC 1058 (RIPv1) and RFC 2453 (RIPv2). It uses hop count as its metric and is limited to 15 hops maximum.</p>
+
+<table style="margin-top: 10px;">
+<thead>
+<tr>
+<th>Feature</th>
+<th>RIPv1</th>
+<th>RIPv2</th>
+<th>RIPng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RFC</strong></td>
+<td>RFC 1058</td>
+<td>RFC 2453</td>
+<td>RFC 2080</td>
+</tr>
+<tr>
+<td><strong>Classful/Classless</strong></td>
+<td>Classful</td>
+<td>Classless</td>
+<td>Classless</td>
+</tr>
+<tr>
+<td><strong>VLSM Support</strong></td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Subnet Mask</strong></td>
+<td>Not sent</td>
+<td>Sent with updates</td>
+<td>IPv6 prefix</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>No</td>
+<td>Yes (Plain/MD5)</td>
+<td>IPsec</td>
+</tr>
+<tr>
+<td><strong>Update Method</strong></td>
+<td>Broadcast</td>
+<td>Multicast (224.0.0.9)</td>
+<td>Multicast (FF02::9)</td>
+</tr>
+<tr>
+<td><strong>Protocol</strong></td>
+<td>IPv4</td>
+<td>IPv4</td>
+<td>IPv6</td>
+</tr>
+<tr>
+<td><strong>Max Hop Count</strong></td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td><strong>Administrative Distance</strong></td>
+<td>120</td>
+<td>120</td>
+<td>120</td>
+</tr>
+<tr>
+<td><strong>Update Timer</strong></td>
+<td>30 seconds</td>
+<td>30 seconds</td>
+<td>30 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="config-section">
+<h4>RIP Timers</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>Update Timer (30 seconds):</strong> How often routing updates are sent</li>
+<li><strong>Invalid Timer (180 seconds):</strong> How long to wait before declaring a route invalid</li>
+<li><strong>Holddown Timer (180 seconds):</strong> How long to wait before accepting new information about a route</li>
+<li><strong>Flush Timer (240 seconds):</strong> How long before a route is removed from the routing table</li>
+</ul>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ RIP Limitations:</strong><br>
+• Maximum 15 hops (16 is unreachable)<br>
+• Slow convergence compared to modern protocols<br>
+• Uses full routing table updates (not incremental)<br>
+• High bandwidth consumption on large networks<br>
+• No support for equal-cost load balancing beyond 4 paths<br>
+• Not suitable for large enterprise networks
+</div>
+
+<div class="section-title">⚙️ Configuration Tasks</div>
+
+<div class="step-box">
+<h3>📌 Task 1: Basic IPv4 Interface Configuration</h3>
+<p><strong>Objective:</strong> Configure IPv4 addresses on all router interfaces and verify connectivity.</p>
+
+<p style="margin-top: 10px;"><strong>Step 1.1: Configure R1 Interfaces</strong></p>
+<div class="code-block">
+! === R1 IPv4 Interface Configuration ===<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname R1<br>
+R1(config)#<br>
+<br>
+! Configure interface to R2<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# description ** Link to R2 **<br>
+R1(config-if)# ip address 10.1.12.1 255.255.255.0<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Configure Loopback interfaces<br>
+R1(config)# interface Loopback0<br>
+R1(config-if)# description ** R1 LAN Network **<br>
+R1(config-if)# ip address 10.1.1.1 255.255.255.0<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# interface Loopback1<br>
+R1(config-if)# description ** R1 Additional Network **<br>
+R1(config-if)# ip address 10.1.11.1 255.255.255.0<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.2: Configure R2 Interfaces</strong></p>
+<div class="code-block">
+! === R2 IPv4 Interface Configuration ===<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname R2<br>
+R2(config)#<br>
+<br>
+! Configure interface to R1<br>
+R2(config)# interface GigabitEthernet0/0<br>
+R2(config-if)# description ** Link to R1 **<br>
+R2(config-if)# ip address 10.1.12.2 255.255.255.0<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+! Configure interface to R3<br>
+R2(config)# interface GigabitEthernet0/1<br>
+R2(config-if)# description ** Link to R3 **<br>
+R2(config-if)# ip address 10.2.23.2 255.255.255.0<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+! Configure Loopback interface<br>
+R2(config)# interface Loopback0<br>
+R2(config-if)# description ** R2 LAN Network **<br>
+R2(config-if)# ip address 10.2.2.2 255.255.255.0<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.3: Configure R3 Interfaces</strong></p>
+<div class="code-block">
+! === R3 IPv4 Interface Configuration ===<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname R3<br>
+R3(config)#<br>
+<br>
+! Configure interface to R2<br>
+R3(config)# interface GigabitEthernet0/1<br>
+R3(config-if)# description ** Link to R2 **<br>
+R3(config-if)# ip address 10.2.23.3 255.255.255.0<br>
+R3(config-if)# no shutdown<br>
+R3(config-if)# exit<br>
+<br>
+! Configure Loopback interfaces<br>
+R3(config)# interface Loopback0<br>
+R3(config-if)# description ** R3 LAN Network **<br>
+R3(config-if)# ip address 10.3.3.3 255.255.255.0<br>
+R3(config-if)# exit<br>
+<br>
+R3(config)# interface Loopback1<br>
+R3(config-if)# description ** R3 Additional Network **<br>
+R3(config-if)# ip address 10.3.33.3 255.255.255.0<br>
+R3(config-if)# exit<br>
+<br>
+R3(config)# end<br>
+R3# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.4: Verify IPv4 Connectivity</strong></p>
+<div class="code-block">
+! On R1:<br>
+R1# show ip interface brief<br>
+R1# ping 10.1.12.2<br>
+<br>
+! On R2:<br>
+R2# show ip interface brief<br>
+R2# ping 10.1.12.1<br>
+R2# ping 10.2.23.3<br>
+<br>
+! On R3:<br>
+R3# show ip interface brief<br>
+R3# ping 10.2.23.2<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• All interfaces should be in "up/up" state<br>
+• Ping tests between directly connected routers should succeed<br>
+• R1 can ping R2, R2 can ping R1 and R3, R3 can ping R2
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 2: Configure RIP Version 1 (Classful Routing)</h3>
+<p><strong>Objective:</strong> Implement RIPv1 and understand classful routing behavior.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ RIPv1 Characteristics:</strong><br>
+• Classful routing protocol (does not send subnet masks)<br>
+• Uses broadcast (255.255.255.255) for updates<br>
+• No authentication support<br>
+• Automatic summarization at classful boundaries<br>
+• No VLSM support
+</div>
+
+<p style="margin-top: 10px;"><strong>Step 2.1: Configure RIPv1 on R1</strong></p>
+<div class="code-block">
+! === R1 RIPv1 Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Enable RIP routing process<br>
+R1(config)# router rip<br>
+<br>
+! Advertise networks (use classful networks only)<br>
+R1(config-router)# network 10.0.0.0<br>
+<br>
+R1(config-router)# exit<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.2: Configure RIPv1 on R2</strong></p>
+<div class="code-block">
+! === R2 RIPv1 Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Enable RIP routing process<br>
+R2(config)# router rip<br>
+<br>
+! Advertise networks<br>
+R2(config-router)# network 10.0.0.0<br>
+<br>
+R2(config-router)# exit<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.3: Configure RIPv1 on R3</strong></p>
+<div class="code-block">
+! === R3 RIPv1 Configuration ===<br>
+<br>
+R3# configure terminal<br>
+<br>
+! Enable RIP routing process<br>
+R3(config)# router rip<br>
+<br>
+! Advertise networks<br>
+R3(config-router)# network 10.0.0.0<br>
+<br>
+R3(config-router)# exit<br>
+R3(config)# end<br>
+R3# write memory<br>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ RIPv1 Important Note:</strong><br>
+In RIPv1, you can only specify classful networks (Class A, B, or C). The "network 10.0.0.0" command advertises ALL interfaces in the 10.0.0.0/8 network. RIPv1 automatically summarizes at classful boundaries.
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.4: Verify RIPv1 Configuration</strong></p>
+<div class="code-block">
+! On all routers:<br>
+<br>
+R1# show ip protocols<br>
+R1# show ip route<br>
+R1# show ip route rip<br>
+R1# show ip rip database<br>
+<br>
+! Debug RIP updates (use carefully)<br>
+R1# debug ip rip<br>
+! Let it run for 30 seconds to see updates<br>
+R1# undebug all<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• RIP routing process should be active on all routers<br>
+• Routing tables should contain RIP-learned routes (marked with "R")<br>
+• All networks should be reachable<br>
+• show ip protocols should display "Routing Protocol is 'rip'" and "Sending updates every 30 seconds"<br>
+• Automatic summarization should be enabled
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.5: Test RIPv1 Connectivity</strong></p>
+<div class="code-block">
+! On R1 - Test end-to-end connectivity:<br>
+R1# ping 10.2.2.2<br>
+R1# ping 10.3.3.3<br>
+R1# ping 10.3.33.3<br>
+<br>
+! On R3 - Test end-to-end connectivity:<br>
+R3# ping 10.1.1.1<br>
+R3# ping 10.1.11.1<br>
+R3# ping 10.2.2.2<br>
+<br>
+! View routing table<br>
+R1# show ip route<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 3: Migrate to RIP Version 2 (Classless Routing)</h3>
+<p><strong>Objective:</strong> Upgrade to RIPv2 for classless routing, VLSM support, and authentication capabilities.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ RIPv2 Improvements:</strong><br>
+• Classless routing protocol (sends subnet masks)<br>
+• Uses multicast (224.0.0.9) instead of broadcast<br>
+• Supports authentication (plain text and MD5)<br>
+• Supports VLSM and CIDR<br>
+• Manual summarization capability<br>
+• Can disable auto-summarization
+</div>
+
+<p style="margin-top: 10px;"><strong>Step 3.1: Upgrade R1 to RIPv2</strong></p>
+<div class="code-block">
+! === R1 RIPv2 Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Enter RIP configuration mode<br>
+R1(config)# router rip<br>
+<br>
+! Specify RIP version 2<br>
+R1(config-router)# version 2<br>
+<br>
+! Disable automatic summarization (recommended)<br>
+R1(config-router)# no auto-summary<br>
+<br>
+R1(config-router)# exit<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.2: Upgrade R2 to RIPv2</strong></p>
+<div class="code-block">
+! === R2 RIPv2 Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+R2(config)# router rip<br>
+R2(config-router)# version 2<br>
+R2(config-router)# no auto-summary<br>
+<br>
+R2(config-router)# exit<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.3: Upgrade R3 to RIPv2</strong></p>
+<div class="code-block">
+! === R3 RIPv2 Configuration ===<br>
+<br>
+R3# configure terminal<br>
+<br>
+R3(config)# router rip<br>
+R3(config-router)# version 2<br>
+R3(config-router)# no auto-summary<br>
+<br>
+R3(config-router)# exit<br>
+R3(config)# end<br>
+R3# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.4: Verify RIPv2 Configuration</strong></p>
+<div class="code-block">
+! On all routers:<br>
+<br>
+R1# show ip protocols<br>
+! Should show "Routing Protocol is 'rip'" and "Version 2"<br>
+<br>
+R1# show ip route rip<br>
+! Routes should now include subnet masks<br>
+<br>
+R1# show ip rip database<br>
+<br>
+! Debug RIPv2 updates<br>
+R1# debug ip rip<br>
+! Observe multicast updates to 224.0.0.9<br>
+R1# undebug all<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• show ip protocols should display "Routing Protocol is 'rip'" with "Sending updates every 30 seconds, version 2"<br>
+• Automatic summarization should be disabled<br>
+• Updates should be sent to multicast address 224.0.0.9<br>
+• Subnet masks should be included in routing updates<br>
+• All networks remain reachable
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 4: Configure RIPv2 Authentication (MD5)</h3>
+<p><strong>Objective:</strong> Secure RIP updates with MD5 authentication to prevent unauthorized routing updates.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ RIP Authentication:</strong><br>
+RIPv2 supports two types of authentication:<br>
+• <strong>Plain text:</strong> Password sent in clear text (not secure)<br>
+• <strong>MD5:</strong> Password hashed with MD5 algorithm (recommended)<br>
+<br>
+Authentication is configured per interface using key chains.
+</div>
+
+<p style="margin-top: 10px;"><strong>Step 4.1: Configure Authentication on R1</strong></p>
+<div class="code-block">
+! === R1 RIPv2 MD5 Authentication ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Create key chain<br>
+R1(config)# key chain RIP_KEY<br>
+R1(config-keychain)# key 1<br>
+R1(config-keychain-key)# key-string CCNP2026<br>
+R1(config-keychain-key)# exit<br>
+R1(config-keychain)# exit<br>
+<br>
+! Apply authentication to interface<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# ip rip authentication mode md5<br>
+R1(config-if)# ip rip authentication key-chain RIP_KEY<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.2: Configure Authentication on R2</strong></p>
+<div class="code-block">
+! === R2 RIPv2 MD5 Authentication ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Create key chain<br>
+R2(config)# key chain RIP_KEY<br>
+R2(config-keychain)# key 1<br>
+R2(config-keychain-key)# key-string CCNP2026<br>
+R2(config-keychain-key)# exit<br>
+R2(config-keychain)# exit<br>
+<br>
+! Apply authentication to interfaces<br>
+R2(config)# interface GigabitEthernet0/0<br>
+R2(config-if)# ip rip authentication mode md5<br>
+R2(config-if)# ip rip authentication key-chain RIP_KEY<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# interface GigabitEthernet0/1<br>
+R2(config-if)# ip rip authentication mode md5<br>
+R2(config-if)# ip rip authentication key-chain RIP_KEY<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.3: Configure Authentication on R3</strong></p>
+<div class="code-block">
+! === R3 RIPv2 MD5 Authentication ===<br>
+<br>
+R3# configure terminal<br>
+<br>
+! Create key chain<br>
+R3(config)# key chain RIP_KEY<br>
+R3(config-keychain)# key 1<br>
+R3(config-keychain-key)# key-string CCNP2026<br>
+R3(config-keychain-key)# exit<br>
+R3(config-keychain)# exit<br>
+<br>
+! Apply authentication to interface<br>
+R3(config)# interface GigabitEthernet0/1<br>
+R3(config-if)# ip rip authentication mode md5<br>
+R3(config-if)# ip rip authentication key-chain RIP_KEY<br>
+R3(config-if)# exit<br>
+<br>
+R3(config)# end<br>
+R3# write memory<br>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Authentication Important Notes:</strong><br>
+• Key chain names are case-sensitive<br>
+• Key-string (password) must match EXACTLY on both sides<br>
+• Key numbers must match<br>
+• If authentication fails, RIP adjacency will not form<br>
+• Authentication is configured per interface, not globally
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.4: Verify Authentication</strong></p>
+<div class="code-block">
+! On all routers:<br>
+<br>
+! Verify key chain configuration<br>
+R1# show key chain<br>
+<br>
+! Verify interface authentication<br>
+R1# show ip interface GigabitEthernet0/0 | include authentication<br>
+<br>
+! Check RIP neighbors<br>
+R1# show ip protocols<br>
+<br>
+! Verify routes are still present<br>
+R1# show ip route rip<br>
+<br>
+! Test connectivity<br>
+R1# ping 10.3.3.3<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• Key chains should be configured on all routers<br>
+• show ip interface should display MD5 authentication enabled<br>
+• RIP routes should still be present in routing table<br>
+• All networks should remain reachable<br>
+• Authentication should be working (no adjacency issues)
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.5: Test Authentication Failure</strong></p>
+<div class="code-block">
+! On R1 - Temporarily change the password to test:<br>
+R1# configure terminal<br>
+R1(config)# key chain RIP_KEY<br>
+R1(config-keychain)# key 1<br>
+R1(config-keychain-key)# key-string WRONG_PASSWORD<br>
+R1(config-keychain-key)# end<br>
+<br>
+! Wait 30 seconds for updates<br>
+! Check routing table<br>
+R1# show ip route rip<br>
+! Routes from R2 should disappear after invalid timer expires<br>
+<br>
+! Restore correct password<br>
+R1# configure terminal<br>
+R1(config)# key chain RIP_KEY<br>
+R1(config-keychain)# key 1<br>
+R1(config-keychain-key)# key-string CCNP2026<br>
+R1(config-keychain-key)# end<br>
+<br>
+! Routes should reappear<br>
+R1# show ip route rip<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 5: Configure Passive Interfaces</h3>
+<p><strong>Objective:</strong> Optimize RIP by preventing unnecessary routing updates on interfaces where no RIP neighbors exist.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ Passive Interface:</strong><br>
+A passive interface in RIP:<br>
+• Does NOT send RIP updates out the interface<br>
+• Still advertises the network to other RIP neighbors<br>
+• Still listens for incoming RIP updates (can receive)<br>
+• Reduces unnecessary traffic on LAN segments<br>
+• Improves security by not advertising routing protocol information
+</div>
+
+<p style="margin-top: 10px;"><strong>Step 5.1: Configure Passive Interfaces on R1</strong></p>
+<div class="code-block">
+! === R1 Passive Interface Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+R1(config)# router rip<br>
+<br>
+! Make loopback interfaces passive (no RIP neighbors on LANs)<br>
+R1(config-router)# passive-interface Loopback0<br>
+R1(config-router)# passive-interface Loopback1<br>
+<br>
+R1(config-router)# exit<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.2: Configure Passive Interfaces on R2</strong></p>
+<div class="code-block">
+! === R2 Passive Interface Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+R2(config)# router rip<br>
+R2(config-router)# passive-interface Loopback0<br>
+<br>
+R2(config-router)# exit<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.3: Configure Passive Interfaces on R3</strong></p>
+<div class="code-block">
+! === R3 Passive Interface Configuration ===<br>
+<br>
+R3# configure terminal<br>
+<br>
+R3(config)# router rip<br>
+R3(config-router)# passive-interface Loopback0<br>
+R3(config-router)# passive-interface Loopback1<br>
+<br>
+R3(config-router)# exit<br>
+R3(config)# end<br>
+R3# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.4: Verify Passive Interface Configuration</strong></p>
+<div class="code-block">
+! On all routers:<br>
+<br>
+R1# show ip protocols<br>
+! Should list passive interfaces<br>
+<br>
+R1# show ip protocols | section Passive<br>
+<br>
+! Verify routes are still present<br>
+R1# show ip route rip<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• show ip protocols should list passive interfaces<br>
+• Loopback networks should still appear in routing tables<br>
+• No RIP updates sent out loopback interfaces<br>
+• All inter-router connectivity remains functional
+</div>
+
+<div class="alert alert-info">
+<strong>💡 Passive Interface Alternative:</strong><br>
+You can also use "passive-interface default" to make all interfaces passive by default, then explicitly enable RIP on specific interfaces:<br>
+<br>
+<code>router rip</code><br>
+<code> passive-interface default</code><br>
+<code> no passive-interface GigabitEthernet0/0</code><br>
+<br>
+This is more secure and prevents accidental RIP advertisements.
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 6: Configure RIPng for IPv6</h3>
+<p><strong>Objective:</strong> Implement RIPng (RIP next generation) for IPv6 routing.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ RIPng Key Differences:</strong><br>
+• Configured per-interface (not globally)<br>
+• Uses IPv6 multicast address FF02::9<br>
+• No network statements required<br>
+• Uses UDP port 521<br>
+• Authentication via IPsec (not key chains)
+</div>
+
+<p style="margin-top: 10px;"><strong>Step 6.1: Enable IPv6 and Configure Addresses on R1</strong></p>
+<div class="code-block">
+! === R1 IPv6 Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Enable IPv6 routing<br>
+R1(config)# ipv6 unicast-routing<br>
+<br>
+! Configure IPv6 addresses<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# ipv6 address 2001:DB8:12::1/64<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# interface Loopback0<br>
+R1(config-if)# ipv6 address 2001:DB8:1::1/64<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.2: Enable IPv6 and Configure Addresses on R2</strong></p>
+<div class="code-block">
+! === R2 IPv6 Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Enable IPv6 routing<br>
+R2(config)# ipv6 unicast-routing<br>
+<br>
+! Configure IPv6 addresses<br>
+R2(config)# interface GigabitEthernet0/0<br>
+R2(config-if)# ipv6 address 2001:DB8:12::2/64<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# interface GigabitEthernet0/1<br>
+R2(config-if)# ipv6 address 2001:DB8:23::2/64<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# interface Loopback0<br>
+R2(config-if)# ipv6 address 2001:DB8:2::2/64<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.3: Enable IPv6 and Configure Addresses on R3</strong></p>
+<div class="code-block">
+! === R3 IPv6 Configuration ===<br>
+<br>
+R3# configure terminal<br>
+<br>
+! Enable IPv6 routing<br>
+R3(config)# ipv6 unicast-routing<br>
+<br>
+! Configure IPv6 addresses<br>
+R3(config)# interface GigabitEthernet0/1<br>
+R3(config-if)# ipv6 address 2001:DB8:23::3/64<br>
+R3(config-if)# exit<br>
+<br>
+R3(config)# interface Loopback0<br>
+R3(config-if)# ipv6 address 2001:DB8:3::3/64<br>
+R3(config-if)# exit<br>
+<br>
+R3(config)# end<br>
+R3# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.4: Configure RIPng on R1</strong></p>
+<div class="code-block">
+! === R1 RIPng Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Create RIPng process (name it CCNP_RIPng)<br>
+R1(config)# ipv6 router rip CCNP_RIPng<br>
+R1(config-rtr)# exit<br>
+<br>
+! Enable RIPng on interfaces<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# ipv6 rip CCNP_RIPng enable<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# interface Loopback0<br>
+R1(config-if)# ipv6 rip CCNP_RIPng enable<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.5: Configure RIPng on R2</strong></p>
+<div class="code-block">
+! === R2 RIPng Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Create RIPng process<br>
+R2(config)# ipv6 router rip CCNP_RIPng<br>
+R2(config-rtr)# exit<br>
+<br>
+! Enable RIPng on interfaces<br>
+R2(config)# interface GigabitEthernet0/0<br>
+R2(config-if)# ipv6 rip CCNP_RIPng enable<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# interface GigabitEthernet0/1<br>
+R2(config-if)# ipv6 rip CCNP_RIPng enable<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# interface Loopback0<br>
+R2(config-if)# ipv6 rip CCNP_RIPng enable<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.6: Configure RIPng on R3</strong></p>
+<div class="code-block">
+! === R3 RIPng Configuration ===<br>
+<br>
+R3# configure terminal<br>
+<br>
+! Create RIPng process<br>
+R3(config)# ipv6 router rip CCNP_RIPng<br>
+R3(config-rtr)# exit<br>
+<br>
+! Enable RIPng on interfaces<br>
+R3(config)# interface GigabitEthernet0/1<br>
+R3(config-if)# ipv6 rip CCNP_RIPng enable<br>
+R3(config-if)# exit<br>
+<br>
+R3(config)# interface Loopback0<br>
+R3(config-if)# ipv6 rip CCNP_RIPng enable<br>
+R3(config-if)# exit<br>
+<br>
+R3(config)# end<br>
+R3# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.7: Verify RIPng Configuration</strong></p>
+<div class="code-block">
+! On all routers:<br>
+<br>
+! Check IPv6 routing table<br>
+R1# show ipv6 route<br>
+R1# show ipv6 route rip<br>
+<br>
+! Check RIPng process<br>
+R1# show ipv6 protocols<br>
+<br>
+! Check RIPng database<br>
+R1# show ipv6 rip<br>
+R1# show ipv6 rip database<br>
+<br>
+! Verify IPv6 connectivity<br>
+R1# ping ipv6 2001:DB8:3::3<br>
+R1# traceroute ipv6 2001:DB8:3::3<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• IPv6 routing should be enabled on all routers<br>
+• RIPng process should be running<br>
+• IPv6 routes learned via RIPng should appear in routing table (marked with "R")<br>
+• IPv6 connectivity should work end-to-end<br>
+• show ipv6 protocols should display RIPng information
+</div>
+</div>
+
+<div class="section-title">✅ Verification Checklist</div>
+
+<ul class="checklist">
+<li>☐ <strong>Step 1:</strong> All IPv4 interfaces are configured and in "up/up" state</li>
+<li>☐ <strong>Step 2:</strong> Direct IPv4 connectivity between adjacent routers works</li>
+<li>☐ <strong>Step 3:</strong> RIP routing process is enabled on all routers</li>
+<li>☐ <strong>Step 4:</strong> RIPv2 is configured and running (show ip protocols)</li>
+<li>☐ <strong>Step 5:</strong> Auto-summarization is disabled (no auto-summary)</li>
+<li>☐ <strong>Step 6:</strong> All networks are advertised in RIP</li>
+<li>☐ <strong>Step 7:</strong> RIP routes appear in routing table on all routers</li>
+<li>☐ <strong>Step 8:</strong> MD5 authentication is configured on all interfaces</li>
+<li>☐ <strong>Step 9:</strong> Key chains are correctly configured with matching passwords</li>
+<li>☐ <strong>Step 10:</strong> Passive interfaces are configured on loopback interfaces</li>
+<li>☐ <strong>Step 11:</strong> End-to-end IPv4 connectivity works (ping tests)</li>
+<li>☐ <strong>Step 12:</strong> IPv6 unicast routing is enabled on all routers</li>
+<li>☐ <strong>Step 13:</strong> All IPv6 interfaces are configured with addresses</li>
+<li>☐ <strong>Step 14:</strong> RIPng process is created on all routers</li>
+<li>☐ <strong>Step 15:</strong> RIPng is enabled on appropriate interfaces</li>
+<li>☐ <strong>Step 16:</strong> IPv6 RIP routes appear in routing table</li>
+<li>☐ <strong>Step 17:</strong> End-to-end IPv6 connectivity works</li>
+<li>☐ <strong>Step 18:</strong> Configuration is saved on all routers (write memory)</li>
+</ul>
+
+<div class="section-title">📝 Complete Configuration Reference</div>
+
+<p><strong>R1 - Complete Final Configuration</strong></p>
+<div class="code-block">
+!<br>
+! R1 Complete Configuration - RIPv2 and RIPng<br>
+!<br>
+hostname R1<br>
+!<br>
+! Enable IPv6 routing<br>
+ipv6 unicast-routing<br>
+!<br>
+! === Interface Configuration ===<br>
+!<br>
+interface Loopback0<br>
+ description ** R1 LAN Network **<br>
+ ip address 10.1.1.1 255.255.255.0<br>
+ ipv6 address 2001:DB8:1::1/64<br>
+ ipv6 rip CCNP_RIPng enable<br>
+!<br>
+interface Loopback1<br>
+ description ** R1 Additional Network **<br>
+ ip address 10.1.11.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Link to R2 **<br>
+ ip address 10.1.12.1 255.255.255.0<br>
+ ip rip authentication mode md5<br>
+ ip rip authentication key-chain RIP_KEY<br>
+ ipv6 address 2001:DB8:12::1/64<br>
+ ipv6 rip CCNP_RIPng enable<br>
+ no shutdown<br>
+!<br>
+! === RIPv2 Configuration ===<br>
+!<br>
+router rip<br>
+ version 2<br>
+ network 10.0.0.0<br>
+ no auto-summary<br>
+ passive-interface Loopback0<br>
+ passive-interface Loopback1<br>
+!<br>
+! === RIPng Configuration ===<br>
+!<br>
+ipv6 router rip CCNP_RIPng<br>
+!<br>
+! === Key Chain for Authentication ===<br>
+!<br>
+key chain RIP_KEY<br>
+ key 1<br>
+  key-string CCNP2026<br>
+!<br>
+end<br>
+</div>
+
+<p style="margin-top: 20px;"><strong>R2 - Complete Final Configuration</strong></p>
+<div class="code-block">
+!<br>
+! R2 Complete Configuration - RIPv2 and RIPng<br>
+!<br>
+hostname R2<br>
+!<br>
+! Enable IPv6 routing<br>
+ipv6 unicast-routing<br>
+!<br>
+! === Interface Configuration ===<br>
+!<br>
+interface Loopback0<br>
+ description ** R2 LAN Network **<br>
+ ip address 10.2.2.2 255.255.255.0<br>
+ ipv6 address 2001:DB8:2::2/64<br>
+ ipv6 rip CCNP_RIPng enable<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Link to R1 **<br>
+ ip address 10.1.12.2 255.255.255.0<br>
+ ip rip authentication mode md5<br>
+ ip rip authentication key-chain RIP_KEY<br>
+ ipv6 address 2001:DB8:12::2/64<br>
+ ipv6 rip CCNP_RIPng enable<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Link to R3 **<br>
+ ip address 10.2.23.2 255.255.255.0<br>
+ ip rip authentication mode md5<br>
+ ip rip authentication key-chain RIP_KEY<br>
+ ipv6 address 2001:DB8:23::2/64<br>
+ ipv6 rip CCNP_RIPng enable<br>
+ no shutdown<br>
+!<br>
+! === RIPv2 Configuration ===<br>
+!<br>
+router rip<br>
+ version 2<br>
+ network 10.0.0.0<br>
+ no auto-summary<br>
+ passive-interface Loopback0<br>
+!<br>
+! === RIPng Configuration ===<br>
+!<br>
+ipv6 router rip CCNP_RIPng<br>
+!<br>
+! === Key Chain for Authentication ===<br>
+!<br>
+key chain RIP_KEY<br>
+ key 1<br>
+  key-string CCNP2026<br>
+!<br>
+end<br>
+</div>
+
+<p style="margin-top: 20px;"><strong>R3 - Complete Final Configuration</strong></p>
+<div class="code-block">
+!<br>
+! R3 Complete Configuration - RIPv2 and RIPng<br>
+!<br>
+hostname R3<br>
+!<br>
+! Enable IPv6 routing<br>
+ipv6 unicast-routing<br>
+!<br>
+! === Interface Configuration ===<br>
+!<br>
+interface Loopback0<br>
+ description ** R3 LAN Network **<br>
+ ip address 10.3.3.3 255.255.255.0<br>
+ ipv6 address 2001:DB8:3::3/64<br>
+ ipv6 rip CCNP_RIPng enable<br>
+!<br>
+interface Loopback1<br>
+ description ** R3 Additional Network **<br>
+ ip address 10.3.33.3 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Link to R2 **<br>
+ ip address 10.2.23.3 255.255.255.0<br>
+ ip rip authentication mode md5<br>
+ ip rip authentication key-chain RIP_KEY<br>
+ ipv6 address 2001:DB8:23::3/64<br>
+ ipv6 rip CCNP_RIPng enable<br>
+ no shutdown<br>
+!<br>
+! === RIPv2 Configuration ===<br>
+!<br>
+router rip<br>
+ version 2<br>
+ network 10.0.0.0<br>
+ no auto-summary<br>
+ passive-interface Loopback0<br>
+ passive-interface Loopback1<br>
+!<br>
+! === RIPng Configuration ===<br>
+!<br>
+ipv6 router rip CCNP_RIPng<br>
+!<br>
+! === Key Chain for Authentication ===<br>
+!<br>
+key chain RIP_KEY<br>
+ key 1<br>
+  key-string CCNP2026<br>
+!<br>
+end<br>
+</div>
+
+<div class="section-title">🔍 Verification Commands Reference</div>
+
+<div class="config-section">
+<strong>RIP General Verification:</strong>
+<div class="code-block">
+show ip protocols<br>
+show ip route<br>
+show ip route rip<br>
+show ip rip database<br>
+show running-config | section router rip<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>RIP Neighbor and Interface Verification:</strong>
+<div class="code-block">
+show ip interface brief<br>
+show ip interface GigabitEthernet0/0<br>
+show key chain<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>RIPng (IPv6) Verification:</strong>
+<div class="code-block">
+show ipv6 protocols<br>
+show ipv6 route<br>
+show ipv6 route rip<br>
+show ipv6 rip<br>
+show ipv6 rip database<br>
+show ipv6 interface brief<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>RIP Debugging:</strong>
+<div class="code-block">
+debug ip rip<br>
+debug ip rip events<br>
+debug ipv6 rip<br>
+undebug all<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>Connectivity Testing:</strong>
+<div class="code-block">
+ping 10.3.3.3<br>
+ping 10.3.3.3 source 10.1.1.1<br>
+traceroute 10.3.3.3<br>
+ping ipv6 2001:DB8:3::3<br>
+traceroute ipv6 2001:DB8:3::3<br>
+</div>
+</div>
+
+<div class="section-title">🔧 Comprehensive Troubleshooting Guide</div>
+
+<div class="step-box">
+<h3>❌ Problem 1: RIP Adjacency Not Forming</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>No RIP routes in routing table</li>
+<li>show ip route rip shows no routes</li>
+<li>No RIP updates being received</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Verify RIP is enabled<br>
+R1# show ip protocols<br>
+! Should show "Routing Protocol is 'rip'"<br>
+<br>
+! Step 2: Verify network statements<br>
+R1# show running-config | section router rip<br>
+<br>
+! Step 3: Verify interface status<br>
+R1# show ip interface brief<br>
+<br>
+! Step 4: Check if updates are being sent/received<br>
+R1# debug ip rip<br>
+! Wait for 30 seconds<br>
+R1# undebug all<br>
+<br>
+! Step 5: Verify RIP version matches<br>
+R1# show ip protocols | include version<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>RIP not enabled on router</li>
+<li>Network statement missing or incorrect</li>
+<li>Interface is down</li>
+<li>Version mismatch (RIPv1 vs RIPv2)</li>
+<li>Passive interface configured on wrong interface</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution:</strong></p>
+<div class="code-block">
+! Enable RIP<br>
+R1(config)# router rip<br>
+R1(config-router)# version 2<br>
+R1(config-router)# network 10.0.0.0<br>
+R1(config-router)# no auto-summary<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>❌ Problem 2: Authentication Failure</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>RIP routes disappear after configuring authentication</li>
+<li>Routes from specific neighbors missing</li>
+<li>show ip protocols shows authentication enabled but no routes</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Verify key chain configuration<br>
+R1# show key chain<br>
+<br>
+! Step 2: Verify interface authentication<br>
+R1# show running-config interface GigabitEthernet0/0<br>
+<br>
+! Step 3: Check for authentication errors<br>
+R1# debug ip rip<br>
+! Look for "invalid authentication" messages<br>
+R1# undebug all<br>
+<br>
+! Step 4: Verify key-string matches on both sides<br>
+! Check on R1 and R2<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Key-string mismatch (case-sensitive)</li>
+<li>Key number mismatch</li>
+<li>Key chain name mismatch</li>
+<li>Authentication only configured on one side</li>
+<li>Wrong authentication mode (text vs MD5)</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution:</strong></p>
+<div class="code-block">
+! Verify both sides have identical configuration<br>
+R1# show key chain<br>
+R2# show key chain<br>
+<br>
+! Reconfigure if needed<br>
+R1(config)# key chain RIP_KEY<br>
+R1(config-keychain)# key 1<br>
+R1(config-keychain-key)# key-string CCNP2026<br>
+<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# ip rip authentication mode md5<br>
+R1(config-if)# ip rip authentication key-chain RIP_KEY<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>❌ Problem 3: Routes Not Appearing in Routing Table</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>RIP is running but specific routes are missing</li>
+<li>show ip rip database shows routes but not in routing table</li>
+<li>Connectivity to some networks fails</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Check RIP database<br>
+R1# show ip rip database<br>
+! Routes should appear here even if not in routing table<br>
+<br>
+! Step 2: Check routing table<br>
+R1# show ip route<br>
+<br>
+! Step 3: Check for better routes from other protocols<br>
+R1# show ip route [network]<br>
+<br>
+! Step 4: Verify auto-summary is disabled<br>
+R1# show ip protocols | include auto<br>
+<br>
+! Step 5: Check maximum paths<br>
+R1# show ip protocols | include Maximum<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Better route from another protocol (lower AD)</li>
+<li>Auto-summarization causing issues</li>
+<li>Passive interface on wrong interface</li>
+<li>Network not advertised</li>
+<li>Split horizon preventing route advertisement</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution:</strong></p>
+<div class="code-block">
+! Disable auto-summary<br>
+R1(config)# router rip<br>
+R1(config-router)# no auto-summary<br>
+<br>
+! Verify network statements<br>
+R1(config-router)# network 10.0.0.0<br>
+<br>
+! Check for passive interfaces<br>
+R1# show ip protocols | section Passive<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>❌ Problem 4: RIPng Not Working (IPv6)</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>No IPv6 RIP routes in routing table</li>
+<li>show ipv6 route rip shows nothing</li>
+<li>IPv6 connectivity fails between routers</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Verify IPv6 routing is enabled<br>
+R1# show ipv6 interface brief<br>
+<br>
+! Step 2: Verify RIPng process exists<br>
+R1# show ipv6 protocols<br>
+<br>
+! Step 3: Verify RIPng is enabled on interfaces<br>
+R1# show ipv6 interface GigabitEthernet0/0 | include RIP<br>
+<br>
+! Step 4: Check RIPng database<br>
+R1# show ipv6 rip database<br>
+<br>
+! Step 5: Debug RIPng<br>
+R1# debug ipv6 rip<br>
+R1# undebug all<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>IPv6 unicast-routing not enabled</li>
+<li>RIPng process not created</li>
+<li>RIPng not enabled on interfaces</li>
+<li>Process name mismatch</li>
+<li>Link-local addresses not generated</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution:</strong></p>
+<div class="code-block">
+! Enable IPv6 routing<br>
+R1(config)# ipv6 unicast-routing<br>
+<br>
+! Create RIPng process<br>
+R1(config)# ipv6 router rip CCNP_RIPng<br>
+<br>
+! Enable RIPng on interfaces<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# ipv6 rip CCNP_RIPng enable<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>❌ Problem 5: Slow Convergence</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Routes take long time to appear after link comes up</li>
+<li>Routes take long time to be removed after link failure</li>
+<li>Network downtime during convergence</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Understanding:</strong></p>
+<p>RIP has inherently slow convergence due to its periodic update mechanism (30-second updates) and timers.</p>
+
+<div class="code-block">
+! Check RIP timers<br>
+R1# show ip protocols | include timer<br>
+<br>
+! Default timers:<br>
+! Update: 30 seconds<br>
+! Invalid: 180 seconds<br>
+! Holddown: 180 seconds<br>
+! Flush: 240 seconds<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Solution (Optional - Adjust Timers):</strong></p>
+<div class="code-block">
+! Adjust RIP timers (use with caution)<br>
+R1(config)# router rip<br>
+R1(config-router)# timers basic 10 60 60 80<br>
+! Format: update invalid holddown flush<br>
+<br>
+! Must be configured on ALL routers<br>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Timer Tuning Warning:</strong><br>
+• Aggressive timers increase CPU and bandwidth usage<br>
+• All routers must use the same timers<br>
+• Not recommended for production without thorough testing<br>
+• Consider using a modern protocol (EIGRP, OSPF) for faster convergence
+</div>
+</div>
+
+<div class="section-title">🎓 Key Learning Points</div>
+
+<div class="config-section">
+<h4>1. RIP Version Comparison</h4>
+<p><strong>When to Use Each Version:</strong></p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>RIPv1:</strong> Legacy networks only, classful routing required</li>
+<li><strong>RIPv2:</strong> Small to medium networks, VLSM needed, authentication required</li>
+<li><strong>RIPng:</strong> IPv6 networks, simple configuration</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>2. RIP Best Practices</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Always use RIPv2 over RIPv1 (unless legacy requirement)</li>
+<li>Disable auto-summarization with "no auto-summary"</li>
+<li>Configure passive interfaces on LAN segments</li>
+<li>Use MD5 authentication for security</li>
+<li>Limit RIP to small networks (max 15 hops)</li>
+<li>Consider modern protocols for larger deployments</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>3. RIP Limitations</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Maximum 15 hops (16 = unreachable)</li>
+<li>Slow convergence (update timer = 30 seconds)</li>
+<li>Hop count is the only metric (doesn't consider bandwidth)</li>
+<li>Sends full routing table every 30 seconds</li>
+<li>High bandwidth consumption</li>
+<li>No support for traffic engineering</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>4. Administrative Distance</h4>
+<table style="margin-top: 10px;">
+<thead>
+<tr>
+<th>Protocol</th>
+<th>AD Value</th>
+<th>Preference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Connected</td>
+<td>0</td>
+<td>Highest</td>
+</tr>
+<tr>
+<td>Static</td>
+<td>1</td>
+<td>Very High</td>
+</tr>
+<tr>
+<td>EIGRP</td>
+<td>90</td>
+<td>High</td>
+</tr>
+<tr>
+<td>OSPF</td>
+<td>110</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td><strong>RIP</strong></td>
+<td><strong>120</strong></td>
+<td><strong>Low</strong></td>
+</tr>
+</tbody>
+</table>
+<p style="margin-top: 10px;">RIP has the highest AD among common IGPs, making it the least preferred when multiple protocols are running.</p>
+</div>
+
+<div class="section-title">📚 Lab Summary</div>
+
+<p><strong>What You Accomplished:</strong></p>
+
+<div class="config-section">
+<p><strong>✅ Completed Configuration Tasks:</strong></p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Configured IPv4 addresses on all router interfaces</li>
+<li>Implemented RIPv1 (classful routing)</li>
+<li>Migrated to RIPv2 (classless routing with VLSM)</li>
+<li>Configured MD5 authentication for RIPv2</li>
+<li>Implemented passive interfaces for optimization</li>
+<li>Configured IPv6 addresses and routing</li>
+<li>Deployed RIPng for IPv6 networks</li>
+<li>Verified and tested all RIP configurations</li>
+<li>Documented complete working configurations</li>
+</ul>
+</div>
+
+<div class="section-title">🏆 Lab Completion Certificate</div>
+
+<div class="alert alert-success">
+<strong>✅ Congratulations!</strong><br><br>
+You have successfully completed <strong>Lab 10.3: RIP - Routing Information Protocol (v1, v2 & RIPng)</strong>.<br><br>
+<strong>Lab Completion Date:</strong> _________________<br>
+<strong>Instructor Signature:</strong> _________________<br>
+<strong>Student Name:</strong> _________________<br><br>
+<strong>Skills Verified:</strong><br>
+☑ RIPv1 configuration and classful routing<br>
+☑ RIPv2 configuration and classless routing<br>
+☑ RIP MD5 authentication implementation<br>
+☑ Passive interface configuration<br>
+☑ RIPng for IPv6 configuration<br>
+☑ RIP verification and troubleshooting<br><br>
+<strong>CCNP Progress:</strong> Distance-Vector Protocols ✓ | Layer 3 Routing ✓
+</div>
+
+</div>
+
+</div>
+
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Password-Protected Content | Authorized Use Only</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<script>
+const MASTER_PASSWORD = "CCNP@2026";
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+
+let isUnlocked = false;
+let sessionTimer = null;
+
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+});
+
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+}
+}
+
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+}
+
+function lockPage() {
+isUnlocked = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+function initializeProtection() {
+const protectedIds = ['protectedHeader', 'protectedBody', 'protectedFooter'];
+protectedIds.forEach(id => {
+const element = document.getElementById(id);
+if (element) {
+element.addEventListener('keydown', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 This content is protected. Please unlock with password first.');
+showPasswordModal();
+return false;
+}
+});
+}
+});
+}
+
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+document.addEventListener('selectstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+document.addEventListener('keydown', function(e) {
+if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && e.keyCode === 73) || 
+    (e.ctrlKey && e.keyCode === 85)) {
+e.preventDefault();
+return false;
+}
+if (e.ctrlKey && e.keyCode === 83 && !isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+});
+
+document.addEventListener('copy', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+if (self !== top) {
+top.location = self.location;
+}
+
+window.addEventListener('load', function() {
+setTimeout(function() {
+console.clear();
+console.log('%c🔐 ICONIC INFOSEC TRAINING - PROTECTED CONTENT', 'color: #667eea; font-size: 18px; font-weight: bold;');
+console.log('%cLab 10.3: RIP Protocol Configuration', 'color: #1e3c72; font-size: 14px; font-weight: bold;');
+console.log('%cPassword Required: CCNP@2026', 'color: red; font-size: 11px; font-weight: bold;');
+}, 500);
+});
+</script>
+
+</body>
+</html>

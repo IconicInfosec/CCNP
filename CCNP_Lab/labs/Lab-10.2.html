@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 10.1 - IPv6 Static Routes & IP SLA - Iconic InfoSec Training</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+width: 100%;
+max-width: 100%;
+height: auto;
+border: 2px solid #667eea;
+border-radius: 8px;
+margin: 20px 0;
+display: block;
+}
+
+.step-box {
+background: #f8f9fa;
+padding: 15px;
+margin: 15px 0;
+border-left: 4px solid #28a745;
+border-radius: 4px;
+}
+
+.config-section {
+background: #f0f8ff;
+padding: 15px;
+margin: 15px 0;
+border-left: 4px solid #667eea;
+border-radius: 4px;
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - IPv6 Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<div id="protectedBody" class="protected-element">
+
+<div class="content-wrapper">
+
+<div class="lab-title">🔧 Lab 10.1: IPv6 Static Routing, Floating Routes & IP SLA Tracking</div>
+<div class="lab-description">Advanced IPv6 Static Route Configuration with Redundancy and Failover</div>
+
+<div class="lab-metadata">
+<strong>Lab Description | Password Protected</strong><br>
+<strong>Topics:</strong> IPv6 Static Routes, Floating Static Routes, IP SLA IPv6 Configuration, Track Objects, IPv6 Failover Mechanisms<br>
+<strong>Duration:</strong> 90-120 minutes | <strong>Difficulty Level:</strong> Intermediate-Advanced | <strong>Lab Version:</strong> 1.0 IPv6<br>
+<strong>CCNP Alignment:</strong> CCNP 350-401 (ENCOR) Topic 3.1 - Layer 3 Technologies (IPv6) | CCNP 300-410 (ENARSI) Topic 1.1-1.4
+</div>
+
+<div class="section-title">🎯 Lab Objective</div>
+<div class="alert alert-info">
+<strong>ℹ️ Learning Objectives:</strong><br>
+By the end of this lab, you will be able to:<br>
+• Configure IPv6 static routes with different administrative distances<br>
+• Implement floating IPv6 static routes for backup path redundancy<br>
+• Configure IP SLA for IPv6 (ICMPv6) proactive link monitoring<br>
+• Use track objects to create intelligent IPv6 failover mechanisms<br>
+• Integrate IP SLA with IPv6 routing for advanced path control<br>
+• Verify and troubleshoot IPv6 route failover scenarios<br>
+• Understand the differences between IPv4 and IPv6 static routing<br>
+• Master IPv6 address configuration and link-local addressing
+</div>
+
+<div class="section-title">🗺️ Network Topology</div>
+<p><strong>Lab Topology Description:</strong></p>
+<p>This lab features a dual-path redundant IPv6 network between Router R1 and Router R2. Two GigabitEthernet links (G0/0 and G0/1) provide primary and backup connectivity using global unicast IPv6 addresses. The scenario simulates a typical enterprise edge design where redundancy is critical in an IPv6-only or dual-stack environment.</p>
+
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab10.1.jpg" alt="Lab 10.1 Topology" class="topology-image">
+
+<div class="alert alert-info">
+<strong>🔌 Physical Cable Connections:</strong><br>
+• R1 GigabitEthernet0/0 ↔ R2 GigabitEthernet0/0 (Primary IPv6 Path)<br>
+• R1 GigabitEthernet0/1 ↔ R2 GigabitEthernet0/1 (Backup IPv6 Path)<br>
+<br>
+<strong>Topology Characteristics:</strong><br>
+• Redundant dual-link IPv6 design for high availability<br>
+• Primary and backup path architecture<br>
+• Global Unicast IPv6 addressing (2001:db8::/32 documentation prefix)<br>
+• Suitable for IPv6 IP SLA monitoring and track integration
+</div>
+
+<div class="section-title">📊 IPv6 Address Allocation Table</div>
+<p><strong>Network Addressing Scheme:</strong></p>
+
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IPv6 Address</th>
+<th>Prefix Length</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet0/0</td>
+<td>2001:DB8:1:1::1</td>
+<td>/64</td>
+<td>Primary Link to R2</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet0/1</td>
+<td>2001:DB8:1:2::1</td>
+<td>/64</td>
+<td>Backup Link to R2</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>Loopback0</td>
+<td>2001:DB8:A::1</td>
+<td>/128</td>
+<td>R1 Loopback (Source Network)</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/0</td>
+<td>2001:DB8:1:1::2</td>
+<td>/64</td>
+<td>Primary Link to R1</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/1</td>
+<td>2001:DB8:1:2::2</td>
+<td>/64</td>
+<td>Backup Link to R1</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Loopback0</td>
+<td>2001:DB8:B::2</td>
+<td>/128</td>
+<td>R2 Loopback (Destination Network)</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🌐 IPv6 Subnet Summary</div>
+<table>
+<thead>
+<tr>
+<th>Network</th>
+<th>IPv6 Prefix</th>
+<th>Purpose</th>
+<th>Link ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2001:DB8:1:1::/64</td>
+<td>Primary WAN Segment</td>
+<td>R1-R2 Primary Link</td>
+<td>Primary Path</td>
+</tr>
+<tr>
+<td>2001:DB8:1:2::/64</td>
+<td>Backup WAN Segment</td>
+<td>R1-R2 Backup Link</td>
+<td>Backup Path</td>
+</tr>
+<tr>
+<td>2001:DB8:A::1/128</td>
+<td>Host Route</td>
+<td>R1 Management/Test Network</td>
+<td>Loopback</td>
+</tr>
+<tr>
+<td>2001:DB8:B::2/128</td>
+<td>Host Route</td>
+<td>R2 Management/Test Network</td>
+<td>Loopback</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-info">
+<strong>ℹ️ IPv6 Addressing Notes:</strong><br>
+• Using 2001:DB8::/32 documentation prefix (RFC 3849)<br>
+• /64 prefix for point-to-point links (standard practice)<br>
+• /128 prefix for loopback interfaces (host routes)<br>
+• Link-local addresses automatically assigned (FE80::/10)<br>
+• No NAT required - true end-to-end connectivity<br>
+• IPv6 unicast routing must be enabled globally
+</div>
+
+<div class="section-title">📋 Lab Prerequisites</div>
+<div class="alert alert-warning">
+<strong>⚠️ Before Starting This Lab:</strong><br>
+✓ Understanding of IPv6 addressing and subnetting<br>
+✓ Knowledge of IPv6 address types (Global Unicast, Link-Local, Unique Local)<br>
+✓ Basic knowledge of Cisco IOS CLI navigation and configuration modes<br>
+✓ Familiarity with IPv6 static routing concepts and administrative distance<br>
+✓ Understanding of ICMPv6 and Neighbor Discovery Protocol<br>
+✓ Access to Cisco routers (physical or GNS3/EVE-NG - IOS 15.0+ required for IPv6 IP SLA)<br>
+✓ Console or SSH access to all devices<br>
+✓ All devices should be in factory default or clean configuration state
+</div>
+
+<div class="section-title">📖 Lab Scenario</div>
+<p><strong>Business Context:</strong></p>
+<p>Your company is migrating to IPv6 and operates a mission-critical WAN connection between two sites represented by R1 and R2. Due to the importance of this connectivity in the new IPv6 infrastructure, the network team has deployed redundant links. Your task is to implement an intelligent IPv6 routing solution that:</p>
+
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Uses the primary IPv6 link (G0/0) as the preferred path under normal conditions</li>
+<li>Automatically fails over to the backup IPv6 link (G0/1) if the primary path fails</li>
+<li>Provides proactive monitoring using ICMPv6 echo to detect failures before routing protocols timeout</li>
+<li>Ensures minimal downtime during failover events in IPv6 environment</li>
+<li>Can be monitored and verified by network operations staff</li>
+<li>Demonstrates best practices for IPv6 enterprise deployments</li>
+</ul>
+
+<p style="margin-top: 15px;">You will implement three different IPv6 failover strategies, progressing from basic to advanced:</p>
+<ol style="margin-left: 20px; margin-top: 10px;">
+<li><strong>Basic IPv6 Static Routes</strong> - Standard configuration with no redundancy</li>
+<li><strong>Floating IPv6 Static Routes</strong> - Traditional backup using administrative distance</li>
+<li><strong>IP SLA for IPv6 with Track Objects</strong> - Intelligent failover with proactive ICMPv6 monitoring</li>
+</ol>
+
+<div class="section-title">⚙️ Configuration Tasks</div>
+
+<div class="step-box">
+<h3>📌 Task 1: Basic IPv6 Interface Configuration</h3>
+<p><strong>Objective:</strong> Enable IPv6, configure global unicast addresses on all interfaces and verify Layer 2/3 connectivity.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ IPv6 Configuration Requirements:</strong><br>
+• IPv6 unicast routing must be enabled globally<br>
+• Each interface needs a global unicast IPv6 address<br>
+• Link-local addresses are auto-generated (FE80::/10)<br>
+• Use EUI-64 or manual addressing (we'll use manual)<br>
+• Neighbor Discovery Protocol (NDP) replaces ARP
+</div>
+
+<p style="margin-top: 10px;"><strong>Step 1.1: Enable IPv6 Routing and Configure R1 Interfaces</strong></p>
+<div class="code-block">
+! === R1 IPv6 Basic Interface Configuration ===<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname R1<br>
+R1(config)#<br>
+<br>
+! Enable IPv6 unicast routing globally (REQUIRED!)<br>
+R1(config)# ipv6 unicast-routing<br>
+<br>
+! Configure Primary Link Interface<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# description ** Primary IPv6 Link to R2 G0/0 **<br>
+R1(config-if)# ipv6 address 2001:DB8:1:1::1/64<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Configure Backup Link Interface<br>
+R1(config)# interface GigabitEthernet0/1<br>
+R1(config-if)# description ** Backup IPv6 Link to R2 G0/1 **<br>
+R1(config-if)# ipv6 address 2001:DB8:1:2::1/64<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Configure Loopback Interface<br>
+R1(config)# interface Loopback0<br>
+R1(config-if)# description ** R1 IPv6 Management/Test Network **<br>
+R1(config-if)# ipv6 address 2001:DB8:A::1/128<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.2: Enable IPv6 Routing and Configure R2 Interfaces</strong></p>
+<div class="code-block">
+! === R2 IPv6 Basic Interface Configuration ===<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname R2<br>
+R2(config)#<br>
+<br>
+! Enable IPv6 unicast routing globally (REQUIRED!)<br>
+R2(config)# ipv6 unicast-routing<br>
+<br>
+! Configure Primary Link Interface<br>
+R2(config)# interface GigabitEthernet0/0<br>
+R2(config-if)# description ** Primary IPv6 Link to R1 G0/0 **<br>
+R2(config-if)# ipv6 address 2001:DB8:1:1::2/64<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+! Configure Backup Link Interface<br>
+R2(config)# interface GigabitEthernet0/1<br>
+R2(config-if)# description ** Backup IPv6 Link to R1 G0/1 **<br>
+R2(config-if)# ipv6 address 2001:DB8:1:2::2/64<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+! Configure Loopback Interface<br>
+R2(config)# interface Loopback0<br>
+R2(config-if)# description ** R2 IPv6 Management/Test Network **<br>
+R2(config-if)# ipv6 address 2001:DB8:B::2/128<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.3: Verify IPv6 Interface Configuration</strong></p>
+<div class="code-block">
+! On Both R1 and R2:<br>
+<br>
+! Check IPv6 interface status<br>
+R1# show ipv6 interface brief<br>
+<br>
+! View detailed IPv6 interface information<br>
+R1# show ipv6 interface GigabitEthernet0/0<br>
+<br>
+! Verify IPv6 routing is enabled<br>
+R1# show ipv6 interface | include line protocol<br>
+<br>
+! View IPv6 neighbors (similar to ARP in IPv4)<br>
+R1# show ipv6 neighbors<br>
+<br>
+! Verify connectivity using ICMPv6<br>
+R1# ping ipv6 2001:DB8:1:1::2<br>
+R1# ping ipv6 2001:DB8:1:2::2<br>
+<br>
+R2# ping ipv6 2001:DB8:1:1::1<br>
+R2# ping ipv6 2001:DB8:1:2::1<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• All interfaces should be in "up/up" state<br>
+• Each interface should show both global unicast and link-local addresses<br>
+• IPv6 routing should be enabled<br>
+• Ping tests between directly connected interfaces should succeed (100% success rate)<br>
+• IPv6 neighbor table should show discovered neighbors<br>
+• Interface descriptions should be visible in show commands
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 2: Configure Basic IPv6 Static Routes (No Redundancy)</h3>
+<p><strong>Objective:</strong> Implement basic IPv6 static routes to understand baseline behavior before adding redundancy.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ IPv6 Static Route Syntax:</strong><br>
+<code>ipv6 route [destination-prefix/length] [next-hop-ipv6-address | exit-interface] [administrative-distance]</code><br>
+<br>
+Key differences from IPv4:<br>
+• Use "ipv6 route" instead of "ip route"<br>
+• IPv6 addresses use colon notation<br>
+• Can use link-local or global unicast as next-hop<br>
+• Exit interface may be required with link-local next-hops
+</div>
+
+<p style="margin-top: 10px;"><strong>Step 2.1: Configure IPv6 Static Route on R1</strong></p>
+<div class="code-block">
+! === R1 Basic IPv6 Static Route Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Static route to R2's Loopback network via primary link<br>
+! Using global unicast next-hop address<br>
+R1(config)# ipv6 route 2001:DB8:B::2/128 2001:DB8:1:1::2<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.2: Configure IPv6 Static Route on R2</strong></p>
+<div class="code-block">
+! === R2 Basic IPv6 Static Route Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Static route to R1's Loopback network via primary link<br>
+! Using global unicast next-hop address<br>
+R2(config)# ipv6 route 2001:DB8:A::1/128 2001:DB8:1:1::1<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.3: Verify Basic IPv6 Static Route Configuration</strong></p>
+<div class="code-block">
+! On R1:<br>
+R1# show ipv6 route static<br>
+R1# show ipv6 route 2001:DB8:B::2<br>
+R1# ping ipv6 2001:DB8:B::2 source 2001:DB8:A::1<br>
+R1# traceroute ipv6 2001:DB8:B::2 source 2001:DB8:A::1<br>
+<br>
+! On R2:<br>
+R2# show ipv6 route static<br>
+R2# show ipv6 route 2001:DB8:A::1<br>
+R2# ping ipv6 2001:DB8:A::1 source 2001:DB8:B::2<br>
+R2# traceroute ipv6 2001:DB8:A::1 source 2001:DB8:B::2<br>
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Problem Identified:</strong><br>
+With basic IPv6 static routes, when the primary link fails, there is NO automatic failover to the backup link. This results in complete connectivity loss until manual intervention. This is why we need floating IPv6 static routes!
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 3: Configure Floating IPv6 Static Routes</h3>
+<p><strong>Objective:</strong> Implement floating IPv6 static routes using administrative distance to create automatic failover.</p>
+
+<p style="margin-top: 15px;"><strong>Step 3.1: Configure Floating IPv6 Static Route on R1</strong></p>
+<div class="code-block">
+! === R1 Floating IPv6 Static Route Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Remove the old basic static route first<br>
+R1(config)# no ipv6 route 2001:DB8:B::2/128 2001:DB8:1:1::2<br>
+<br>
+! Primary IPv6 static route via G0/0 (default AD = 1)<br>
+R1(config)# ipv6 route 2001:DB8:B::2/128 2001:DB8:1:1::2 1<br>
+<br>
+! Floating IPv6 static route via G0/1 (higher AD = 5)<br>
+R1(config)# ipv6 route 2001:DB8:B::2/128 2001:DB8:1:2::2 5<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.2: Configure Floating IPv6 Static Route on R2</strong></p>
+<div class="code-block">
+! === R2 Floating IPv6 Static Route Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Remove the old basic static route first<br>
+R2(config)# no ipv6 route 2001:DB8:A::1/128 2001:DB8:1:1::1<br>
+<br>
+! Primary IPv6 static route via G0/0 (default AD = 1)<br>
+R2(config)# ipv6 route 2001:DB8:A::1/128 2001:DB8:1:1::1 1<br>
+<br>
+! Floating IPv6 static route via G0/1 (higher AD = 5)<br>
+R2(config)# ipv6 route 2001:DB8:A::1/128 2001:DB8:1:2::1 5<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.3: Test Floating IPv6 Static Route Failover</strong></p>
+<div class="code-block">
+! === Test Primary Link Failure ===<br>
+<br>
+! On R1 - Start continuous ICMPv6 ping<br>
+R1# ping ipv6 2001:DB8:B::2 source 2001:DB8:A::1 repeat 1000<br>
+<br>
+! On a second R1 session, shutdown the primary interface:<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# shutdown<br>
+R1(config-if)# end<br>
+<br>
+! Check IPv6 routing table<br>
+R1# show ipv6 route 2001:DB8:B::2<br>
+! Route should now show via 2001:DB8:1:2::2 (backup path)<br>
+<br>
+! === Test Primary Link Recovery ===<br>
+<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# end<br>
+<br>
+R1# show ipv6 route 2001:DB8:B::2<br>
+! Route should revert to primary path via 2001:DB8:1:1::2<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 4: Configure IP SLA for IPv6 Proactive Monitoring</h3>
+<p><strong>Objective:</strong> Implement Cisco IP SLA for IPv6 to actively monitor end-to-end reachability using ICMPv6.</p>
+
+<p style="margin-top: 15px;"><strong>Step 4.1: Configure IP SLA for IPv6 on R1</strong></p>
+<div class="code-block">
+! === R1 IP SLA IPv6 Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Create IP SLA operation (probe ID 1)<br>
+R1(config)# ip sla 1<br>
+! Use ICMPv6 Echo to monitor R2's loopback (end-to-end test)<br>
+R1(config-ip-sla)# icmp-echo 2001:DB8:B::2 source-ipv6 2001:DB8:A::1<br>
+! Set probe frequency to every 5 seconds<br>
+R1(config-ip-sla-echo)# frequency 5<br>
+! Set timeout to 2 seconds<br>
+R1(config-ip-sla-echo)# timeout 2000<br>
+! Set threshold for performance degradation (in milliseconds)<br>
+R1(config-ip-sla-echo)# threshold 1000<br>
+R1(config-ip-sla-echo)# exit<br>
+<br>
+! Schedule the IP SLA operation to start now and run forever<br>
+R1(config)# ip sla schedule 1 start-time now life forever<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ IP SLA IPv6 Configuration Breakdown:</strong><br>
+• <strong>ip sla 1</strong> - Creates IP SLA operation with ID 1 (command same as IPv4)<br>
+• <strong>icmp-echo 2001:DB8:B::2 source-ipv6 2001:DB8:A::1</strong> - Sends ICMPv6 pings from R1 loopback to R2 loopback<br>
+• <strong>frequency 5</strong> - Sends probe every 5 seconds<br>
+• <strong>timeout 2000</strong> - Waits 2000ms (2 seconds) for response before declaring failure<br>
+• <strong>threshold 1000</strong> - Triggers threshold violation if RTT exceeds 1000ms (1 second)
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.2: Verify IP SLA IPv6 Operation</strong></p>
+<div class="code-block">
+! On R1 - Verify IP SLA configuration and status:<br>
+<br>
+R1# show ip sla configuration 1<br>
+R1# show ip sla statistics 1<br>
+R1# show ip sla summary<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.3: Configure IP SLA for IPv6 on R2 (Optional)</strong></p>
+<div class="code-block">
+! === R2 IP SLA IPv6 Configuration (Optional) ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+R2(config)# ip sla 1<br>
+R2(config-ip-sla)# icmp-echo 2001:DB8:A::1 source-ipv6 2001:DB8:B::2<br>
+R2(config-ip-sla-echo)# frequency 5<br>
+R2(config-ip-sla-echo)# timeout 2000<br>
+R2(config-ip-sla-echo)# threshold 1000<br>
+R2(config-ip-sla-echo)# exit<br>
+<br>
+R2(config)# ip sla schedule 1 start-time now life forever<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 5: Configure Track Objects to Monitor IPv6 IP SLA</h3>
+<p><strong>Objective:</strong> Create Track objects that monitor IP SLA state for intelligent IPv6 routing decisions.</p>
+
+<p style="margin-top: 15px;"><strong>Step 5.1: Configure Track Object on R1</strong></p>
+<div class="code-block">
+! === R1 Track Object Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Create Track object 1 to monitor IP SLA operation 1<br>
+R1(config)# track 1 ip sla 1 reachability<br>
+<br>
+! Configure delay timers<br>
+R1(config-track)# delay down 10 up 10<br>
+<br>
+R1(config-track)# exit<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.2: Verify Track Object Status</strong></p>
+<div class="code-block">
+! On R1:<br>
+<br>
+R1# show track<br>
+R1# show track 1<br>
+R1# show track brief<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.3: Configure Track Object on R2 (Optional)</strong></p>
+<div class="code-block">
+! === R2 Track Object Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+R2(config)# track 1 ip sla 1 reachability<br>
+R2(config-track)# delay down 10 up 10<br>
+R2(config-track)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 6: Integrate Track Objects with IPv6 Static Routes</h3>
+<p><strong>Objective:</strong> Configure IPv6 static routes to use Track objects for intelligent failover.</p>
+
+<p style="margin-top: 15px;"><strong>Step 6.1: Remove Previous IPv6 Static Routes on R1</strong></p>
+<div class="code-block">
+! === R1 Remove Old Routes ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Remove previous IPv6 static routes<br>
+R1(config)# no ipv6 route 2001:DB8:B::2/128 2001:DB8:1:1::2 1<br>
+R1(config)# no ipv6 route 2001:DB8:B::2/128 2001:DB8:1:2::2 5<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.2: Configure Tracked IPv6 Static Routes on R1</strong></p>
+<div class="code-block">
+! === R1 Tracked IPv6 Static Route Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Primary IPv6 route via G0/0 - Tracked by Track 1<br>
+! This route is ONLY installed when Track 1 is UP (IP SLA succeeds)<br>
+R1(config)# ipv6 route 2001:DB8:B::2/128 2001:DB8:1:1::2 track 1<br>
+<br>
+! Backup IPv6 route via G0/1 - Not tracked, higher AD<br>
+! This route is installed when primary route is removed (Track 1 DOWN)<br>
+R1(config)# ipv6 route 2001:DB8:B::2/128 2001:DB8:1:2::2 10<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.3: Configure Tracked IPv6 Static Routes on R2</strong></p>
+<div class="code-block">
+! === R2 Tracked IPv6 Static Route Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Remove old routes<br>
+R2(config)# no ipv6 route 2001:DB8:A::1/128 2001:DB8:1:1::1 1<br>
+R2(config)# no ipv6 route 2001:DB8:A::1/128 2001:DB8:1:2::1 5<br>
+<br>
+! Primary IPv6 route via G0/0 - Tracked by Track 1<br>
+R2(config)# ipv6 route 2001:DB8:A::1/128 2001:DB8:1:1::1 track 1<br>
+<br>
+! Backup IPv6 route via G0/1 - Not tracked<br>
+R2(config)# ipv6 route 2001:DB8:A::1/128 2001:DB8:1:2::1 10<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.4: Verify Tracked IPv6 Static Route Configuration</strong></p>
+<div class="code-block">
+! On R1:<br>
+<br>
+R1# show ipv6 route static<br>
+R1# show ipv6 route 2001:DB8:B::2<br>
+R1# show running-config | include ipv6 route<br>
+R1# show track 1<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>📌 Task 7: Test IPv6 IP SLA-Based Failover Scenarios</h3>
+<p><strong>Objective:</strong> Verify that IPv6 IP SLA track-based failover works correctly.</p>
+
+<p style="margin-top: 10px;"><strong>Test Scenario 1: Primary IPv6 Link Failure</strong></p>
+<div class="code-block">
+! === On R1: Monitor Before Failure ===<br>
+<br>
+! Start continuous ICMPv6 ping<br>
+R1# ping ipv6 2001:DB8:B::2 source 2001:DB8:A::1 repeat 1000 timeout 1<br>
+<br>
+! Check current route<br>
+R1# show ipv6 route 2001:DB8:B::2<br>
+<br>
+! === Simulate Primary Link Failure ===<br>
+<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# shutdown<br>
+R1(config-if)# end<br>
+<br>
+! === Monitor Failover Process ===<br>
+<br>
+! After ~10-15 seconds, check track status:<br>
+R1# show track 1<br>
+<br>
+! Check IPv6 routing table<br>
+R1# show ipv6 route 2001:DB8:B::2<br>
+! Should show backup path via 2001:DB8:1:2::2<br>
+<br>
+! Verify backup path is working<br>
+R1# traceroute ipv6 2001:DB8:B::2 source 2001:DB8:A::1<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Test Scenario 2: Primary IPv6 Link Recovery</strong></p>
+<div class="code-block">
+! === Restore Primary Link ===<br>
+<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# end<br>
+<br>
+! === Monitor Recovery Process ===<br>
+<br>
+! Check interface status<br>
+R1# show ipv6 interface brief GigabitEthernet0/0<br>
+<br>
+! Monitor track status<br>
+R1# show track 1<br>
+<br>
+! Check IPv6 routing table<br>
+R1# show ipv6 route 2001:DB8:B::2<br>
+! Should revert to primary path via 2001:DB8:1:1::2<br>
+</div>
+</div>
+
+<div class="section-title">✅ Verification Checklist</div>
+
+<ul class="checklist">
+<li>☐ <strong>Step 1:</strong> IPv6 unicast routing is enabled on both routers</li>
+<li>☐ <strong>Step 2:</strong> All interfaces have IPv6 global unicast addresses configured</li>
+<li>☐ <strong>Step 3:</strong> All interfaces are in "up/up" state</li>
+<li>☐ <strong>Step 4:</strong> Link-local IPv6 addresses are auto-generated on all interfaces</li>
+<li>☐ <strong>Step 5:</strong> Direct IPv6 connectivity between R1 and R2 via both links is functional</li>
+<li>☐ <strong>Step 6:</strong> IPv6 neighbors are discovered via NDP</li>
+<li>☐ <strong>Step 7:</strong> IP SLA operation 1 is configured for ICMPv6 on R1</li>
+<li>☐ <strong>Step 8:</strong> IP SLA operation shows "OK" status with successful ICMPv6 probes</li>
+<li>☐ <strong>Step 9:</strong> Track object 1 is configured and monitoring IP SLA 1</li>
+<li>☐ <strong>Step 10:</strong> Track object status is "Up" with "Reachability is Up"</li>
+<li>☐ <strong>Step 11:</strong> Primary IPv6 static route is installed via 2001:DB8:1:1::2 track 1</li>
+<li>☐ <strong>Step 12:</strong> Backup IPv6 static route exists in config but not in routing table</li>
+<li>☐ <strong>Step 13:</strong> ICMPv6 ping from R1 loopback to R2 loopback is successful</li>
+<li>☐ <strong>Step 14:</strong> Traceroute shows IPv6 traffic using primary path</li>
+<li>☐ <strong>Step 15:</strong> When G0/0 is shutdown, track goes Down after delay timer</li>
+<li>☐ <strong>Step 16:</strong> Failover to backup IPv6 route occurs automatically</li>
+<li>☐ <strong>Step 17:</strong> When G0/0 is restored, track goes Up and primary route is restored</li>
+<li>☐ <strong>Step 18:</strong> Configuration is saved on both routers</li>
+</ul>
+
+<div class="section-title">📝 Complete Configuration Reference</div>
+
+<p><strong>R1 - Complete Final IPv6 Configuration</strong></p>
+<div class="code-block">
+!<br>
+! R1 Complete Configuration - IPv6 Static Routes with IP SLA Track<br>
+!<br>
+hostname R1<br>
+!<br>
+! Enable IPv6 routing globally<br>
+ipv6 unicast-routing<br>
+!<br>
+! === Interface Configuration ===<br>
+!<br>
+interface Loopback0<br>
+ description ** R1 IPv6 Management/Test Network **<br>
+ ipv6 address 2001:DB8:A::1/128<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Primary IPv6 Link to R2 G0/0 **<br>
+ ipv6 address 2001:DB8:1:1::1/64<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Backup IPv6 Link to R2 G0/1 **<br>
+ ipv6 address 2001:DB8:1:2::1/64<br>
+ no shutdown<br>
+!<br>
+! === IP SLA Configuration ===<br>
+!<br>
+ip sla 1<br>
+ icmp-echo 2001:DB8:B::2 source-ipv6 2001:DB8:A::1<br>
+ frequency 5<br>
+ timeout 2000<br>
+ threshold 1000<br>
+!<br>
+ip sla schedule 1 start-time now life forever<br>
+!<br>
+! === Track Configuration ===<br>
+!<br>
+track 1 ip sla 1 reachability<br>
+ delay down 10 up 10<br>
+!<br>
+! === IPv6 Static Route Configuration ===<br>
+!<br>
+! Primary IPv6 route - tracked by IP SLA<br>
+ipv6 route 2001:DB8:B::2/128 2001:DB8:1:1::2 track 1<br>
+!<br>
+! Backup IPv6 route - higher AD, not tracked<br>
+ipv6 route 2001:DB8:B::2/128 2001:DB8:1:2::2 10<br>
+!<br>
+end<br>
+</div>
+
+<p style="margin-top: 20px;"><strong>R2 - Complete Final IPv6 Configuration</strong></p>
+<div class="code-block">
+!<br>
+! R2 Complete Configuration - IPv6 Static Routes with IP SLA Track<br>
+!<br>
+hostname R2<br>
+!<br>
+! Enable IPv6 routing globally<br>
+ipv6 unicast-routing<br>
+!<br>
+! === Interface Configuration ===<br>
+!<br>
+interface Loopback0<br>
+ description ** R2 IPv6 Management/Test Network **<br>
+ ipv6 address 2001:DB8:B::2/128<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Primary IPv6 Link to R1 G0/0 **<br>
+ ipv6 address 2001:DB8:1:1::2/64<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Backup IPv6 Link to R1 G0/1 **<br>
+ ipv6 address 2001:DB8:1:2::2/64<br>
+ no shutdown<br>
+!<br>
+! === IP SLA Configuration ===<br>
+!<br>
+ip sla 1<br>
+ icmp-echo 2001:DB8:A::1 source-ipv6 2001:DB8:B::2<br>
+ frequency 5<br>
+ timeout 2000<br>
+ threshold 1000<br>
+!<br>
+ip sla schedule 1 start-time now life forever<br>
+!<br>
+! === Track Configuration ===<br>
+!<br>
+track 1 ip sla 1 reachability<br>
+ delay down 10 up 10<br>
+!<br>
+! === IPv6 Static Route Configuration ===<br>
+!<br>
+! Primary IPv6 route - tracked by IP SLA<br>
+ipv6 route 2001:DB8:A::1/128 2001:DB8:1:1::1 track 1<br>
+!<br>
+! Backup IPv6 route - higher AD, not tracked<br>
+ipv6 route 2001:DB8:A::1/128 2001:DB8:1:2::1 10<br>
+!<br>
+end<br>
+</div>
+
+<div class="section-title">🔍 Verification Commands Reference</div>
+
+<div class="config-section">
+<strong>IPv6 Interface Verification:</strong>
+<div class="code-block">
+show ipv6 interface brief<br>
+show ipv6 interface GigabitEthernet0/0<br>
+show ipv6 protocols<br>
+show ipv6 neighbors<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>IPv6 Routing Table Verification:</strong>
+<div class="code-block">
+show ipv6 route<br>
+show ipv6 route static<br>
+show ipv6 route 2001:DB8:B::2<br>
+show ipv6 route summary<br>
+show running-config | include ipv6 route<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>IP SLA Verification:</strong>
+<div class="code-block">
+show ip sla configuration<br>
+show ip sla configuration 1<br>
+show ip sla statistics<br>
+show ip sla statistics 1<br>
+show ip sla summary<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>Track Object Verification:</strong>
+<div class="code-block">
+show track<br>
+show track 1<br>
+show track brief<br>
+show track 1 timers<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>IPv6 Connectivity Testing:</strong>
+<div class="code-block">
+ping ipv6 2001:DB8:B::2 source 2001:DB8:A::1<br>
+ping ipv6 2001:DB8:B::2 source 2001:DB8:A::1 repeat 100<br>
+traceroute ipv6 2001:DB8:B::2 source 2001:DB8:A::1<br>
+</div>
+</div>
+
+<div class="section-title">🎓 Key Learning Points</div>
+
+<div class="config-section">
+<h4>IPv6 vs IPv4 Static Routing Differences</h4>
+<table style="margin-top: 10px;">
+<tr>
+<th>Feature</th>
+<th>IPv4</th>
+<th>IPv6</th>
+</tr>
+<tr>
+<td><strong>Command Syntax</strong></td>
+<td>ip route</td>
+<td>ipv6 route</td>
+</tr>
+<tr>
+<td><strong>Address Format</strong></td>
+<td>Dotted decimal</td>
+<td>Colon hexadecimal</td>
+</tr>
+<tr>
+<td><strong>Neighbor Discovery</strong></td>
+<td>ARP</td>
+<td>NDP (ICMPv6)</td>
+</tr>
+<tr>
+<td><strong>Global Routing Enable</strong></td>
+<td>Automatic</td>
+<td>Requires "ipv6 unicast-routing"</td>
+</tr>
+<tr>
+<td><strong>Link-Local Address</strong></td>
+<td>N/A</td>
+<td>Auto-generated (FE80::/10)</td>
+</tr>
+<tr>
+<td><strong>IP SLA Command</strong></td>
+<td>icmp-echo [ip] source-ip [ip]</td>
+<td>icmp-echo [ipv6] source-ipv6 [ipv6]</td>
+</tr>
+</table>
+</div>
+
+<div class="section-title">📚 Lab Summary</div>
+
+<p><strong>What You Accomplished:</strong></p>
+
+<div class="config-section">
+<p><strong>✅ Completed Configuration Tasks:</strong></p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Enabled IPv6 unicast routing globally on both routers</li>
+<li>Configured dual-path redundant IPv6 network topology</li>
+<li>Implemented basic IPv6 static routes</li>
+<li>Configured floating IPv6 static routes for AD-based failover</li>
+<li>Deployed Cisco IP SLA for IPv6 using ICMPv6 proactive monitoring</li>
+<li>Created track objects to monitor IPv6 IP SLA state</li>
+<li>Integrated track objects with IPv6 static routes for intelligent failover</li>
+<li>Tested multiple IPv6 failover scenarios</li>
+<li>Verified automatic recovery mechanisms in IPv6 environment</li>
+<li>Documented complete working IPv6 configuration</li>
+</ul>
+</div>
+
+<div class="section-title">🏆 Lab Completion Certificate</div>
+
+<div class="alert alert-success">
+<strong>✅ Congratulations!</strong><br><br>
+You have successfully completed <strong>Lab 10.1: IPv6 Static Routing, Floating Routes & IP SLA Tracking</strong>.<br><br>
+<strong>Lab Completion Date:</strong> _________________<br>
+<strong>Instructor Signature:</strong> _________________<br>
+<strong>Student Name:</strong> _________________<br><br>
+<strong>Skills Verified:</strong><br>
+☑ IPv6 static route configuration<br>
+☑ IPv6 floating route implementation<br>
+☑ IP SLA IPv6 (ICMPv6) configuration and monitoring<br>
+☑ Track object integration with IPv6 routing<br>
+☑ IPv6 failover testing and verification<br>
+☑ Troubleshooting IPv6 network redundancy<br>
+☑ IPv6 address configuration and management<br><br>
+<strong>CCNP Progress:</strong> IPv6 Fundamentals ✓ | Layer 3 Technologies ✓
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Lab Environment Note:</strong><br>
+This lab was designed for Cisco IOS routers with IPv6 support. Commands require IOS 15.0(1)M or later for IPv6 IP SLA support. Tested on Cisco IOS Software, C2900 Software Version 15.x or higher.
+</div>
+
+</div>
+
+</div>
+
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program - IPv6 Edition</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<script>
+const MASTER_PASSWORD = "CCNP@2026";
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+
+let isUnlocked = false;
+let sessionTimer = null;
+
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+});
+
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+}
+}
+
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+}
+
+function lockPage() {
+isUnlocked = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+function initializeProtection() {
+const protectedIds = ['protectedHeader', 'protectedBody', 'protectedFooter'];
+protectedIds.forEach(id => {
+const element = document.getElementById(id);
+if (element) {
+element.addEventListener('keydown', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 This content is protected. Please unlock with password first.');
+showPasswordModal();
+return false;
+}
+});
+}
+});
+}
+
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+document.addEventListener('selectstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+document.addEventListener('keydown', function(e) {
+if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && e.keyCode === 73) || 
+    (e.ctrlKey && e.keyCode === 85)) {
+e.preventDefault();
+return false;
+}
+if (e.ctrlKey && e.keyCode === 83 && !isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+});
+
+document.addEventListener('copy', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+window.addEventListener('load', function() {
+setTimeout(function() {
+console.clear();
+console.log('%c🔐 ICONIC INFOSEC TRAINING - PROTECTED CONTENT (IPv6 Version)', 'color: #667eea; font-size: 18px; font-weight: bold;');
+console.log('%cPassword Required: CCNP@2026', 'color: red; font-size: 11px; font-weight: bold;');
+}, 500);
+});
+
+if (self !== top) {
+top.location = self.location;
+}
+</script>
+
+</body>
+</html>

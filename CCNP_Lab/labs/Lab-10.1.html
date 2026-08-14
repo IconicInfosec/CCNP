@@ -1,0 +1,2875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 10.1 - Static Routes & IP SLA - Iconic InfoSec Training</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+width: 100%;
+max-width: 100%;
+height: auto;
+border: 2px solid #667eea;
+border-radius: 8px;
+margin: 20px 0;
+display: block;
+}
+
+.step-box {
+background: #f8f9fa;
+padding: 15px;
+margin: 15px 0;
+border-left: 4px solid #28a745;
+border-radius: 4px;
+}
+
+.config-section {
+background: #f0f8ff;
+padding: 15px;
+margin: 15px 0;
+border-left: 4px solid #667eea;
+border-radius: 4px;
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+/* Password Protection Modal */
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Password Protection Modal -->
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<!-- Header -->
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<!-- Main Content Container -->
+<div id="protectedBody" class="protected-element">
+
+<!-- Lab Content Wrapper -->
+<div class="content-wrapper">
+
+<!-- Lab Title Section -->
+<div class="lab-title">🔧 Lab 10.1: Static Routing, Floating Routes & IP SLA Tracking</div>
+<div class="lab-description">Advanced Static Route Configuration with Redundancy and Failover</div>
+
+<!-- Lab Metadata -->
+<div class="lab-metadata">
+<strong>Lab Description | Password Protected</strong><br>
+<strong>Topics:</strong> Static Routes, Floating Static Routes, IP SLA Configuration, Track Objects, Failover Mechanisms<br>
+<strong>Duration:</strong> 90-120 minutes | <strong>Difficulty Level:</strong> Intermediate-Advanced | <strong>Lab Version:</strong> 1.0<br>
+<strong>CCNP Alignment:</strong> CCNP 350-401 (ENCOR) Topic 3.1 - Layer 3 Technologies | CCNP 300-410 (ENARSI) Topic 1.1-1.4
+</div>
+
+<!-- Lab Objective -->
+<div class="section-title">🎯 Lab Objective</div>
+<div class="alert alert-info">
+<strong>ℹ️ Learning Objectives:</strong><br>
+By the end of this lab, you will be able to:<br>
+• Configure standard static routes with different administrative distances<br>
+• Implement floating static routes for backup path redundancy<br>
+• Configure IP SLA (Service Level Agreement) for proactive link monitoring<br>
+• Use track objects to create intelligent failover mechanisms<br>
+• Integrate IP SLA with static routing for advanced path control<br>
+• Verify and troubleshoot route failover scenarios<br>
+• Understand the differences between traditional and intelligent failover methods
+</div>
+
+<!-- Network Topology -->
+<div class="section-title">🗺️ Network Topology</div>
+<p><strong>Lab Topology Description:</strong></p>
+<p>This lab features a dual-path redundant network between Router R1 and Router R2. Two GigabitEthernet links (G0/0 and G0/1) provide primary and backup connectivity. The scenario simulates a typical enterprise edge design where redundancy is critical.</p>
+
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab10.1.jpg" alt="Lab 10.1 Topology" class="topology-image">
+
+<div class="alert alert-info">
+<strong>🔌 Physical Cable Connections:</strong><br>
+• R1 GigabitEthernet0/0 ↔ R2 GigabitEthernet0/0 (Primary Path)<br>
+• R1 GigabitEthernet0/1 ↔ R2 GigabitEthernet0/1 (Backup Path)<br>
+<br>
+<strong>Topology Characteristics:</strong><br>
+• Redundant dual-link design for high availability<br>
+• Primary and backup path architecture<br>
+• Suitable for IP SLA monitoring and track integration
+</div>
+
+<!-- IP Addressing Table -->
+<div class="section-title">📊 IP Address Allocation Table</div>
+<p><strong>Network Addressing Scheme:</strong></p>
+
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet0/0</td>
+<td>10.1.1.1</td>
+<td>255.255.255.252</td>
+<td>Primary Link to R2</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet0/1</td>
+<td>10.1.2.1</td>
+<td>255.255.255.252</td>
+<td>Backup Link to R2</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>Loopback0</td>
+<td>1.1.1.1</td>
+<td>255.255.255.255</td>
+<td>R1 Loopback (Source Network)</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/0</td>
+<td>10.1.1.2</td>
+<td>255.255.255.252</td>
+<td>Primary Link to R1</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/1</td>
+<td>10.1.2.2</td>
+<td>255.255.255.252</td>
+<td>Backup Link to R1</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Loopback0</td>
+<td>2.2.2.2</td>
+<td>255.255.255.255</td>
+<td>R2 Loopback (Destination Network)</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Subnet Summary -->
+<div class="section-title">🌐 Subnet Summary</div>
+<table>
+<thead>
+<tr>
+<th>Network</th>
+<th>Subnet</th>
+<th>Purpose</th>
+<th>VLAN/Link ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10.1.1.0/30</td>
+<td>10.1.1.0 - 10.1.1.3</td>
+<td>R1-R2 Primary WAN Link</td>
+<td>Primary Path</td>
+</tr>
+<tr>
+<td>10.1.2.0/30</td>
+<td>10.1.2.0 - 10.1.2.3</td>
+<td>R1-R2 Backup WAN Link</td>
+<td>Backup Path</td>
+</tr>
+<tr>
+<td>1.1.1.1/32</td>
+<td>Host Address</td>
+<td>R1 Management/Test Network</td>
+<td>Loopback</td>
+</tr>
+<tr>
+<td>2.2.2.2/32</td>
+<td>Host Address</td>
+<td>R2 Management/Test Network</td>
+<td>Loopback</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Prerequisites -->
+<div class="section-title">📋 Lab Prerequisites</div>
+<div class="alert alert-warning">
+<strong>⚠️ Before Starting This Lab:</strong><br>
+✓ Understanding of IP addressing and subnetting (CIDR notation)<br>
+✓ Basic knowledge of Cisco IOS CLI navigation and configuration modes<br>
+✓ Familiarity with static routing concepts and administrative distance<br>
+✓ Understanding of routing table operations and longest match rule<br>
+✓ Access to Cisco routers (physical or GNS3/EVE-NG/Packet Tracer)<br>
+✓ Console or SSH access to all devices<br>
+✓ All devices should be in factory default or clean configuration state
+</div>
+
+<!-- Lab Scenario -->
+<div class="section-title">📖 Lab Scenario</div>
+<p><strong>Business Context:</strong></p>
+<p>Your company operates a mission-critical WAN connection between two sites represented by R1 and R2. Due to the importance of this connectivity, the network team has deployed redundant links. Your task is to implement an intelligent routing solution that:</p>
+
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Uses the primary link (G0/0) as the preferred path under normal conditions</li>
+<li>Automatically fails over to the backup link (G0/1) if the primary path fails</li>
+<li>Provides proactive monitoring to detect failures before routing protocols timeout</li>
+<li>Ensures minimal downtime during failover events</li>
+<li>Can be monitored and verified by network operations staff</li>
+</ul>
+
+<p style="margin-top: 15px;">You will implement three different failover strategies, progressing from basic to advanced:</p>
+<ol style="margin-left: 20px; margin-top: 10px;">
+<li><strong>Basic Static Routes</strong> - Standard configuration with no redundancy</li>
+<li><strong>Floating Static Routes</strong> - Traditional backup using administrative distance</li>
+<li><strong>IP SLA with Track Objects</strong> - Intelligent failover with proactive monitoring</li>
+</ol>
+
+<!-- Configuration Tasks -->
+<div class="section-title">⚙️ Configuration Tasks</div>
+
+<!-- Task 1 -->
+<div class="step-box">
+<h3>📌 Task 1: Basic Interface Configuration</h3>
+<p><strong>Objective:</strong> Configure IP addresses on all interfaces and verify Layer 2/3 connectivity.</p>
+
+<p style="margin-top: 10px;"><strong>Step 1.1: Configure R1 Interfaces</strong></p>
+<div class="code-block">
+! === R1 Basic Interface Configuration ===<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname R1<br>
+R1(config)#<br>
+<br>
+! Configure Primary Link Interface<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# description ** Primary Link to R2 G0/0 **<br>
+R1(config-if)# ip address 10.1.1.1 255.255.255.252<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Configure Backup Link Interface<br>
+R1(config)# interface GigabitEthernet0/1<br>
+R1(config-if)# description ** Backup Link to R2 G0/1 **<br>
+R1(config-if)# ip address 10.1.2.1 255.255.255.252<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Configure Loopback Interface<br>
+R1(config)# interface Loopback0<br>
+R1(config-if)# description ** R1 Management/Test Network **<br>
+R1(config-if)# ip address 1.1.1.1 255.255.255.255<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.2: Configure R2 Interfaces</strong></p>
+<div class="code-block">
+! === R2 Basic Interface Configuration ===<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname R2<br>
+R2(config)#<br>
+<br>
+! Configure Primary Link Interface<br>
+R2(config)# interface GigabitEthernet0/0<br>
+R2(config-if)# description ** Primary Link to R1 G0/0 **<br>
+R2(config-if)# ip address 10.1.1.2 255.255.255.252<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+! Configure Backup Link Interface<br>
+R2(config)# interface GigabitEthernet0/1<br>
+R2(config-if)# description ** Backup Link to R1 G0/1 **<br>
+R2(config-if)# ip address 10.1.2.2 255.255.255.252<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+! Configure Loopback Interface<br>
+R2(config)# interface Loopback0<br>
+R2(config-if)# description ** R2 Management/Test Network **<br>
+R2(config-if)# ip address 2.2.2.2 255.255.255.255<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.3: Verify Interface Configuration</strong></p>
+<div class="code-block">
+! On Both R1 and R2:<br>
+<br>
+R1# show ip interface brief<br>
+R1# show interfaces description<br>
+<br>
+! Verify connectivity<br>
+R1# ping 10.1.1.2<br>
+R1# ping 10.1.2.2<br>
+<br>
+R2# ping 10.1.1.1<br>
+R2# ping 10.1.2.1<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• All interfaces should be in "up/up" state<br>
+• Ping tests between directly connected interfaces should succeed (100% success rate)<br>
+• Interface descriptions should be visible in show commands
+</div>
+</div>
+
+<!-- Task 2 -->
+<div class="step-box">
+<h3>📌 Task 2: Configure Basic Static Routes (No Redundancy)</h3>
+<p><strong>Objective:</strong> Implement basic static routes to understand baseline behavior before adding redundancy.</p>
+
+<p style="margin-top: 10px;"><strong>Step 2.1: Configure Static Route on R1</strong></p>
+<div class="code-block">
+! === R1 Basic Static Route Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Static route to R2's Loopback network via primary link<br>
+R1(config)# ip route 2.2.2.2 255.255.255.255 10.1.1.2<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.2: Configure Static Route on R2</strong></p>
+<div class="code-block">
+! === R2 Basic Static Route Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Static route to R1's Loopback network via primary link<br>
+R2(config)# ip route 1.1.1.1 255.255.255.255 10.1.1.1<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.3: Verify Basic Static Route Configuration</strong></p>
+<div class="code-block">
+! On R1:<br>
+R1# show ip route static<br>
+R1# show ip route 2.2.2.2<br>
+R1# ping 2.2.2.2 source 1.1.1.1<br>
+R1# traceroute 2.2.2.2 source 1.1.1.1<br>
+<br>
+! On R2:<br>
+R2# show ip route static<br>
+R2# show ip route 1.1.1.1<br>
+R2# ping 1.1.1.1 source 2.2.2.2<br>
+R2# traceroute 1.1.1.1 source 2.2.2.2<br>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Understanding Basic Static Routes:</strong><br>
+• Static routes have a default administrative distance (AD) of 1<br>
+• They remain in the routing table as long as the next-hop is reachable<br>
+• No automatic failover mechanism exists - if the primary link fails, connectivity is lost<br>
+• The next-hop IP address (10.1.1.2 or 10.1.1.1) must be directly connected
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.4: Test Failure Scenario</strong></p>
+<div class="code-block">
+! On R1 - Simulate primary link failure:<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# shutdown<br>
+R1(config-if)# exit<br>
+R1(config)# end<br>
+<br>
+! Check routing table<br>
+R1# show ip route 2.2.2.2<br>
+! Notice the route is removed<br>
+<br>
+! Verify connectivity is lost<br>
+R1# ping 2.2.2.2 source 1.1.1.1<br>
+! Ping will fail<br>
+<br>
+! Restore the interface<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# end<br>
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Problem Identified:</strong><br>
+With basic static routes, when the primary link fails, there is NO automatic failover to the backup link. This results in complete connectivity loss until manual intervention. This is why we need floating static routes!
+</div>
+</div>
+
+<!-- Task 3 -->
+<div class="step-box">
+<h3>📌 Task 3: Configure Floating Static Routes (Traditional Redundancy)</h3>
+<p><strong>Objective:</strong> Implement floating static routes using administrative distance to create automatic failover.</p>
+
+<p style="margin-top: 10px;"><strong>Understanding Floating Static Routes:</strong></p>
+<p>A floating static route is a backup static route that has a higher administrative distance than the primary route. It "floats" in the configuration but is not installed in the routing table unless the primary route fails.</p>
+
+<div class="config-section">
+<strong>Administrative Distance Values Reference:</strong><br>
+• Connected Interface: 0<br>
+• Static Route: 1 (default)<br>
+• EIGRP: 90<br>
+• OSPF: 110<br>
+• RIP: 120<br>
+• <span style="color: #dc3545; font-weight: bold;">Floating Static Route: Typically 5-254 (commonly 5, 10, or 50)</span>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.1: Configure Floating Static Route on R1</strong></p>
+<div class="code-block">
+! === R1 Floating Static Route Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Remove the old basic static route first<br>
+R1(config)# no ip route 2.2.2.2 255.255.255.255 10.1.1.2<br>
+<br>
+! Primary static route via G0/0 (default AD = 1)<br>
+R1(config)# ip route 2.2.2.2 255.255.255.255 10.1.1.2 1<br>
+<br>
+! Floating static route via G0/1 (higher AD = 5)<br>
+R1(config)# ip route 2.2.2.2 255.255.255.255 10.1.2.2 5<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.2: Configure Floating Static Route on R2</strong></p>
+<div class="code-block">
+! === R2 Floating Static Route Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Remove the old basic static route first<br>
+R2(config)# no ip route 1.1.1.1 255.255.255.255 10.1.1.1<br>
+<br>
+! Primary static route via G0/0 (default AD = 1)<br>
+R2(config)# ip route 1.1.1.1 255.255.255.255 10.1.1.1 1<br>
+<br>
+! Floating static route via G0/1 (higher AD = 5)<br>
+R2(config)# ip route 1.1.1.1 255.255.255.255 10.1.2.1 5<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.3: Verify Floating Static Route Configuration</strong></p>
+<div class="code-block">
+! On R1:<br>
+R1# show ip route static<br>
+R1# show ip route 2.2.2.2<br>
+! Should show route via 10.1.1.2 (primary path)<br>
+<br>
+! View ALL static routes including floating (not in routing table)<br>
+R1# show running-config | include ip route<br>
+! You'll see BOTH routes configured<br>
+<br>
+! Check administrative distance<br>
+R1# show ip route 2.2.2.2 | include metric<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• Primary route (AD=1) via 10.1.1.2 should be in the routing table<br>
+• Floating route (AD=5) via 10.1.2.2 should be in configuration but NOT in routing table<br>
+• Ping from R1 to 2.2.2.2 should succeed using primary path
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.4: Test Floating Static Route Failover</strong></p>
+<div class="code-block">
+! === Test Primary Link Failure ===<br>
+<br>
+! On R1 - Start continuous ping in background<br>
+R1# ping 2.2.2.2 source 1.1.1.1 repeat 1000<br>
+<br>
+! On a second R1 session, shutdown the primary interface:<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# shutdown<br>
+R1(config-if)# end<br>
+<br>
+! Immediately check routing table<br>
+R1# show ip route 2.2.2.2<br>
+! Route should now show via 10.1.2.2 (backup path)<br>
+<br>
+! Verify connectivity is maintained<br>
+R1# ping 2.2.2.2 source 1.1.1.1<br>
+! Should succeed via backup path<br>
+<br>
+! Verify path<br>
+R1# traceroute 2.2.2.2 source 1.1.1.1<br>
+! Should show 10.1.2.2 as next hop<br>
+<br>
+! === Test Primary Link Recovery ===<br>
+<br>
+! Bring primary interface back up<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# end<br>
+<br>
+! Wait a few seconds for interface to come up<br>
+R1# show ip route 2.2.2.2<br>
+! Route should revert to primary path via 10.1.1.2<br>
+<br>
+! Verify connectivity<br>
+R1# ping 2.2.2.2 source 1.1.1.1<br>
+R1# traceroute 2.2.2.2 source 1.1.1.1<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Floating Static Route Benefits:</strong><br>
+• Automatic failover to backup path when primary fails<br>
+• Automatic fallback to primary path when it recovers<br>
+• Simple to configure and understand<br>
+• No additional protocols required
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Floating Static Route Limitations:</strong><br>
+• Failover only occurs when next-hop becomes unreachable (interface down)<br>
+• Cannot detect end-to-end path failures beyond next-hop<br>
+• No proactive monitoring of link quality or remote end reachability<br>
+• If next-hop remains up but path is broken downstream, failover won't occur<br>
+• This is where IP SLA becomes essential!
+</div>
+</div>
+
+<!-- Task 4 -->
+<div class="step-box">
+<h3>📌 Task 4: Configure IP SLA for Proactive Monitoring</h3>
+<p><strong>Objective:</strong> Implement Cisco IP SLA to actively monitor end-to-end reachability and detect failures proactively.</p>
+
+<p style="margin-top: 10px;"><strong>What is IP SLA?</strong></p>
+<p>IP SLA (Service Level Agreement) is a Cisco IOS feature that generates and monitors synthetic traffic to measure network performance and verify end-to-end connectivity. Unlike floating static routes that only detect next-hop failures, IP SLA can detect failures anywhere along the path.</p>
+
+<div class="config-section">
+<strong>IP SLA Key Features:</strong><br>
+• Proactive network monitoring with synthetic traffic generation<br>
+• Measures network performance metrics (latency, jitter, packet loss)<br>
+• Detects failures beyond directly connected next-hop<br>
+• Multiple probe types: ICMP Echo, UDP Echo, TCP Connect, HTTP, DNS, etc.<br>
+• Integrates with Track objects for routing decisions<br>
+• Configurable frequency, timeout, and threshold values
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.1: Configure IP SLA on R1</strong></p>
+<div class="code-block">
+! === R1 IP SLA Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Create IP SLA operation (probe ID 1)<br>
+R1(config)# ip sla 1<br>
+! Use ICMP Echo to monitor R2's loopback (end-to-end test)<br>
+R1(config-ip-sla)# icmp-echo 2.2.2.2 source-ip 1.1.1.1<br>
+! Set probe frequency to every 5 seconds<br>
+R1(config-ip-sla-echo)# frequency 5<br>
+! Set timeout to 2 seconds<br>
+R1(config-ip-sla-echo)# timeout 2000<br>
+! Set threshold for performance degradation (in milliseconds)<br>
+R1(config-ip-sla-echo)# threshold 1000<br>
+R1(config-ip-sla-echo)# exit<br>
+<br>
+! Schedule the IP SLA operation to start now and run forever<br>
+R1(config)# ip sla schedule 1 start-time now life forever<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ IP SLA Configuration Breakdown:</strong><br>
+• <strong>ip sla 1</strong> - Creates IP SLA operation with ID 1<br>
+• <strong>icmp-echo 2.2.2.2 source-ip 1.1.1.1</strong> - Sends ICMP pings from R1 loopback to R2 loopback<br>
+• <strong>frequency 5</strong> - Sends probe every 5 seconds<br>
+• <strong>timeout 2000</strong> - Waits 2000ms (2 seconds) for response before declaring failure<br>
+• <strong>threshold 1000</strong> - Triggers threshold violation if RTT exceeds 1000ms (1 second)<br>
+• <strong>ip sla schedule 1 start-time now life forever</strong> - Starts operation immediately and runs continuously
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.2: Verify IP SLA Operation</strong></p>
+<div class="code-block">
+! On R1 - Verify IP SLA configuration and status:<br>
+<br>
+R1# show ip sla configuration 1<br>
+! Shows detailed configuration of IP SLA operation 1<br>
+<br>
+R1# show ip sla statistics 1<br>
+! Shows current statistics including success/failure rate and RTT<br>
+<br>
+R1# show ip sla statistics 1 details<br>
+! Shows detailed statistics with timestamps<br>
+<br>
+R1# show ip sla summary<br>
+! Shows summary of all IP SLA operations<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Expected Output Example:</strong></p>
+<div class="code-block">
+R1# show ip sla statistics 1<br>
+<br>
+IPSLAs Latest Operation Statistics<br>
+<br>
+IPSLA operation id: 1<br>
+        Latest RTT: 1 milliseconds<br>
+Latest operation start time: *12:30:15.123 UTC Mon Mar 1 2026<br>
+Latest operation return code: OK<br>
+Number of successes: 45<br>
+Number of failures: 0<br>
+Operation time to live: Forever<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• IP SLA operation should be in "OK" state<br>
+• RTT (Round Trip Time) should be low (typically 1-10ms in lab)<br>
+• Success count should be increasing<br>
+• Failure count should remain at 0<br>
+• Return code should show "OK"
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.3: Configure IP SLA on R2 (Optional - for bidirectional monitoring)</strong></p>
+<div class="code-block">
+! === R2 IP SLA Configuration (Optional) ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Create IP SLA operation (probe ID 1)<br>
+R2(config)# ip sla 1<br>
+R2(config-ip-sla)# icmp-echo 1.1.1.1 source-ip 2.2.2.2<br>
+R2(config-ip-sla-echo)# frequency 5<br>
+R2(config-ip-sla-echo)# timeout 2000<br>
+R2(config-ip-sla-echo)# threshold 1000<br>
+R2(config-ip-sla-echo)# exit<br>
+<br>
+R2(config)# ip sla schedule 1 start-time now life forever<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Note:</strong> Configuring IP SLA on both routers provides bidirectional monitoring and independent failover capability on each side. This is recommended for production environments.
+</div>
+</div>
+
+<!-- Task 5 -->
+<div class="step-box">
+<h3>📌 Task 5: Configure Track Objects to Monitor IP SLA</h3>
+<p><strong>Objective:</strong> Create Track objects that monitor IP SLA state and can be used for intelligent routing decisions.</p>
+
+<p style="margin-top: 10px;"><strong>What are Track Objects?</strong></p>
+<p>Track objects provide a way to monitor the state of various network elements (interfaces, IP SLA operations, route reachability) and make that state available to other IOS features like static routing, HSRP, VRRP, or PBR. Track objects have two states: UP or DOWN.</p>
+
+<div class="config-section">
+<strong>Track Object Integration:</strong><br>
+• Monitors IP SLA operations and returns UP/DOWN state<br>
+• Can be referenced by static routes for intelligent failover<br>
+• Provides immediate failover when track object goes DOWN<br>
+• More granular control than AD-based floating routes<br>
+• Can combine multiple conditions with boolean logic (AND/OR)
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.1: Configure Track Object on R1</strong></p>
+<div class="code-block">
+! === R1 Track Object Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Create Track object 1 to monitor IP SLA operation 1<br>
+R1(config)# track 1 ip sla 1 reachability<br>
+<br>
+! Optional: Configure delay timers<br>
+! Wait 10 seconds before declaring track UP (prevents flapping)<br>
+R1(config-track)# delay down 10 up 10<br>
+<br>
+R1(config-track)# exit<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Track Configuration Breakdown:</strong><br>
+• <strong>track 1</strong> - Creates track object with ID 1<br>
+• <strong>ip sla 1 reachability</strong> - Monitors IP SLA operation 1 for reachability (OK/Failed)<br>
+• <strong>delay down 10 up 10</strong> - Delays state change by 10 seconds to prevent route flapping<br>
+• Track is UP when IP SLA returns OK<br>
+• Track is DOWN when IP SLA fails or times out
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.2: Verify Track Object Status</strong></p>
+<div class="code-block">
+! On R1:<br>
+<br>
+R1# show track<br>
+! Shows all track objects and their current state<br>
+<br>
+R1# show track 1<br>
+! Shows detailed information about track object 1<br>
+<br>
+R1# show track brief<br>
+! Shows brief summary of all track objects<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Expected Output Example:</strong></p>
+<div class="code-block">
+R1# show track 1<br>
+<br>
+Track 1<br>
+  IP SLA 1 reachability<br>
+  Reachability is Up<br>
+    1 change, last change 00:02:15<br>
+  Delay up 10 secs, down 10 secs<br>
+  Latest operation return code: OK<br>
+  Latest RTT (millisecs) 1<br>
+  Tracked by:<br>
+    STATIC-IP-ROUTING 0<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• Track object should be in "Up" state<br>
+• Should show "Reachability is Up"<br>
+• Should reference IP SLA 1<br>
+• Latest RTT should be visible
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.3: Configure Track Object on R2 (Optional)</strong></p>
+<div class="code-block">
+! === R2 Track Object Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+R2(config)# track 1 ip sla 1 reachability<br>
+R2(config-track)# delay down 10 up 10<br>
+R2(config-track)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+</div>
+
+<!-- Task 6 -->
+<div class="step-box">
+<h3>📌 Task 6: Integrate Track Objects with Static Routes</h3>
+<p><strong>Objective:</strong> Configure static routes to use Track objects for intelligent, end-to-end path monitoring and failover.</p>
+
+<p style="margin-top: 10px;"><strong>Understanding Tracked Static Routes:</strong></p>
+<p>By associating a static route with a Track object, the route is only installed in the routing table when the Track object is UP. This provides more intelligent failover than AD-based floating routes because it monitors end-to-end reachability rather than just next-hop availability.</p>
+
+<p style="margin-top: 15px;"><strong>Step 6.1: Remove Previous Static Routes on R1</strong></p>
+<div class="code-block">
+! === R1 Remove Old Routes ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Remove previous static routes<br>
+R1(config)# no ip route 2.2.2.2 255.255.255.255 10.1.1.2 1<br>
+R1(config)# no ip route 2.2.2.2 255.255.255.255 10.1.2.2 5<br>
+<br>
+! Verify routes are removed<br>
+R1(config)# do show ip route static<br>
+R1(config)# do show running-config | include ip route<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.2: Configure Tracked Static Routes on R1</strong></p>
+<div class="code-block">
+! === R1 Tracked Static Route Configuration ===<br>
+<br>
+R1# configure terminal<br>
+<br>
+! Primary route via G0/0 - Tracked by Track 1<br>
+! This route is ONLY installed when Track 1 is UP (IP SLA succeeds)<br>
+R1(config)# ip route 2.2.2.2 255.255.255.255 10.1.1.2 track 1<br>
+<br>
+! Backup route via G0/1 - Not tracked, higher AD<br>
+! This route is installed when primary route is removed (Track 1 DOWN)<br>
+R1(config)# ip route 2.2.2.2 255.255.255.255 10.1.2.2 10<br>
+<br>
+R1(config)# end<br>
+R1# write memory<br>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Tracked Route Logic:</strong><br>
+<strong>Primary Route:</strong> ip route 2.2.2.2 255.255.255.255 10.1.1.2 track 1<br>
+• Installed ONLY when Track 1 is UP<br>
+• Default AD = 1 when installed<br>
+• Removed immediately when Track 1 goes DOWN<br>
+<br>
+<strong>Backup Route:</strong> ip route 2.2.2.2 255.255.255.255 10.1.2.2 10<br>
+• Always installed when primary route is absent<br>
+• AD = 10 (higher than primary)<br>
+• Used automatically when primary route is removed<br>
+<br>
+<strong>Result:</strong> Intelligent failover based on end-to-end reachability, not just next-hop status!
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.3: Configure Tracked Static Routes on R2</strong></p>
+<div class="code-block">
+! === R2 Tracked Static Route Configuration ===<br>
+<br>
+R2# configure terminal<br>
+<br>
+! Remove old routes<br>
+R2(config)# no ip route 1.1.1.1 255.255.255.255 10.1.1.1 1<br>
+R2(config)# no ip route 1.1.1.1 255.255.255.255 10.1.2.1 5<br>
+<br>
+! Primary route via G0/0 - Tracked by Track 1<br>
+R2(config)# ip route 1.1.1.1 255.255.255.255 10.1.1.1 track 1<br>
+<br>
+! Backup route via G0/1 - Not tracked<br>
+R2(config)# ip route 1.1.1.1 255.255.255.255 10.1.2.1 10<br>
+<br>
+R2(config)# end<br>
+R2# write memory<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.4: Verify Tracked Static Route Configuration</strong></p>
+<div class="code-block">
+! On R1:<br>
+<br>
+R1# show ip route static<br>
+! Should show primary route via 10.1.1.2<br>
+<br>
+R1# show ip route 2.2.2.2<br>
+! Should show tracked route as active<br>
+<br>
+R1# show running-config | include ip route<br>
+! Shows both routes in configuration<br>
+<br>
+R1# show track 1<br>
+! Verify track is UP<br>
+<br>
+! Check which routes are using the track object<br>
+R1# show track 1 | include Tracked<br>
+</div>
+
+<p style="margin-top: 15px;"><strong>Expected Output Example:</strong></p>
+<div class="code-block">
+R1# show ip route 2.2.2.2<br>
+<br>
+Routing entry for 2.2.2.2/32<br>
+  Known via "static", distance 1, metric 0<br>
+  Routing Descriptor Blocks:<br>
+  * 10.1.1.2<br>
+      Route metric is 0, traffic share count is 1<br>
+<br>
+R1# show track 1<br>
+<br>
+Track 1<br>
+  IP SLA 1 reachability<br>
+  Reachability is Up<br>
+    1 change, last change 00:15:23<br>
+  Delay up 10 secs, down 10 secs<br>
+  Latest operation return code: OK<br>
+  Latest RTT (millisecs) 1<br>
+  Tracked by:<br>
+    STATIC-IP-ROUTING 0<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Result:</strong><br>
+• Track 1 should be UP<br>
+• Primary route (via 10.1.1.2) should be in routing table<br>
+• Backup route (via 10.1.2.2) should be in config but NOT in routing table<br>
+• "Tracked by: STATIC-IP-ROUTING" should appear in show track output<br>
+• Ping from R1 to 2.2.2.2 should succeed
+</div>
+</div>
+
+<!-- Task 7 -->
+<div class="step-box">
+<h3>📌 Task 7: Test IP SLA-Based Failover Scenarios</h3>
+<p><strong>Objective:</strong> Verify that IP SLA track-based failover works correctly in various failure scenarios.</p>
+
+<p style="margin-top: 10px;"><strong>Test Scenario 1: Primary Link Failure</strong></p>
+<div class="code-block">
+! === On R1: Monitor Before Failure ===<br>
+<br>
+! Start continuous ping<br>
+R1# ping 2.2.2.2 source 1.1.1.1 repeat 1000 timeout 1<br>
+<br>
+! In another terminal session, monitor routing table<br>
+R1# debug ip routing<br>
+<br>
+! Check current route<br>
+R1# show ip route 2.2.2.2 | include via<br>
+!   via 10.1.1.2 (should show primary path)<br>
+<br>
+! Check track status<br>
+R1# show track 1 brief<br>
+! Track 1  IP SLA 1 reachability          Up<br>
+<br>
+! === Simulate Primary Link Failure ===<br>
+<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# shutdown<br>
+R1(config-if)# end<br>
+<br>
+! === Monitor Failover Process ===<br>
+<br>
+! Wait for IP SLA to detect failure (timeout + frequency = ~7 seconds)<br>
+! Watch the ping output - you'll see a few drops, then recovery<br>
+<br>
+! After ~10-15 seconds, check track status:<br>
+R1# show track 1<br>
+! Should show "Reachability is Down" after delay timer expires<br>
+<br>
+! Check routing table<br>
+R1# show ip route 2.2.2.2 | include via<br>
+!   via 10.1.2.2 (should show backup path now!)<br>
+<br>
+! Verify backup path is working<br>
+R1# traceroute 2.2.2.2 source 1.1.1.1<br>
+! Should show path through 10.1.2.2<br>
+<br>
+! Check IP SLA statistics<br>
+R1# show ip sla statistics 1<br>
+! Should show failures<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Behavior:</strong><br>
+1. IP SLA probe fails when G0/0 goes down<br>
+2. After timeout (2 sec) + delay timer (10 sec), Track 1 goes DOWN<br>
+3. Primary tracked route is removed from routing table<br>
+4. Backup route (AD=10) via 10.1.2.2 is automatically installed<br>
+5. Ping resumes after brief interruption (10-15 seconds)<br>
+6. Traffic now flows through backup link
+</div>
+
+<p style="margin-top: 15px;"><strong>Test Scenario 2: Primary Link Recovery</strong></p>
+<div class="code-block">
+! === Restore Primary Link ===<br>
+<br>
+R1# configure terminal<br>
+R1(config)# interface GigabitEthernet0/0<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# end<br>
+<br>
+! === Monitor Recovery Process ===<br>
+<br>
+! Wait for interface to come up and IP SLA to succeed<br>
+! Check interface status<br>
+R1# show ip interface brief GigabitEthernet0/0<br>
+<br>
+! Monitor track status<br>
+R1# show track 1<br>
+! After delay timer (10 sec), should show "Reachability is Up"<br>
+<br>
+! Check routing table<br>
+R1# show ip route 2.2.2.2 | include via<br>
+!   via 10.1.1.2 (should revert to primary path)<br>
+<br>
+! Verify primary path<br>
+R1# traceroute 2.2.2.2 source 1.1.1.1<br>
+! Should show 10.1.1.2 as next hop<br>
+<br>
+! Check IP SLA success<br>
+R1# show ip sla statistics 1<br>
+! Success count should be increasing<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Expected Behavior:</strong><br>
+1. Interface G0/0 comes back up<br>
+2. IP SLA probes succeed<br>
+3. After delay timer (10 sec), Track 1 goes UP<br>
+4. Primary tracked route (AD=1) is reinstalled<br>
+5. Backup route (AD=10) is removed due to higher AD<br>
+6. Traffic automatically reverts to primary path<br>
+7. Minimal service interruption during recovery
+</div>
+
+<p style="margin-top: 15px;"><strong>Test Scenario 3: Remote End (R2 Loopback) Failure</strong></p>
+<p>This test demonstrates the advantage of IP SLA over traditional floating routes - it can detect failures beyond the next-hop router.</p>
+
+<div class="code-block">
+! === On R2: Simulate Remote End Failure ===<br>
+<br>
+R2# configure terminal<br>
+R2(config)# interface Loopback0<br>
+R2(config-if)# shutdown<br>
+R2(config-if)# end<br>
+<br>
+! === On R1: Observe Failover ===<br>
+<br>
+! IP SLA will fail because 2.2.2.2 is unreachable<br>
+! Even though both G0/0 links are up!<br>
+<br>
+R1# show ip sla statistics 1<br>
+! Should show failures and "No connection" or "Timeout"<br>
+<br>
+R1# show track 1<br>
+! After timeout + delay, should show Down<br>
+<br>
+R1# show ip route 2.2.2.2<br>
+! Will show backup path via 10.1.2.2<br>
+! (Even though this won't help in this scenario - demonstrates the mechanism)<br>
+<br>
+! === Restore R2 Loopback ===<br>
+<br>
+R2# configure terminal<br>
+R2(config)# interface Loopback0<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# end<br>
+<br>
+! On R1, track will go UP and primary route will be restored<br>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Key Learning Point:</strong><br>
+This scenario shows that IP SLA with Track provides END-TO-END monitoring. A traditional floating static route (based only on next-hop reachability) would NOT detect this failure because the next-hop (10.1.1.2) is still reachable. IP SLA detects the actual destination (2.2.2.2) is unreachable and triggers failover.
+</div>
+
+<p style="margin-top: 15px;"><strong>Test Scenario 4: Monitoring Real-Time Failover</strong></p>
+<div class="code-block">
+! === Set up Real-Time Monitoring ===<br>
+<br>
+! Terminal 1: Continuous ping<br>
+R1# ping 2.2.2.2 source 1.1.1.1 repeat 10000 timeout 1<br>
+<br>
+! Terminal 2: Monitor IP SLA<br>
+R1# while true; do show ip sla statistics 1 | include RTT; sleep 2; done<br>
+<br>
+! Terminal 3: Monitor track status<br>
+R1# while true; do show track 1 brief; sleep 1; done<br>
+<br>
+! Terminal 4: Monitor routing table<br>
+R1# debug ip routing<br>
+<br>
+! Now perform shutdown/no shutdown on R1 G0/0 and observe:<br>
+! - Ping drops briefly during failover<br>
+! - IP SLA statistics change<br>
+! - Track state transitions<br>
+! - Route table updates<br>
+</div>
+</div>
+
+<!-- Verification Checklist -->
+<div class="section-title">✅ Verification Checklist</div>
+
+<ul class="checklist">
+<li>☐ <strong>Step 1:</strong> All interfaces are configured with correct IP addresses (show ip interface brief)</li>
+<li>☐ <strong>Step 2:</strong> All interfaces are in "up/up" state (show interfaces status)</li>
+<li>☐ <strong>Step 3:</strong> Direct connectivity between R1 and R2 via both links is functional (ping tests)</li>
+<li>☐ <strong>Step 4:</strong> IP SLA operation 1 is configured and running on R1 (show ip sla configuration 1)</li>
+<li>☐ <strong>Step 5:</strong> IP SLA operation shows "OK" status with successful probes (show ip sla statistics 1)</li>
+<li>☐ <strong>Step 6:</strong> Track object 1 is configured and monitoring IP SLA 1 (show track 1)</li>
+<li>☐ <strong>Step 7:</strong> Track object status is "Up" with "Reachability is Up" (show track 1)</li>
+<li>☐ <strong>Step 8:</strong> Primary static route is installed via 10.1.1.2 track 1 (show ip route static)</li>
+<li>☐ <strong>Step 9:</strong> Backup static route exists in config but not in routing table (show run | include ip route)</li>
+<li>☐ <strong>Step 10:</strong> Ping from R1 loopback to R2 loopback is successful (ping 2.2.2.2 source 1.1.1.1)</li>
+<li>☐ <strong>Step 11:</strong> Traceroute shows traffic using primary path via 10.1.1.2 (traceroute 2.2.2.2)</li>
+<li>☐ <strong>Step 12:</strong> When G0/0 is shutdown, track goes Down after delay timer</li>
+<li>☐ <strong>Step 13:</strong> Failover to backup route via 10.1.2.2 occurs automatically</li>
+<li>☐ <strong>Step 14:</strong> When G0/0 is restored, track goes Up and primary route is restored</li>
+<li>☐ <strong>Step 15:</strong> Failover and recovery occur within expected timeframes (10-15 seconds)</li>
+<li>☐ <strong>Step 16:</strong> Configuration is saved on both routers (write memory)</li>
+<li>☐ <strong>Step 17:</strong> Documentation updated with IP addresses and configuration details</li>
+</ul>
+
+<div class="alert alert-success">
+<strong>✅ Lab Completion Criteria:</strong><br>
+All items in the verification checklist must be completed successfully. You should be able to demonstrate automatic failover and recovery in front of an instructor or document with screenshots/output captures.
+</div>
+
+<!-- Complete Configuration Reference -->
+<div class="section-title">📝 Complete Configuration Reference</div>
+
+<p><strong>R1 - Complete Final Configuration</strong></p>
+<div class="code-block">
+!<br>
+! R1 Complete Configuration - Static Routes with IP SLA Track<br>
+!<br>
+hostname R1<br>
+!<br>
+! === Interface Configuration ===<br>
+!<br>
+interface Loopback0<br>
+ description ** R1 Management/Test Network **<br>
+ ip address 1.1.1.1 255.255.255.255<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Primary Link to R2 G0/0 **<br>
+ ip address 10.1.1.1 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Backup Link to R2 G0/1 **<br>
+ ip address 10.1.2.1 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+! === IP SLA Configuration ===<br>
+!<br>
+ip sla 1<br>
+ icmp-echo 2.2.2.2 source-ip 1.1.1.1<br>
+ frequency 5<br>
+ timeout 2000<br>
+ threshold 1000<br>
+!<br>
+ip sla schedule 1 start-time now life forever<br>
+!<br>
+! === Track Configuration ===<br>
+!<br>
+track 1 ip sla 1 reachability<br>
+ delay down 10 up 10<br>
+!<br>
+! === Static Route Configuration ===<br>
+!<br>
+! Primary route - tracked by IP SLA<br>
+ip route 2.2.2.2 255.255.255.255 10.1.1.2 track 1<br>
+!<br>
+! Backup route - higher AD, not tracked<br>
+ip route 2.2.2.2 255.255.255.255 10.1.2.2 10<br>
+!<br>
+end<br>
+</div>
+
+<p style="margin-top: 20px;"><strong>R2 - Complete Final Configuration</strong></p>
+<div class="code-block">
+!<br>
+! R2 Complete Configuration - Static Routes with IP SLA Track<br>
+!<br>
+hostname R2<br>
+!<br>
+! === Interface Configuration ===<br>
+!<br>
+interface Loopback0<br>
+ description ** R2 Management/Test Network **<br>
+ ip address 2.2.2.2 255.255.255.255<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Primary Link to R1 G0/0 **<br>
+ ip address 10.1.1.2 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Backup Link to R1 G0/1 **<br>
+ ip address 10.1.2.2 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+! === IP SLA Configuration ===<br>
+!<br>
+ip sla 1<br>
+ icmp-echo 1.1.1.1 source-ip 2.2.2.2<br>
+ frequency 5<br>
+ timeout 2000<br>
+ threshold 1000<br>
+!<br>
+ip sla schedule 1 start-time now life forever<br>
+!<br>
+! === Track Configuration ===<br>
+!<br>
+track 1 ip sla 1 reachability<br>
+ delay down 10 up 10<br>
+!<br>
+! === Static Route Configuration ===<br>
+!<br>
+! Primary route - tracked by IP SLA<br>
+ip route 1.1.1.1 255.255.255.255 10.1.1.1 track 1<br>
+!<br>
+! Backup route - higher AD, not tracked<br>
+ip route 1.1.1.1 255.255.255.255 10.1.2.1 10<br>
+!<br>
+end<br>
+</div>
+
+<!-- Verification Commands Reference -->
+<div class="section-title">🔍 Verification Commands Reference</div>
+
+<div class="config-section">
+<strong>Interface Verification:</strong>
+<div class="code-block">
+show ip interface brief<br>
+show interfaces status<br>
+show interfaces description<br>
+show ip interface GigabitEthernet0/0<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>Routing Table Verification:</strong>
+<div class="code-block">
+show ip route<br>
+show ip route static<br>
+show ip route 2.2.2.2<br>
+show ip route 2.2.2.2 longer-prefixes<br>
+show running-config | include ip route<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>IP SLA Verification:</strong>
+<div class="code-block">
+show ip sla configuration<br>
+show ip sla configuration 1<br>
+show ip sla statistics<br>
+show ip sla statistics 1<br>
+show ip sla statistics 1 details<br>
+show ip sla summary<br>
+show ip sla history 1<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>Track Object Verification:</strong>
+<div class="code-block">
+show track<br>
+show track 1<br>
+show track brief<br>
+show track 1 timers<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>Connectivity Testing:</strong>
+<div class="code-block">
+ping 2.2.2.2 source 1.1.1.1<br>
+ping 2.2.2.2 source 1.1.1.1 repeat 100<br>
+traceroute 2.2.2.2 source 1.1.1.1<br>
+traceroute 2.2.2.2 source 1.1.1.1 probe 1<br>
+</div>
+</div>
+
+<div class="config-section">
+<strong>Debugging (Use with Caution):</strong>
+<div class="code-block">
+debug ip routing<br>
+debug ip icmp<br>
+debug track<br>
+debug ip sla trace<br>
+! Remember to disable debugging after troubleshooting:<br>
+undebug all<br>
+</div>
+</div>
+
+<!-- Troubleshooting Guide -->
+<div class="section-title">🔧 Comprehensive Troubleshooting Guide</div>
+
+<div class="step-box">
+<h3>❌ Problem 1: IP SLA Shows "No Connection" or "Timeout"</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>show ip sla statistics shows failures</li>
+<li>Return code: "No connection" or "Timeout"</li>
+<li>Track object is Down</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Verify IP SLA configuration<br>
+R1# show ip sla configuration 1<br>
+! Check: correct destination IP, source IP, timeout values<br>
+<br>
+! Step 2: Verify interface status<br>
+R1# show ip interface brief<br>
+! Ensure both source and primary path interfaces are up<br>
+<br>
+! Step 3: Test basic connectivity<br>
+R1# ping 2.2.2.2 source 1.1.1.1<br>
+! If this fails, IP SLA will also fail<br>
+<br>
+! Step 4: Test next-hop connectivity<br>
+R1# ping 10.1.1.2<br>
+! Verify Layer 3 connectivity to next-hop<br>
+<br>
+! Step 5: Check for routing issues<br>
+R1# show ip route 2.2.2.2<br>
+! Verify route exists (may need to temporarily remove track)<br>
+<br>
+! Step 6: Verify IP SLA is scheduled and running<br>
+R1# show ip sla summary<br>
+! Ensure operation is Active<br>
+<br>
+! Step 7: Check for access-lists blocking ICMP<br>
+R1# show ip access-lists<br>
+R2# show ip access-lists<br>
+! Ensure ICMP is not blocked<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Destination IP address unreachable</li>
+<li>Interface down on primary path</li>
+<li>Access-list blocking ICMP</li>
+<li>Incorrect source IP in IP SLA configuration</li>
+<li>Timeout value too low for network conditions</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution:</strong></p>
+<div class="code-block">
+! Fix 1: Verify and correct IP SLA configuration<br>
+R1(config)# no ip sla 1<br>
+R1(config)# ip sla 1<br>
+R1(config-ip-sla)# icmp-echo 2.2.2.2 source-ip 1.1.1.1<br>
+R1(config-ip-sla)# timeout 2000<br>
+R1(config-ip-sla)# frequency 5<br>
+R1(config-ip-sla)# exit<br>
+R1(config)# ip sla schedule 1 start-time now life forever<br>
+<br>
+! Fix 2: Increase timeout if network latency is high<br>
+R1(config)# ip sla 1<br>
+R1(config-ip-sla)# timeout 5000<br>
+R1(config-ip-sla)# exit<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>❌ Problem 2: Track Object Not Changing State</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>IP SLA is failing but Track remains Up</li>
+<li>IP SLA is succeeding but Track remains Down</li>
+<li>show track shows incorrect state</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Check track configuration<br>
+R1# show track 1<br>
+! Verify it's monitoring correct IP SLA operation<br>
+<br>
+! Step 2: Check delay timers<br>
+R1# show track 1 timers<br>
+! May need to wait for delay timer to expire<br>
+<br>
+! Step 3: Verify IP SLA operation number matches<br>
+R1# show ip sla summary<br>
+R1# show track 1<br>
+! Ensure track is monitoring correct IP SLA ID<br>
+<br>
+! Step 4: Check track configuration<br>
+R1# show running-config | section track<br>
+! Verify syntax is correct<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Delay timers not yet expired</li>
+<li>Track monitoring wrong IP SLA operation</li>
+<li>IP SLA operation not running</li>
+<li>Misconfigured track type (reachability vs state)</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution:</strong></p>
+<div class="code-block">
+! Remove and reconfigure track<br>
+R1(config)# no track 1<br>
+R1(config)# track 1 ip sla 1 reachability<br>
+R1(config-track)# delay down 10 up 10<br>
+R1(config-track)# exit<br>
+<br>
+! Verify immediately<br>
+R1# show track 1<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>❌ Problem 3: Route Not Installing or Removing</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Track is Up but route not in routing table</li>
+<li>Track is Down but primary route still installed</li>
+<li>Backup route not activating during failover</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Verify static route configuration<br>
+R1# show running-config | include ip route<br>
+! Check syntax: ip route [destination] [mask] [next-hop] track [track-id]<br>
+<br>
+! Step 2: Verify track association<br>
+R1# show track 1<br>
+! Check "Tracked by: STATIC-IP-ROUTING"<br>
+<br>
+! Step 3: Check routing table<br>
+R1# show ip route 2.2.2.2<br>
+R1# show ip route static<br>
+<br>
+! Step 4: Verify administrative distance<br>
+R1# show ip route 2.2.2.2 | include distance<br>
+! Primary (tracked) should have AD=1<br>
+! Backup should have higher AD (e.g., 10)<br>
+<br>
+! Step 5: Check for routing conflicts<br>
+R1# show ip route 2.2.2.2 longer-prefixes<br>
+! Ensure no more specific routes exist<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Incorrect track ID in static route command</li>
+<li>Backup route has lower AD than primary</li>
+<li>Next-hop address unreachable</li>
+<li>Syntax error in static route command</li>
+<li>More specific route taking precedence</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution:</strong></p>
+<div class="code-block">
+! Remove and reconfigure routes with correct syntax<br>
+R1(config)# no ip route 2.2.2.2 255.255.255.255 10.1.1.2<br>
+R1(config)# no ip route 2.2.2.2 255.255.255.255 10.1.2.2<br>
+<br>
+! Primary route with track (AD=1 default)<br>
+R1(config)# ip route 2.2.2.2 255.255.255.255 10.1.1.2 track 1<br>
+<br>
+! Backup route with higher AD (must be > 1)<br>
+R1(config)# ip route 2.2.2.2 255.255.255.255 10.1.2.2 10<br>
+<br>
+! Verify<br>
+R1# show ip route static<br>
+R1# show track 1<br>
+</div>
+</div>
+
+<div class="step-box">
+<h3>❌ Problem 4: Failover Takes Too Long</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Connectivity lost for extended period during failover</li>
+<li>Failover takes 30+ seconds</li>
+<li>Applications time out during failover</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Check IP SLA timers<br>
+R1# show ip sla configuration 1 | include frequency|timeout<br>
+! Frequency = how often probe is sent<br>
+! Timeout = how long to wait for response<br>
+<br>
+! Step 2: Check track delay timers<br>
+R1# show track 1 | include Delay<br>
+! Delay down/up adds time before state change<br>
+<br>
+! Step 3: Calculate total failover time<br>
+! Formula: timeout + delay down = total failover time<br>
+! Example: 2000ms timeout + 10sec delay = 12 seconds<br>
+<br>
+! Step 4: Monitor actual failover time<br>
+R1# ping 2.2.2.2 source 1.1.1.1 repeat 1000<br>
+! Count failed pings * 1 second = downtime<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>IP SLA timeout too long</li>
+<li>Track delay timers too conservative</li>
+<li>IP SLA frequency too low</li>
+<li>Multiple components adding to total delay</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution - Tune Timers for Faster Failover:</strong></p>
+<div class="code-block">
+! Reduce IP SLA timeout (be careful not to go too low)<br>
+R1(config)# ip sla 1<br>
+R1(config-ip-sla)# timeout 1000<br>
+R1(config-ip-sla)# frequency 3<br>
+R1(config-ip-sla)# exit<br>
+<br>
+! Reduce track delay timers<br>
+R1(config)# track 1<br>
+R1(config-track)# delay down 5 up 5<br>
+R1(config-track)# exit<br>
+<br>
+! New failover time: 1sec timeout + 5sec delay = 6 seconds<br>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Timer Tuning Best Practices:</strong><br>
+• Don't set timeout too low - may cause false positives on slow networks<br>
+• Don't eliminate delay timers - they prevent route flapping<br>
+• Balance fast failover vs. stability<br>
+• Production recommendation: timeout=2000ms, delay=5-10sec<br>
+• Test thoroughly after any timer changes
+</div>
+</div>
+
+<div class="step-box">
+<h3>❌ Problem 5: Route Flapping (Unstable Routes)</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Routes constantly installing and removing</li>
+<li>Track object rapidly changing between Up and Down</li>
+<li>Logs show frequent routing changes</li>
+<li>Inconsistent ping results</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Monitor track state changes<br>
+R1# show track 1<br>
+! Look at "changes" counter - should be low<br>
+! If high (dozens or hundreds), indicates flapping<br>
+<br>
+! Step 2: Monitor IP SLA success/failure ratio<br>
+R1# show ip sla statistics 1<br>
+! Check success vs failure counts<br>
+! Intermittent failures indicate unstable link<br>
+<br>
+! Step 3: Check for interface flapping<br>
+R1# show interfaces GigabitEthernet0/0<br>
+! Look for increasing input/output errors<br>
+! Check "5 minute" input/output rate<br>
+<br>
+! Step 4: Enable logging to see pattern<br>
+R1# configure terminal<br>
+R1(config)# track timer 1<br>
+R1(config)# end<br>
+R1# terminal monitor<br>
+R1# debug track<br>
+! Watch for rapid state changes<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Marginal link quality (packet loss)</li>
+<li>Delay timers too short</li>
+<li>Timeout too aggressive for network conditions</li>
+<li>Duplex mismatch or CRC errors on interface</li>
+<li>Intermittent physical layer issues</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution:</strong></p>
+<div class="code-block">
+! Fix 1: Increase delay timers to dampen flapping<br>
+R1(config)# track 1<br>
+R1(config-track)# delay down 15 up 15<br>
+R1(config-track)# exit<br>
+<br>
+! Fix 2: Increase IP SLA timeout<br>
+R1(config)# ip sla 1<br>
+R1(config-ip-sla)# timeout 3000<br>
+R1(config-ip-sla)# exit<br>
+<br>
+! Fix 3: Require multiple failures before declaring down<br>
+R1(config)# track 1<br>
+R1(config-track)# react 1 failures 3<br>
+R1(config-track)# exit<br>
+<br>
+! Fix 4: Check interface errors<br>
+R1# show interfaces GigabitEthernet0/0<br>
+! If errors present, investigate physical layer<br>
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Critical:</strong> Route flapping can cause major network instability. Always use appropriate delay timers and test thoroughly before production deployment.
+</div>
+</div>
+
+<div class="step-box">
+<h3>❌ Problem 6: Backup Route Never Activates</h3>
+
+<p><strong>Symptoms:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Primary link fails but backup route doesn't install</li>
+<li>Complete connectivity loss during failover</li>
+<li>show ip route shows no route to destination</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! Step 1: Verify backup route exists in configuration<br>
+R1# show running-config | include ip route<br>
+! Should see both primary and backup routes<br>
+<br>
+! Step 2: Check backup route next-hop reachability<br>
+R1# ping 10.1.2.2<br>
+! Backup next-hop must be reachable<br>
+<br>
+! Step 3: Verify backup interface is up<br>
+R1# show ip interface brief GigabitEthernet0/1<br>
+<br>
+! Step 4: Check administrative distance<br>
+R1# show running-config | include ip route 2.2.2.2<br>
+! Backup must have HIGHER AD than primary<br>
+<br>
+! Step 5: Temporarily remove primary route to test backup<br>
+R1(config)# no ip route 2.2.2.2 255.255.255.255 10.1.1.2 track 1<br>
+R1# show ip route 2.2.2.2<br>
+! Backup should install<br>
+</div>
+
+<p style="margin-top: 10px;"><strong>Common Causes:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Backup route not configured</li>
+<li>Backup route has same or lower AD as primary</li>
+<li>Backup interface is down</li>
+<li>Backup next-hop is unreachable</li>
+<li>Typo in backup route configuration</li>
+</ul>
+
+<p style="margin-top: 10px;"><strong>Solution:</strong></p>
+<div class="code-block">
+! Verify backup route configuration<br>
+R1(config)# ip route 2.2.2.2 255.255.255.255 10.1.2.2 10<br>
+! AD must be higher than primary (1 < 10 ✓)<br>
+<br>
+! Verify backup interface is up and configured<br>
+R1(config)# interface GigabitEthernet0/1<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Test backup route manually<br>
+R1# show ip route 2.2.2.2<br>
+! When primary is down, backup should be active<br>
+</div>
+</div>
+
+<!-- Key Learning Points -->
+<div class="section-title">🎓 Key Learning Points</div>
+
+<div class="config-section">
+<h4>1. Static Route Fundamentals</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>Default AD = 1:</strong> Static routes are preferred over dynamic routing protocols (except connected routes)</li>
+<li><strong>Manual Configuration:</strong> No automatic discovery of topology changes</li>
+<li><strong>Next-Hop Dependency:</strong> Route is installed only if next-hop is reachable</li>
+<li><strong>Use Cases:</strong> Stub networks, default routes, policy routing, small networks</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>2. Floating Static Routes</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>AD-Based Redundancy:</strong> Higher AD = lower preference</li>
+<li><strong>Automatic Failover:</strong> Backup route activates when primary fails</li>
+<li><strong>Limitation:</strong> Only detects next-hop failures, not end-to-end failures</li>
+<li><strong>Simple Implementation:</strong> No additional features required</li>
+<li><strong>Common AD Values:</strong> Primary=1, Backup=5 or 10 or 50</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>3. IP SLA (Service Level Agreement)</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>Proactive Monitoring:</strong> Actively tests network paths</li>
+<li><strong>Multiple Probe Types:</strong> ICMP, UDP, TCP, HTTP, DNS, VoIP</li>
+<li><strong>Performance Metrics:</strong> RTT, jitter, packet loss, MOS scores</li>
+<li><strong>Synthetic Traffic:</strong> Generates test traffic without affecting production</li>
+<li><strong>End-to-End Testing:</strong> Detects failures beyond next-hop</li>
+<li><strong>Configurable Thresholds:</strong> Define acceptable performance levels</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>4. Track Objects</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>State Machine:</strong> Binary UP/DOWN state based on monitored object</li>
+<li><strong>Multiple Monitoring Types:</strong> Interface line-protocol, IP route, IP SLA, list</li>
+<li><strong>Integration Point:</strong> Links monitoring with routing decisions</li>
+<li><strong>Delay Timers:</strong> Prevent route flapping during transient failures</li>
+<li><strong>Boolean Logic:</strong> Can combine multiple conditions with AND/OR</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>5. IP SLA + Track Integration Benefits</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>Intelligent Failover:</strong> Based on actual end-to-end reachability</li>
+<li><strong>Faster Detection:</strong> Proactive vs reactive monitoring</li>
+<li><strong>Path Quality:</strong> Can measure performance, not just up/down</li>
+<li><strong>Flexible Criteria:</strong> Customize what constitutes a "failure"</li>
+<li><strong>Production Ready:</strong> Industry standard for mission-critical links</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>6. Failover Timing Calculations</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>Basic Failover:</strong> Interface down detection = instant (carrier loss)</li>
+<li><strong>Floating Route:</strong> Next-hop unreachable = ~3 seconds (ARP timeout)</li>
+<li><strong>IP SLA Failover:</strong> timeout + delay down = total failover time</li>
+<li><strong>Example:</strong> 2-second timeout + 10-second delay = 12-second failover</li>
+<li><strong>Tuning Trade-off:</strong> Faster failover vs stability/route flapping</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>7. Administrative Distance Reference</h4>
+<table style="margin-top: 10px;">
+<tr><th>Route Source</th><th>Default AD</th><th>Trustworthiness</th></tr>
+<tr><td>Connected</td><td>0</td><td>Highest</td></tr>
+<tr><td>Static</td><td>1</td><td>Very High</td></tr>
+<tr><td>EIGRP Summary</td><td>5</td><td>High</td></tr>
+<tr><td>External BGP</td><td>20</td><td>High</td></tr>
+<tr><td>Internal EIGRP</td><td>90</td><td>Medium-High</td></tr>
+<tr><td>OSPF</td><td>110</td><td>Medium</td></tr>
+<tr><td>IS-IS</td><td>115</td><td>Medium</td></tr>
+<tr><td>RIP</td><td>120</td><td>Low</td></tr>
+<tr><td>External EIGRP</td><td>170</td><td>Low</td></tr>
+<tr><td>Internal BGP</td><td>200</td><td>Lowest</td></tr>
+<tr><td>Unknown/Unreachable</td><td>255</td><td>Never Used</td></tr>
+</table>
+</div>
+
+<div class="config-section">
+<h4>8. Design Best Practices</h4>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>Use Track for Critical Paths:</strong> Don't rely solely on AD for important links</li>
+<li><strong>Set Appropriate Timers:</strong> Balance detection speed vs stability</li>
+<li><strong>Monitor Both Directions:</strong> Configure IP SLA on both ends of link</li>
+<li><strong>Document Configurations:</strong> Clear descriptions and comments</li>
+<li><strong>Test Failover Regularly:</strong> Verify automatic recovery works</li>
+<li><strong>Log and Alert:</strong> Integrate with SNMP/syslog for monitoring</li>
+<li><strong>Consider Load:</strong> IP SLA generates traffic - ensure it's acceptable</li>
+</ul>
+</div>
+
+<div class="config-section">
+<h4>9. Comparison: Floating Route vs IP SLA Track</h4>
+<table style="margin-top: 10px;">
+<tr>
+<th>Feature</th>
+<th>Floating Static Route</th>
+<th>IP SLA with Track</th>
+</tr>
+<tr>
+<td><strong>Configuration Complexity</strong></td>
+<td>Simple</td>
+<td>Moderate</td>
+</tr>
+<tr>
+<td><strong>Failure Detection</strong></td>
+<td>Next-hop only</td>
+<td>End-to-end</td>
+</tr>
+<tr>
+<td><strong>Failover Speed</strong></td>
+<td>Fast (seconds)</td>
+<td>Configurable (5-15 sec typical)</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>Passive</td>
+<td>Active/Proactive</td>
+</tr>
+<tr>
+<td><strong>Detects Downstream Issues</strong></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Performance Monitoring</strong></td>
+<td>No</td>
+<td>Yes (RTT, jitter, loss)</td>
+</tr>
+<tr>
+<td><strong>Additional Features Required</strong></td>
+<td>None</td>
+<td>IP SLA (included in IOS)</td>
+</tr>
+<tr>
+<td><strong>Use Case</strong></td>
+<td>Simple backup links</td>
+<td>Mission-critical redundancy</td>
+</tr>
+<tr>
+<td><strong>Routing Protocol Integration</strong></td>
+<td>Can coexist with AD tuning</td>
+<td>Can coexist, track overrides AD</td>
+</tr>
+</table>
+</div>
+
+<div class="config-section">
+<h4>10. When to Use Each Method</h4>
+<p><strong>Use Basic Static Routes When:</strong></p>
+<ul style="margin-left: 20px; margin-top: 5px;">
+<li>Single path with no redundancy required</li>
+<li>Stub networks with one exit point</li>
+<li>Simple lab or test environments</li>
+<li>Default route to ISP</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>Use Floating Static Routes When:</strong></p>
+<ul style="margin-left: 20px; margin-top: 5px;">
+<li>Backup path with different next-hop</li>
+<li>Simple redundancy is acceptable</li>
+<li>Links directly connected (next-hop failure = path failure)</li>
+<li>Budget or equipment limitations prevent IP SLA</li>
+<li>Quick implementation without advanced features</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>Use IP SLA with Track When:</strong></p>
+<ul style="margin-left: 20px; margin-top: 5px;">
+<li>Mission-critical connectivity requiring high availability</li>
+<li>Need to detect failures beyond next-hop router</li>
+<li>WAN links where provider edge is separate from destination</li>
+<li>Requirement for performance monitoring (SLA compliance)</li>
+<li>Multiple intermediate hops between source and destination</li>
+<li>Need to measure and guarantee service levels</li>
+<li>Integration with other track-aware features (HSRP, PBR)</li>
+</ul>
+</div>
+
+<!-- Advanced Topics -->
+<div class="section-title">🚀 Advanced Topics & Extensions</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Beyond This Lab:</strong> The following topics build on the concepts learned in this lab.
+</div>
+
+<div class="config-section">
+<h4>1. Multiple Track Objects with Boolean Logic</h4>
+<p>Combine multiple track objects using AND/OR logic for complex failover scenarios:</p>
+<div class="code-block">
+! Create track list with AND logic (both must be up)<br>
+R1(config)# track 10 list boolean and<br>
+R1(config-track)# object 1<br>
+R1(config-track)# object 2<br>
+R1(config-track)# exit<br>
+<br>
+! Create track list with OR logic (either must be up)<br>
+R1(config)# track 11 list boolean or<br>
+R1(config-track)# object 1<br>
+R1(config-track)# object 2<br>
+R1(config-track)# exit<br>
+<br>
+! Use combined track in routing<br>
+R1(config)# ip route 0.0.0.0 0.0.0.0 10.1.1.2 track 10<br>
+</div>
+</div>
+
+<div class="config-section">
+<h4>2. IP SLA with HTTP Monitoring</h4>
+<p>Monitor web application availability instead of just ICMP:</p>
+<div class="code-block">
+! HTTP GET operation<br>
+R1(config)# ip sla 2<br>
+R1(config-ip-sla)# http get http://192.168.1.100/index.html<br>
+R1(config-ip-sla-http)# timeout 5000<br>
+R1(config-ip-sla-http)# frequency 10<br>
+R1(config-ip-sla-http)# exit<br>
+R1(config)# ip sla schedule 2 start-time now life forever<br>
+</div>
+</div>
+
+<div class="config-section">
+<h4>3. IP SLA with UDP Jitter (VoIP Monitoring)</h4>
+<p>Monitor network quality for voice/video applications:</p>
+<div class="code-block">
+! UDP Jitter operation for VoIP simulation<br>
+R1(config)# ip sla 3<br>
+R1(config-ip-sla)# udp-jitter 10.1.1.2 5060 codec g711ulaw<br>
+R1(config-ip-sla-jitter)# frequency 30<br>
+R1(config-ip-sla-jitter)# exit<br>
+R1(config)# ip sla schedule 3 start-time now life forever<br>
+<br>
+! Track based on MOS score<br>
+R1(config)# track 3 ip sla 3 state<br>
+</div>
+</div>
+
+<div class="config-section">
+<h4>4. IP SLA with TCP Connect</h4>
+<p>Monitor specific TCP services (SSH, Telnet, custom ports):</p>
+<div class="code-block">
+! Monitor SSH availability<br>
+R1(config)# ip sla 4<br>
+R1(config-ip-sla)# tcp-connect 10.1.1.2 22<br>
+R1(config-ip-sla-tcp)# timeout 3000<br>
+R1(config-ip-sla-tcp)# frequency 10<br>
+R1(config-ip-sla-tcp)# exit<br>
+R1(config)# ip sla schedule 4 start-time now life forever<br>
+</div>
+</div>
+
+<div class="config-section">
+<h4>5. Integration with HSRP/VRRP</h4>
+<p>Use track objects to adjust HSRP priority based on upstream connectivity:</p>
+<div class="code-block">
+! HSRP tracking WAN connectivity<br>
+R1(config)# interface GigabitEthernet0/2<br>
+R1(config-if)# ip address 192.168.1.1 255.255.255.0<br>
+R1(config-if)# standby 1 ip 192.168.1.254<br>
+R1(config-if)# standby 1 priority 110<br>
+R1(config-if)# standby 1 preempt<br>
+R1(config-if)# standby 1 track 1 decrement 20<br>
+! If track 1 goes down, priority drops from 110 to 90<br>
+! Backup router with priority 100 becomes active<br>
+</div>
+</div>
+
+<div class="config-section">
+<h4>6. Policy-Based Routing (PBR) with Track</h4>
+<p>Use track objects to dynamically change traffic path based on connectivity:</p>
+<div class="code-block">
+! Create route-map with track<br>
+R1(config)# route-map PBR-PRIMARY permit 10<br>
+R1(config-route-map)# match ip address 100<br>
+R1(config-route-map)# set ip next-hop verify-availability 10.1.1.2 1 track 1<br>
+R1(config-route-map)# set ip next-hop 10.1.2.2<br>
+R1(config-route-map)# exit<br>
+<br>
+! Apply to interface<br>
+R1(config)# interface GigabitEthernet0/2<br>
+R1(config-if)# ip policy route-map PBR-PRIMARY<br>
+</div>
+</div>
+
+<div class="config-section">
+<h4>7. IP SLA Responder for Enhanced Accuracy</h4>
+<p>Configure IP SLA responder on destination for more accurate measurements:</p>
+<div class="code-block">
+! On R2 (destination):<br>
+R2(config)# ip sla responder<br>
+<br>
+! On R1 (source):<br>
+R1(config)# ip sla 5<br>
+R1(config-ip-sla)# udp-echo 10.1.1.2 5000<br>
+R1(config-ip-sla-echo)# control enable<br>
+R1(config-ip-sla-echo)# frequency 5<br>
+R1(config-ip-sla-echo)# exit<br>
+R1(config)# ip sla schedule 5 start-time now life forever<br>
+</div>
+</div>
+
+<div class="config-section">
+<h4>8. SNMP Integration for Monitoring</h4>
+<p>Configure SNMP traps when track objects change state:</p>
+<div class="code-block">
+! Enable SNMP traps for tracking<br>
+R1(config)# snmp-server enable traps event-manager<br>
+R1(config)# snmp-server host 192.168.1.100 version 2c public<br>
+R1(config)# snmp-server community public RO<br>
+<br>
+! Track state changes will generate SNMP traps<br>
+</div>
+</div>
+
+<div class="config-section">
+<h4>9. Syslog Integration</h4>
+<p>Log track and IP SLA events to syslog server:</p>
+<div class="code-block">
+! Configure syslog<br>
+R1(config)# logging host 192.168.1.100<br>
+R1(config)# logging trap informational<br>
+R1(config)# logging facility local6<br>
+<br>
+! Track events automatically logged<br>
+! IP SLA events automatically logged<br>
+</div>
+</div>
+
+<div class="config-section">
+<h4>10. EEM (Embedded Event Manager) Integration</h4>
+<p>Trigger custom scripts when track objects change state:</p>
+<div class="code-block">
+! EEM script to send email when track goes down<br>
+R1(config)# event manager applet TRACK_FAILOVER<br>
+R1(config-applet)# event track 1 state down<br>
+R1(config-applet)# action 1.0 syslog msg "Primary path failed - failover activated"<br>
+R1(config-applet)# action 2.0 cli command "enable"<br>
+R1(config-applet)# action 2.1 cli command "show ip route"<br>
+R1(config-applet)# action 3.0 mail server "smtp.company.com" \<br>
+  to "netadmin@company.com" from "router@company.com" \<br>
+  subject "R1 Primary Path Failure" \<br>
+  body "Primary WAN link has failed. Backup link is now active."<br>
+</div>
+</div>
+
+<!-- Common Mistakes -->
+<div class="section-title">⚠️ Common Mistakes to Avoid</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 1: Not Setting Delay Timers</strong><br>
+<strong>Problem:</strong> Without delay timers, temporary link flaps cause immediate route changes, leading to instability.<br>
+<strong>Solution:</strong> Always configure delay timers: delay down 10 up 10 (or appropriate values for your network).
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 2: Backup Route with Same or Lower AD</strong><br>
+<strong>Problem:</strong> If backup route has AD ≤ primary, both routes installed (load balancing) or backup preferred.<br>
+<strong>Solution:</strong> Backup AD must be HIGHER: Primary AD=1, Backup AD=5 or 10.
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 3: IP SLA Timeout Too Short</strong><br>
+<strong>Problem:</strong> Timeout < actual network RTT causes false positives and unnecessary failovers.<br>
+<strong>Solution:</strong> Set timeout to 3-5x normal RTT. For 10ms RTT, use 2000-5000ms timeout.
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 4: Forgetting to Schedule IP SLA</strong><br>
+<strong>Problem:</strong> IP SLA configured but not scheduled = never runs = track always down.<br>
+<strong>Solution:</strong> Always include: ip sla schedule [id] start-time now life forever
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 5: Track Monitoring Wrong IP SLA Operation</strong><br>
+<strong>Problem:</strong> Track 1 monitors IP SLA 2 instead of IP SLA 1 = incorrect state.<br>
+<strong>Solution:</strong> Verify: show track 1 | include SLA - ensure correct operation number.
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 6: Not Testing Failover Before Production</strong><br>
+<strong>Problem:</strong> Assume configuration works, but discover issues during actual outage.<br>
+<strong>Solution:</strong> Always test: shutdown interface, verify failover, restore, verify recovery.
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 7: Using Track Without Understanding State</strong><br>
+<strong>Problem:</strong> Not understanding that track must be UP for route to install.<br>
+<strong>Solution:</strong> Always verify track state: show track [id] before troubleshooting routes.
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 8: Monitoring Wrong Destination in IP SLA</strong><br>
+<strong>Problem:</strong> IP SLA pings next-hop instead of actual destination = doesn't detect end-to-end failure.<br>
+<strong>Solution:</strong> IP SLA should monitor final destination or critical intermediate point, not just next-hop.
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 9: Forgetting to Save Configuration</strong><br>
+<strong>Problem:</strong> Configuration lost after reload.<br>
+<strong>Solution:</strong> Always: write memory or copy run start after configuration changes.
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Mistake 10: Not Documenting Custom Timers</strong><br>
+<strong>Problem:</strong> Months later, nobody knows why specific timer values were chosen.<br>
+<strong>Solution:</strong> Use interface descriptions and comments to document design decisions.
+</div>
+
+<!-- Lab Summary -->
+<div class="section-title">📚 Lab Summary</div>
+
+<p><strong>What You Accomplished:</strong></p>
+
+<div class="config-section">
+<p><strong>✅ Completed Configuration Tasks:</strong></p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Configured dual-path redundant network topology</li>
+<li>Implemented basic static routes</li>
+<li>Configured floating static routes for AD-based failover</li>
+<li>Deployed Cisco IP SLA for proactive network monitoring</li>
+<li>Created track objects to monitor IP SLA state</li>
+<li>Integrated track objects with static routes for intelligent failover</li>
+<li>Tested multiple failover scenarios</li>
+<li>Verified automatic recovery mechanisms</li>
+<li>Documented complete working configuration</li>
+</ul>
+</div>
+
+<div class="config-section">
+<p><strong>✅ Skills Developed:</strong></p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Understanding of static route fundamentals and AD manipulation</li>
+<li>Configuration of IP SLA for network monitoring</li>
+<li>Implementation of track objects for intelligent routing decisions</li>
+<li>Troubleshooting routing and failover issues</li>
+<li>Performance tuning of timers and thresholds</li>
+<li>Verification techniques using show and debug commands</li>
+<li>Network design for high availability</li>
+</ul>
+</div>
+
+<div class="config-section">
+<p><strong>✅ CCNP Exam Relevance:</strong></p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>CCNP 350-401 ENCOR:</strong> Topic 3.1 - Layer 3 Technologies (Static Routing)</li>
+<li><strong>CCNP 300-410 ENARSI:</strong> Topic 1.1 - EIGRP (Path Control)</li>
+<li><strong>CCNP 300-410 ENARSI:</strong> Topic 1.4 - Routing Protocol Operations (Failover)</li>
+<li><strong>CCNP 350-401 ENCOR:</strong> Topic 1.6 - Network Assurance (IP SLA)</li>
+</ul>
+</div>
+
+<!-- Next Steps -->
+<div class="section-title">🎯 Next Steps & Continued Learning</div>
+
+<div class="config-section">
+<p><strong>Recommended Follow-Up Labs:</strong></p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><strong>Lab 10.2:</strong> Policy-Based Routing (PBR) with Track Objects</li>
+<li><strong>Lab 10.3:</strong> HSRP/VRRP with IP SLA Tracking</li>
+<li><strong>Lab 10.4:</strong> Advanced IP SLA (HTTP, DNS, TCP, VoIP)</li>
+<li><strong>Lab 11.1:</strong> EIGRP Path Control and Manipulation</li>
+<li><strong>Lab 11.2:</strong> OSPF Path Selection and Cost Tuning</li>
+<li><strong>Lab 12.1:</strong> BGP Path Manipulation</li>
+</ul>
+</div>
+
+<div class="config-section">
+<p><strong>Practice Exercises:</strong></p>
+<ol style="margin-left: 20px; margin-top: 10px;">
+<li>Modify the lab to use three parallel links with prioritization (primary, secondary, tertiary)</li>
+<li>Configure bidirectional IP SLA monitoring on both R1 and R2</li>
+<li>Implement threshold-based failover (switch if RTT > 100ms)</li>
+<li>Add HTTP monitoring to track web server availability</li>
+<li>Integrate with SNMP and configure trap generation</li>
+<li>Create EEM scripts to automate failover notifications</li>
+<li>Configure IP SLA responder for more accurate measurements</li>
+<li>Implement load balancing across both links using PBR</li>
+</ol>
+</div>
+
+<div class="config-section">
+<p><strong>Real-World Application:</strong></p>
+<p>The skills learned in this lab are directly applicable to:</p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Dual-ISP edge router configurations</li>
+<li>Branch office WAN redundancy</li>
+<li>Data center exit point failover</li>
+<li>MPLS primary with Internet backup scenarios</li>
+<li>Active/standby firewall pair configurations</li>
+<li>Cloud connectivity with multiple paths (DX + VPN)</li>
+<li>SD-WAN overlay redundancy designs</li>
+</ul>
+</div>
+
+<!-- Additional Resources -->
+<div class="section-title">📖 Additional Resources</div>
+
+<div class="config-section">
+<p><strong>Cisco Documentation:</strong></p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li><a href="#">Cisco IOS IP SLA Configuration Guide</a></li>
+<li><a href="#">Cisco IOS IP Routing Configuration Guide (Static Routes)</a></li>
+<li><a href="#">Tracking IP SLA Operations White Paper</a></li>
+<li><a href="#">IP SLA Best Practices Design Guide</a></li>
+</ul>
+</div>
+
+<div class="config-section">
+<p><strong>Recommended Reading:</strong></p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>CCNP and CCIE Enterprise Core ENCOR 350-401 Official Cert Guide</li>
+<li>CCNP Enterprise Advanced Routing ENARSI 300-410 Official Cert Guide</li>
+<li>Cisco IOS Cookbook (O'Reilly) - Chapter 21: IP SLA</li>
+<li>Network Warrior (O'Reilly) - Chapter 18: High Availability</li>
+</ul>
+</div>
+
+<!-- Lab Completion -->
+<div class="section-title">🏆 Lab Completion Certificate</div>
+
+<div class="alert alert-success">
+<strong>✅ Congratulations!</strong><br><br>
+You have successfully completed <strong>Lab 10.1: Static Routing, Floating Routes & IP SLA Tracking</strong>.<br><br>
+<strong>Lab Completion Date:</strong> _________________<br>
+<strong>Instructor Signature:</strong> _________________<br>
+<strong>Student Name:</strong> _________________<br><br>
+<strong>Skills Verified:</strong><br>
+☑ Static route configuration<br>
+☑ Floating route implementation<br>
+☑ IP SLA configuration and monitoring<br>
+☑ Track object integration<br>
+☑ Failover testing and verification<br>
+☑ Troubleshooting network redundancy<br><br>
+<strong>Next Recommended Lab:</strong> Lab 10.2 - Policy-Based Routing (PBR)<br>
+<strong>CCNP Progress:</strong> Layer 3 Fundamentals ✓ | Routing Protocols ○ | Path Manipulation ○ | BGP ○
+</div>
+
+<!-- Footer Note -->
+<div class="alert alert-info">
+<strong>ℹ️ Lab Environment Note:</strong><br>
+This lab was designed for Cisco IOS routers (physical or virtual). Commands may vary slightly depending on IOS version. Tested on:<br>
+• Cisco IOS Software, C2900 Software (C2900-UNIVERSALK9-M), Version 15.x<br>
+• GNS3 Version 2.2+ with IOS images<br>
+• EVE-NG with Cisco IOSv images<br>
+• Cisco Packet Tracer 8.x (limited IP SLA support)<br><br>
+For production deployment, always test in a non-production environment first and follow organizational change management procedures.
+</div>
+
+</div>
+<!-- End of content wrapper -->
+
+</div>
+
+<!-- Footer -->
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<!-- Enhanced Password Protection & Anti-Tampering Script -->
+<script>
+// ==================== SECURITY CONFIGURATION ====================
+const MASTER_PASSWORD = "CCNP@2026";
+const PROTECTED_CONTENT = true;
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+let isUnlocked = false;
+let sessionTimer = null;
+let editMode = false;
+
+// Initialize security on page load
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+setupSecurityMonitoring();
+});
+
+// ==================== SESSION MANAGEMENT ====================
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+// ==================== PASSWORD VERIFICATION ====================
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+logSecurityEvent('FAILED_LOGIN_ATTEMPT', { timestamp: new Date().toISOString() });
+}
+}
+
+// ==================== CONTENT LOCKING/UNLOCKING ====================
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+enableEditMode();
+}
+
+function lockPage() {
+isUnlocked = false;
+editMode = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+disableEditMode();
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+// ==================== EDIT MODE MANAGEMENT ====================
+function enableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'true');
+});
+editMode = true;
+logSecurityEvent('EDIT_MODE_ENABLED');
+}
+
+function disableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'false');
+});
+editMode = false;
+logSecurityEvent('EDIT_MODE_DISABLED');
+}
+
+// ==================== CONTENT PROTECTION ====================
+function protectElement(elementId) {
+const element = document.getElementById(elementId);
+if (element) {
+element.addEventListener('keydown', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 This content is protected. Please unlock with password first.');
+showPasswordModal();
+return false;
+}
+});
+
+element.addEventListener('paste', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Paste not allowed on protected content');
+return false;
+}
+});
+
+element.addEventListener('drop', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Drag and drop not allowed on protected content');
+return false;
+}
+});
+}
+}
+
+// Make protected elements editable when unlocked
+function initializeProtection() {
+protectElement('protectedHeader');
+protectElement('protectedBody');
+protectElement('protectedFooter');
+}
+
+// ==================== ANTI-TAMPERING MEASURES ====================
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+// Disable text selection and dragging
+document.addEventListener('selectstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+document.addEventListener('dragstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable dangerous keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+// F12 - Developer Tools
+if (e.keyCode === 123) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+I - Developer Tools
+if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+C - Element Inspector
+if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+J - Console
+if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+e.preventDefault();
+return false;
+}
+// Ctrl+U - View Source
+if (e.ctrlKey && e.keyCode === 85) {
+e.preventDefault();
+return false;
+}
+// Ctrl+S - Save Page (only works with password)
+if (e.ctrlKey && e.keyCode === 83) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+}
+});
+
+// Disable copying
+document.addEventListener('copy', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable cutting
+document.addEventListener('cut', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Prevent right-click
+document.addEventListener('mousedown', function(e) {
+if (e.button === 2) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable double-click selection
+document.addEventListener('dblclick', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// ==================== SECURITY MONITORING ====================
+function setupSecurityMonitoring() {
+// DevTools detection
+let devTools = { open: false };
+setInterval(function() {
+if (window.outerHeight - window.innerHeight > 150) {
+if (!devTools.open) {
+devTools.open = true;
+logSecurityEvent('DEVTOOLS_DETECTED');
+}
+} else {
+devTools.open = false;
+}
+}, 500);
+
+// Monitor window focus
+window.addEventListener('blur', function() {
+logSecurityEvent('WINDOW_BLUR');
+});
+
+window.addEventListener('focus', function() {
+logSecurityEvent('WINDOW_FOCUS');
+if (!isUnlocked) {
+showPasswordModal();
+}
+});
+}
+
+// ==================== SECURITY LOGGING ====================
+function logSecurityEvent(eventType, details = {}) {
+const event = {
+type: eventType,
+timestamp: new Date().toISOString(),
+userAgent: navigator.userAgent,
+...details
+};
+console.log('[SECURITY LOG]', event);
+}
+
+// ==================== ANTI-EXPORT MEASURES ====================
+// Prevent printing
+window.addEventListener('beforeprint', function() {
+if (!isUnlocked) {
+alert('🔒 Printing is not allowed without password authentication');
+}
+});
+
+// Prevent iframe embedding
+if (self !== top) {
+top.location = self.location;
+}
+
+// Prevent drag & drop files
+document.addEventListener('dragover', function(e) {
+e.preventDefault();
+return false;
+});
+
+document.addEventListener('drop', function(e) {
+e.preventDefault();
+return false;
+});
+
+// ==================== CONSOLE SECURITY ====================
+// Security message on page load
+window.addEventListener('load', function() {
+setTimeout(function() {
+console.clear();
+console.log('%c🔐 ICONIC INFOSEC TRAINING - PROTECTED CONTENT',
+'color: #667eea; font-size: 18px; font-weight: bold;');
+console.log('%cThis document is FULLY PASSWORD PROTECTED',
+'color: #1e3c72; font-size: 14px; font-weight: bold;');
+console.log('%c⚠️ Content Protections: ACTIVE',
+'color: #ff6b6b; font-size: 12px;');
+console.log('%c✓ Header Protected ✓ Body Protected ✓ Footer Protected',
+'color: #28a745; font-size: 12px;');
+console.log('%cMaster Password Required to Edit',
+'color: red; font-size: 11px; font-weight: bold;');
+console.log('%cUnauthorized access attempts are logged and monitored.',
+'color: #dc3545; font-size: 11px;');
+}, 500);
+});
+
+// ==================== SESSION EXPIRY WARNING ====================
+window.addEventListener('beforeunload', function() {
+if (isUnlocked) {
+logSecurityEvent('PAGE_UNLOAD', {
+isAuthenticated: isUnlocked,
+sessionExpires: new Date(Date.now() + SESSION_TIMEOUT).toISOString()
+});
+}
+});
+
+</script>
+
+</body>
+</html>
