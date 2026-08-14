@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 11.1 - Policy-Based Routing with RIP v2</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+width: 100%;
+max-width: 900px;
+margin: 20px auto;
+display: block;
+border: 2px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+/* Password Protection Modal */
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+.step-number {
+display: inline-block;
+background: #667eea;
+color: white;
+padding: 5px 12px;
+border-radius: 50%;
+font-weight: bold;
+margin-right: 10px;
+}
+
+.note-box {
+background: #fff3cd;
+border-left: 4px solid #ffc107;
+padding: 15px;
+margin: 15px 0;
+border-radius: 4px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Password Protection Modal -->
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<!-- Header -->
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<!-- Main Content Container -->
+<div id="protectedBody" class="protected-element">
+
+<!-- Lab Content Wrapper -->
+<div class="content-wrapper">
+
+<!-- Lab Title Section -->
+<div class="lab-title">🔧 Lab 11.1: Policy-Based Routing with RIP v2</div>
+<div class="lab-description">Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Enterprise Networking</div>
+
+<!-- Lab Metadata -->
+<div class="lab-metadata">
+<strong>Policy-Based Routing (PBR) with Dynamic Routing | Password Protected</strong><br>
+Duration: 90-120 minutes | Difficulty Level: Intermediate-Advanced | Lab Version: 1.0<br>
+<strong>Topics:</strong> Policy-Based Routing, RIP v2, Route-Maps, Access Control Lists, Traffic Engineering
+</div>
+
+<!-- Lab Objective -->
+<div class="section-title">🎯 Lab Objective</div>
+<p>This lab focuses on implementing <strong>Policy-Based Routing (PBR)</strong> in conjunction with <strong>RIP version 2</strong> dynamic routing protocol. Students will learn to manipulate traffic forwarding decisions based on defined policies rather than traditional destination-based routing. This lab demonstrates real-world traffic engineering scenarios where different traffic types need to follow different paths through the network.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ Learning Outcomes:</strong><br>
+• Understand Policy-Based Routing concepts and applications<br>
+• Configure RIP v2 for dynamic routing<br>
+• Implement route-maps for traffic manipulation<br>
+• Use access control lists to classify traffic<br>
+• Verify and troubleshoot PBR configurations<br>
+• Apply traffic engineering principles in enterprise networks
+</div>
+
+<!-- Network Topology -->
+<div class="section-title">🗺️ Network Topology</div>
+<p>The lab consists of <strong>three routers</strong> forming a triangle topology with the following connections:</p>
+
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab11-1.jpg" alt="Lab 11.1 Network Topology" class="topology-image">
+
+<div class="note-box">
+<strong>📌 Topology Description:</strong><br>
+• <strong>Local Router:</strong> Central hub connecting Site-1 and Site-2<br>
+• <strong>Site-1 Router:</strong> Provides primary Internet connectivity via ISP-1<br>
+• <strong>Site-2 Router:</strong> Provides backup Internet connectivity via ISP-2<br>
+• <strong>Internet Router:</strong> Simulates ISP edge router with dual connections
+</div>
+
+<!-- Cable Connections -->
+<div class="section-title">🔌 Physical Cable Connections</div>
+<table>
+<thead>
+<tr>
+<th>Connection #</th>
+<th>Device A</th>
+<th>Interface A</th>
+<th>Device B</th>
+<th>Interface B</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Local</td>
+<td>GigabitEthernet0/0</td>
+<td>Site-1</td>
+<td>GigabitEthernet0/0</td>
+<td>Primary WAN Link</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Local</td>
+<td>GigabitEthernet0/1</td>
+<td>Site-2</td>
+<td>GigabitEthernet0/1</td>
+<td>Secondary WAN Link</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Site-1</td>
+<td>GigabitEthernet1/0</td>
+<td>Internet</td>
+<td>GigabitEthernet1/0</td>
+<td>ISP-1 Connection</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Site-2</td>
+<td>GigabitEthernet1/1</td>
+<td>Internet</td>
+<td>GigabitEthernet1/1</td>
+<td>ISP-2 Connection</td>
+</tr>
+</tbody>
+</table>
+
+<!-- IP Addressing Scheme -->
+<div class="section-title">📊 IP Addressing Table</div>
+<p><strong>Subnet Allocation:</strong> 192.168.x.0/24 for internal networks, 203.0.113.x/30 for Internet connections</p>
+
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Network Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="3"><strong>Local Router</strong></td>
+<td>GigabitEthernet0/0</td>
+<td>192.168.10.1</td>
+<td>255.255.255.0</td>
+<td>Local-to-Site1 WAN</td>
+</tr>
+<tr>
+<td>GigabitEthernet0/1</td>
+<td>192.168.20.1</td>
+<td>255.255.255.0</td>
+<td>Local-to-Site2 WAN</td>
+</tr>
+<tr>
+<td>Loopback0</td>
+<td>10.0.0.1</td>
+<td>255.255.255.0</td>
+<td>Local LAN Simulation</td>
+</tr>
+<tr>
+<td rowspan="3"><strong>Site-1 Router</strong></td>
+<td>GigabitEthernet0/0</td>
+<td>192.168.10.2</td>
+<td>255.255.255.0</td>
+<td>Site1-to-Local WAN</td>
+</tr>
+<tr>
+<td>GigabitEthernet1/0</td>
+<td>203.0.113.1</td>
+<td>255.255.255.252</td>
+<td>Site1-to-ISP1</td>
+</tr>
+<tr>
+<td>Loopback0</td>
+<td>172.16.1.1</td>
+<td>255.255.255.0</td>
+<td>Site-1 LAN Simulation</td>
+</tr>
+<tr>
+<td rowspan="3"><strong>Site-2 Router</strong></td>
+<td>GigabitEthernet0/1</td>
+<td>192.168.20.2</td>
+<td>255.255.255.0</td>
+<td>Site2-to-Local WAN</td>
+</tr>
+<tr>
+<td>GigabitEthernet1/1</td>
+<td>203.0.113.5</td>
+<td>255.255.255.252</td>
+<td>Site2-to-ISP2</td>
+</tr>
+<tr>
+<td>Loopback0</td>
+<td>172.16.2.1</td>
+<td>255.255.255.0</td>
+<td>Site-2 LAN Simulation</td>
+</tr>
+<tr>
+<td rowspan="3"><strong>Internet Router</strong></td>
+<td>GigabitEthernet1/0</td>
+<td>203.0.113.2</td>
+<td>255.255.255.252</td>
+<td>ISP1-to-Site1</td>
+</tr>
+<tr>
+<td>GigabitEthernet1/1</td>
+<td>203.0.113.6</td>
+<td>255.255.255.252</td>
+<td>ISP2-to-Site2</td>
+</tr>
+<tr>
+<td>Loopback0</td>
+<td>8.8.8.8</td>
+<td>255.255.255.255</td>
+<td>Public DNS Simulation</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Subnet Summary -->
+<div class="section-title">🌐 Subnet Summary Table</div>
+<table>
+<thead>
+<tr>
+<th>Network Address</th>
+<th>Subnet Mask</th>
+<th>Purpose</th>
+<th>Gateway</th>
+<th>VLAN/Segment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>192.168.10.0</td>
+<td>255.255.255.0 (/24)</td>
+<td>Local ↔ Site-1 WAN</td>
+<td>192.168.10.1</td>
+<td>WAN Segment 1</td>
+</tr>
+<tr>
+<td>192.168.20.0</td>
+<td>255.255.255.0 (/24)</td>
+<td>Local ↔ Site-2 WAN</td>
+<td>192.168.20.1</td>
+<td>WAN Segment 2</td>
+</tr>
+<tr>
+<td>203.0.113.0</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-1 ↔ ISP-1</td>
+<td>203.0.113.1</td>
+<td>Internet Link 1</td>
+</tr>
+<tr>
+<td>203.0.113.4</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-2 ↔ ISP-2</td>
+<td>203.0.113.5</td>
+<td>Internet Link 2</td>
+</tr>
+<tr>
+<td>10.0.0.0</td>
+<td>255.255.255.0 (/24)</td>
+<td>Local LAN</td>
+<td>10.0.0.1</td>
+<td>Internal Network</td>
+</tr>
+<tr>
+<td>172.16.1.0</td>
+<td>255.255.255.0 (/24)</td>
+<td>Site-1 LAN</td>
+<td>172.16.1.1</td>
+<td>Internal Network</td>
+</tr>
+<tr>
+<td>172.16.2.0</td>
+<td>255.255.255.0 (/24)</td>
+<td>Site-2 LAN</td>
+<td>172.16.2.1</td>
+<td>Internal Network</td>
+</tr>
+<tr>
+<td>8.8.8.8</td>
+<td>255.255.255.255 (/32)</td>
+<td>Public DNS (Simulated)</td>
+<td>N/A</td>
+<td>Internet Service</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Lab Scenario -->
+<div class="section-title">📖 Lab Scenario</div>
+<div class="alert alert-info">
+<strong>🏢 Business Requirement:</strong><br><br>
+You are a network engineer for a company with multiple sites. The organization has two Internet connections:<br>
+• <strong>ISP-1 (Primary):</strong> High-bandwidth, premium service via Site-1<br>
+• <strong>ISP-2 (Backup):</strong> Standard bandwidth, cost-effective service via Site-2<br><br>
+
+<strong>Traffic Engineering Requirements:</strong><br>
+1. <strong>HTTP/HTTPS traffic (ports 80, 443)</strong> should use the <strong>primary ISP-1 link</strong> for better performance<br>
+2. <strong>All other traffic</strong> should use the <strong>backup ISP-2 link</strong> to balance load<br>
+3. RIP v2 should provide dynamic routing between sites<br>
+4. If the primary link fails, all traffic should automatically fail over<br><br>
+
+This scenario demonstrates real-world <strong>traffic engineering</strong> and <strong>load distribution</strong> using Policy-Based Routing.
+</div>
+
+<!-- Configuration Tasks -->
+<div class="section-title">⚙️ Configuration Tasks</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Before You Begin:</strong><br>
+• Ensure all physical connections are properly cabled<br>
+• Access console ports on all routers<br>
+• Have the IP addressing table readily available<br>
+• Clear any previous configurations if reusing equipment
+</div>
+
+<!-- Task 1: Basic Interface Configuration -->
+<div class="section-title"><span class="step-number">1</span>Task 1: Basic Interface Configuration</div>
+<p><strong>Configure IP addresses on all router interfaces and enable them.</strong></p>
+
+<strong>Local Router Configuration:</strong>
+<div class="code-block">
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Local<br>
+Local(config)# no ip domain-lookup<br>
+<br>
+! Configure interface to Site-1<br>
+Local(config)# interface GigabitEthernet0/0<br>
+Local(config-if)# description ** WAN Link to Site-1 **<br>
+Local(config-if)# ip address 192.168.10.1 255.255.255.0<br>
+Local(config-if)# no shutdown<br>
+Local(config-if)# exit<br>
+<br>
+! Configure interface to Site-2<br>
+Local(config)# interface GigabitEthernet0/1<br>
+Local(config-if)# description ** WAN Link to Site-2 **<br>
+Local(config-if)# ip address 192.168.20.1 255.255.255.0<br>
+Local(config-if)# no shutdown<br>
+Local(config-if)# exit<br>
+<br>
+! Configure Loopback for LAN simulation<br>
+Local(config)# interface Loopback0<br>
+Local(config-if)# description ** Local LAN Simulation **<br>
+Local(config-if)# ip address 10.0.0.1 255.255.255.0<br>
+Local(config-if)# no shutdown<br>
+Local(config-if)# exit<br>
+Local(config)# exit<br>
+Local# write memory
+</div>
+
+<strong>Site-1 Router Configuration:</strong>
+<div class="code-block">
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Site-1<br>
+Site-1(config)# no ip domain-lookup<br>
+<br>
+! Configure interface to Local<br>
+Site-1(config)# interface GigabitEthernet0/0<br>
+Site-1(config-if)# description ** WAN Link to Local **<br>
+Site-1(config-if)# ip address 192.168.10.2 255.255.255.0<br>
+Site-1(config-if)# no shutdown<br>
+Site-1(config-if)# exit<br>
+<br>
+! Configure interface to Internet (ISP-1)<br>
+Site-1(config)# interface GigabitEthernet1/0<br>
+Site-1(config-if)# description ** ISP-1 Connection **<br>
+Site-1(config-if)# ip address 203.0.113.1 255.255.255.252<br>
+Site-1(config-if)# no shutdown<br>
+Site-1(config-if)# exit<br>
+<br>
+! Configure Loopback for LAN simulation<br>
+Site-1(config)# interface Loopback0<br>
+Site-1(config-if)# description ** Site-1 LAN Simulation **<br>
+Site-1(config-if)# ip address 172.16.1.1 255.255.255.0<br>
+Site-1(config-if)# no shutdown<br>
+Site-1(config-if)# exit<br>
+Site-1(config)# exit<br>
+Site-1# write memory
+</div>
+
+<strong>Site-2 Router Configuration:</strong>
+<div class="code-block">
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Site-2<br>
+Site-2(config)# no ip domain-lookup<br>
+<br>
+! Configure interface to Local<br>
+Site-2(config)# interface GigabitEthernet0/1<br>
+Site-2(config-if)# description ** WAN Link to Local **<br>
+Site-2(config-if)# ip address 192.168.20.2 255.255.255.0<br>
+Site-2(config-if)# no shutdown<br>
+Site-2(config-if)# exit<br>
+<br>
+! Configure interface to Internet (ISP-2)<br>
+Site-2(config)# interface GigabitEthernet1/1<br>
+Site-2(config-if)# description ** ISP-2 Connection **<br>
+Site-2(config-if)# ip address 203.0.113.5 255.255.255.252<br>
+Site-2(config-if)# no shutdown<br>
+Site-2(config-if)# exit<br>
+<br>
+! Configure Loopback for LAN simulation<br>
+Site-2(config)# interface Loopback0<br>
+Site-2(config-if)# description ** Site-2 LAN Simulation **<br>
+Site-2(config-if)# ip address 172.16.2.1 255.255.255.0<br>
+Site-2(config-if)# no shutdown<br>
+Site-2(config-if)# exit<br>
+Site-2(config)# exit<br>
+Site-2# write memory
+</div>
+
+<strong>Internet Router Configuration:</strong>
+<div class="code-block">
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Internet<br>
+Internet(config)# no ip domain-lookup<br>
+<br>
+! Configure interface to Site-1 (ISP-1)<br>
+Internet(config)# interface GigabitEthernet1/0<br>
+Internet(config-if)# description ** ISP-1 to Site-1 **<br>
+Internet(config-if)# ip address 203.0.113.2 255.255.255.252<br>
+Internet(config-if)# no shutdown<br>
+Internet(config-if)# exit<br>
+<br>
+! Configure interface to Site-2 (ISP-2)<br>
+Internet(config)# interface GigabitEthernet1/1<br>
+Internet(config-if)# description ** ISP-2 to Site-2 **<br>
+Internet(config-if)# ip address 203.0.113.6 255.255.255.252<br>
+Internet(config-if)# no shutdown<br>
+Internet(config-if)# exit<br>
+<br>
+! Configure Loopback for public DNS simulation<br>
+Internet(config)# interface Loopback0<br>
+Internet(config-if)# description ** Public DNS 8.8.8.8 Simulation **<br>
+Internet(config-if)# ip address 8.8.8.8 255.255.255.255<br>
+Internet(config-if)# no shutdown<br>
+Internet(config-if)# exit<br>
+Internet(config)# exit<br>
+Internet# write memory
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 1:</strong> Test connectivity between directly connected routers using ping commands.
+</div>
+
+<!-- Task 2: RIP v2 Configuration -->
+<div class="section-title"><span class="step-number">2</span>Task 2: Configure RIP Version 2</div>
+<p><strong>Enable RIP v2 routing protocol on all routers to provide dynamic routing.</strong></p>
+
+<div class="note-box">
+<strong>📘 RIP v2 Features:</strong><br>
+• Classless routing protocol (supports VLSM and CIDR)<br>
+• Uses multicast address 224.0.0.9 for updates<br>
+• Includes subnet mask in routing updates<br>
+• Maximum hop count: 15 (16 = unreachable)<br>
+• Updates sent every 30 seconds
+</div>
+
+<strong>Local Router RIP Configuration:</strong>
+<div class="code-block">
+Local# configure terminal<br>
+Local(config)# router rip<br>
+Local(config-router)# version 2<br>
+Local(config-router)# no auto-summary<br>
+Local(config-router)# network 192.168.10.0<br>
+Local(config-router)# network 192.168.20.0<br>
+Local(config-router)# network 10.0.0.0<br>
+Local(config-router)# passive-interface Loopback0<br>
+Local(config-router)# exit<br>
+Local(config)# exit<br>
+Local# write memory
+</div>
+
+<strong>Site-1 Router RIP Configuration:</strong>
+<div class="code-block">
+Site-1# configure terminal<br>
+Site-1(config)# router rip<br>
+Site-1(config-router)# version 2<br>
+Site-1(config-router)# no auto-summary<br>
+Site-1(config-router)# network 192.168.10.0<br>
+Site-1(config-router)# network 203.0.113.0<br>
+Site-1(config-router)# network 172.16.0.0<br>
+Site-1(config-router)# passive-interface Loopback0<br>
+Site-1(config-router)# passive-interface GigabitEthernet1/0<br>
+Site-1(config-router)# exit<br>
+Site-1(config)# exit<br>
+Site-1# write memory
+</div>
+
+<strong>Site-2 Router RIP Configuration:</strong>
+<div class="code-block">
+Site-2# configure terminal<br>
+Site-2(config)# router rip<br>
+Site-2(config-router)# version 2<br>
+Site-2(config-router)# no auto-summary<br>
+Site-2(config-router)# network 192.168.20.0<br>
+Site-2(config-router)# network 203.0.113.0<br>
+Site-2(config-router)# network 172.16.0.0<br>
+Site-2(config-router)# passive-interface Loopback0<br>
+Site-2(config-router)# passive-interface GigabitEthernet1/1<br>
+Site-2(config-router)# exit<br>
+Site-2(config)# exit<br>
+Site-2# write memory
+</div>
+
+<strong>Internet Router RIP Configuration:</strong>
+<div class="code-block">
+Internet# configure terminal<br>
+Internet(config)# router rip<br>
+Internet(config-router)# version 2<br>
+Internet(config-router)# no auto-summary<br>
+Internet(config-router)# network 203.0.113.0<br>
+Internet(config-router)# network 8.0.0.0<br>
+Internet(config-router)# passive-interface Loopback0<br>
+Internet(config-router)# exit<br>
+Internet(config)# exit<br>
+Internet# write memory
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 2:</strong> Wait 30-60 seconds, then verify RIP routing tables are populated using <code>show ip route rip</code>.
+</div>
+
+<!-- Task 3: Configure Access Control Lists -->
+<div class="section-title"><span class="step-number">3</span>Task 3: Create Access Control Lists for Traffic Classification</div>
+<p><strong>Define ACLs to identify HTTP/HTTPS traffic and other traffic types.</strong></p>
+
+<div class="note-box">
+<strong>📘 ACL Purpose in PBR:</strong><br>
+ACLs are used to classify traffic that will be affected by policy-based routing. We'll create:<br>
+• <strong>ACL 100:</strong> Identify HTTP traffic (TCP port 80)<br>
+• <strong>ACL 101:</strong> Identify HTTPS traffic (TCP port 443)<br>
+• <strong>ACL 102:</strong> Identify all other traffic
+</div>
+
+<strong>Configure ACLs on Local Router:</strong>
+<div class="code-block">
+Local# configure terminal<br>
+<br>
+! ACL for HTTP traffic (TCP port 80)<br>
+Local(config)# access-list 100 remark === Identify HTTP Traffic ===<br>
+Local(config)# access-list 100 permit tcp any any eq 80<br>
+<br>
+! ACL for HTTPS traffic (TCP port 443)<br>
+Local(config)# access-list 101 remark === Identify HTTPS Traffic ===<br>
+Local(config)# access-list 101 permit tcp any any eq 443<br>
+<br>
+! ACL for all other traffic<br>
+Local(config)# access-list 102 remark === Identify All Other Traffic ===<br>
+Local(config)# access-list 102 permit ip any any<br>
+<br>
+Local(config)# exit<br>
+Local# write memory
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ ACL Design Notes:</strong><br>
+• ACLs 100-101 identify web traffic (HTTP/HTTPS) for premium routing<br>
+• ACL 102 catches all remaining traffic for standard routing<br>
+• The order of route-map entries will matter in the next step
+</div>
+
+<!-- Task 4: Create Route-Maps -->
+<div class="section-title"><span class="step-number">4</span>Task 4: Configure Route-Maps for Policy-Based Routing</div>
+<p><strong>Create route-maps to define routing policies based on traffic classification.</strong></p>
+
+<div class="note-box">
+<strong>📘 Route-Map Logic:</strong><br>
+Route-maps work like a combination of ACLs and routing decisions:<br>
+1. <strong>Match</strong> traffic using ACLs<br>
+2. <strong>Set</strong> the next-hop IP address for matched traffic<br>
+3. Process entries in sequence number order (lowest first)<br>
+4. If no match, use normal routing table
+</div>
+
+<strong>Configure Route-Maps on Local Router:</strong>
+<div class="code-block">
+Local# configure terminal<br>
+<br>
+! Route-map for Policy-Based Routing<br>
+Local(config)# route-map PBR-TRAFFIC permit 10<br>
+Local(config-route-map)# description === Route HTTP Traffic to ISP-1 ===<br>
+Local(config-route-map)# match ip address 100<br>
+Local(config-route-map)# set ip next-hop 192.168.10.2<br>
+Local(config-route-map)# exit<br>
+<br>
+Local(config)# route-map PBR-TRAFFIC permit 20<br>
+Local(config-route-map)# description === Route HTTPS Traffic to ISP-1 ===<br>
+Local(config-route-map)# match ip address 101<br>
+Local(config-route-map)# set ip next-hop 192.168.10.2<br>
+Local(config-route-map)# exit<br>
+<br>
+Local(config)# route-map PBR-TRAFFIC permit 30<br>
+Local(config-route-map)# description === Route All Other Traffic to ISP-2 ===<br>
+Local(config-route-map)# match ip address 102<br>
+Local(config-route-map)# set ip next-hop 192.168.20.2<br>
+Local(config-route-map)# exit<br>
+<br>
+Local(config)# exit<br>
+Local# write memory
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Important:</strong> Route-map entries are processed in sequence order (10, 20, 30...). The first matching entry is used, and processing stops.
+</div>
+
+<!-- Task 5: Apply PBR to Interface -->
+<div class="section-title"><span class="step-number">5</span>Task 5: Apply Policy-Based Routing to Interface</div>
+<p><strong>Apply the route-map to the incoming interface where traffic originates.</strong></p>
+
+<div class="note-box">
+<strong>📘 PBR Application:</strong><br>
+PBR is applied to the <strong>incoming interface</strong> where traffic arrives. In this lab:<br>
+• Apply PBR to Loopback0 (simulates traffic originating from Local LAN)<br>
+• Traffic leaving Loopback0 will be policy-routed based on our route-map
+</div>
+
+<strong>Apply Route-Map to Interface:</strong>
+<div class="code-block">
+Local# configure terminal<br>
+Local(config)# interface Loopback0<br>
+Local(config-if)# ip policy route-map PBR-TRAFFIC<br>
+Local(config-if)# exit<br>
+Local(config)# exit<br>
+Local# write memory
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Configuration Complete!</strong> Policy-Based Routing is now active on the Local router.
+</div>
+
+<!-- Task 6: Configure Static Routes for Internet Access -->
+<div class="section-title"><span class="step-number">6</span>Task 6: Configure Default Routes (Optional Enhancement)</div>
+<p><strong>Add default routes for redundancy and failover capability.</strong></p>
+
+<strong>Configure Default Routes on Local Router:</strong>
+<div class="code-block">
+Local# configure terminal<br>
+<br>
+! Primary default route via Site-1 (lower AD = preferred)<br>
+Local(config)# ip route 0.0.0.0 0.0.0.0 192.168.10.2 10<br>
+<br>
+! Backup default route via Site-2 (higher AD = backup)<br>
+Local(config)# ip route 0.0.0.0 0.0.0.0 192.168.20.2 20<br>
+<br>
+Local(config)# exit<br>
+Local# write memory
+</div>
+
+<div class="note-box">
+<strong>📌 Administrative Distance (AD):</strong><br>
+• Primary route has AD=10 (preferred)<br>
+• Backup route has AD=20 (used only if primary fails)<br>
+• This provides automatic failover if ISP-1 link goes down
+</div>
+
+<!-- Verification Section -->
+<div class="section-title">🔍 Verification Commands & Expected Outputs</div>
+
+<strong>1. Verify Interface Status:</strong>
+<div class="code-block">
+Local# show ip interface brief<br>
+<br>
+Interface              IP-Address      OK? Method Status                Protocol<br>
+GigabitEthernet0/0     192.168.10.1    YES manual up                    up<br>
+GigabitEthernet0/1     192.168.20.1    YES manual up                    up<br>
+Loopback0              10.0.0.1        YES manual up                    up
+</div>
+
+<strong>2. Verify RIP Routing:</strong>
+<div class="code-block">
+Local# show ip route rip<br>
+<br>
+Codes: R - RIP<br>
+<br>
+      172.16.0.0/16 is variably subnetted, 2 subnets, 2 masks<br>
+R        172.16.1.0/24 [120/1] via 192.168.10.2, 00:00:15, GigabitEthernet0/0<br>
+R        172.16.2.0/24 [120/1] via 192.168.20.2, 00:00:08, GigabitEthernet0/1<br>
+R     203.0.113.0/30 [120/1] via 192.168.10.2, 00:00:15, GigabitEthernet0/0<br>
+R     203.0.113.4/30 [120/1] via 192.168.20.2, 00:00:08, GigabitEthernet0/1<br>
+R     8.0.0.0/8 [120/2] via 192.168.20.2, 00:00:08, GigabitEthernet0/1<br>
+                [120/2] via 192.168.10.2, 00:00:15, GigabitEthernet0/0
+</div>
+
+<strong>3. Verify Access Control Lists:</strong>
+<div class="code-block">
+Local# show access-lists<br>
+<br>
+Extended IP access list 100<br>
+    10 permit tcp any any eq www (5 matches)<br>
+Extended IP access list 101<br>
+    10 permit tcp any any eq 443 (3 matches)<br>
+Extended IP access list 102<br>
+    10 permit ip any any (12 matches)
+</div>
+
+<strong>4. Verify Route-Map Configuration:</strong>
+<div class="code-block">
+Local# show route-map<br>
+<br>
+route-map PBR-TRAFFIC, permit, sequence 10<br>
+  Match clauses:<br>
+    ip address (access-lists): 100<br>
+  Set clauses:<br>
+    ip next-hop 192.168.10.2<br>
+  Policy routing matches: 5 packets, 320 bytes<br>
+<br>
+route-map PBR-TRAFFIC, permit, sequence 20<br>
+  Match clauses:<br>
+    ip address (access-lists): 101<br>
+  Set clauses:<br>
+    ip next-hop 192.168.10.2<br>
+  Policy routing matches: 3 packets, 192 bytes<br>
+<br>
+route-map PBR-TRAFFIC, permit, sequence 30<br>
+  Match clauses:<br>
+    ip address (access-lists): 102<br>
+  Set clauses:<br>
+    ip next-hop 192.168.20.2<br>
+  Policy routing matches: 12 packets, 768 bytes
+</div>
+
+<strong>5. Verify PBR on Interface:</strong>
+<div class="code-block">
+Local# show ip policy<br>
+<br>
+Interface      Route map<br>
+Loopback0      PBR-TRAFFIC
+</div>
+
+<strong>6. Debug Policy-Based Routing (Use with caution):</strong>
+<div class="code-block">
+Local# debug ip policy<br>
+<br>
+Policy routing debugging is on<br>
+<br>
+! Generate traffic and observe debug output<br>
+Local# ping 8.8.8.8 source Loopback0<br>
+<br>
+*Mar  1 12:34:56.789: IP: s=10.0.0.1 (Loopback0), d=8.8.8.8, len 100<br>
+*Mar  1 12:34:56.789:     FIB: s=10.0.0.1 (Loopback0), d=8.8.8.8 (GigabitEthernet0/1)<br>
+*Mar  1 12:34:56.789:     PBR: matched route-map PBR-TRAFFIC, sequence 30<br>
+*Mar  1 12:34:56.789:     PBR: set next-hop 192.168.20.2<br>
+<br>
+Local# undebug all
+</div>
+
+<strong>7. Verify End-to-End Connectivity:</strong>
+<div class="code-block">
+! Test connectivity to Internet router<br>
+Local# ping 8.8.8.8 source Loopback0<br>
+<br>
+Type escape sequence to abort.<br>
+Sending 5, 100-byte ICMP Echos to 8.8.8.8, timeout is 2 seconds:<br>
+Packet sent with a source address of 10.0.0.1<br>
+!!!!!<br>
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms
+</div>
+
+<strong>8. Verify Routing Table:</strong>
+<div class="code-block">
+Local# show ip route<br>
+<br>
+Codes: L - local, C - connected, S - static, R - RIP<br>
+<br>
+Gateway of last resort is 192.168.10.2 to network 0.0.0.0<br>
+<br>
+S*    0.0.0.0/0 [10/0] via 192.168.10.2<br>
+                [20/0] via 192.168.20.2<br>
+      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks<br>
+C        10.0.0.0/24 is directly connected, Loopback0<br>
+L        10.0.0.1/32 is directly connected, Loopback0<br>
+R     172.16.1.0/24 [120/1] via 192.168.10.2, 00:00:23, GigabitEthernet0/0<br>
+R     172.16.2.0/24 [120/1] via 192.168.20.2, 00:00:15, GigabitEthernet0/1<br>
+      192.168.10.0/24 is variably subnetted, 2 subnets, 2 masks<br>
+C        192.168.10.0/24 is directly connected, GigabitEthernet0/0<br>
+L        192.168.10.1/32 is directly connected, GigabitEthernet0/0<br>
+      192.168.20.0/24 is variably subnetted, 2 subnets, 2 masks<br>
+C        192.168.20.0/24 is directly connected, GigabitEthernet0/1<br>
+L        192.168.20.1/32 is directly connected, GigabitEthernet0/1<br>
+R     203.0.113.0/30 [120/1] via 192.168.10.2, 00:00:23, GigabitEthernet0/0<br>
+R     203.0.113.4/30 [120/1] via 192.168.20.2, 00:00:15, GigabitEthernet0/1
+</div>
+
+<!-- Verification Checklist -->
+<div class="section-title">✅ Verification Checklist</div>
+<ul class="checklist">
+<li>☐ All interfaces are up/up status</li>
+<li>☐ IP addresses are correctly configured on all devices</li>
+<li>☐ Ping test successful between directly connected routers</li>
+<li>☐ RIP v2 is enabled and running on all routers</li>
+<li>☐ RIP routing table shows learned routes from neighbors</li>
+<li>☐ Access control lists are created and showing match counters</li>
+<li>☐ Route-map is configured with correct sequence numbers</li>
+<li>☐ Route-map shows policy routing match statistics</li>
+<li>☐ PBR is applied to Loopback0 interface</li>
+<li>☐ HTTP traffic (port 80) routes through Site-1 (192.168.10.2)</li>
+<li>☐ HTTPS traffic (port 443) routes through Site-1 (192.168.10.2)</li>
+<li>☐ Other traffic routes through Site-2 (192.168.20.2)</li>
+<li>☐ End-to-end connectivity verified to Internet router (8.8.8.8)</li>
+<li>☐ Default routes configured for failover capability</li>
+<li>☐ All configurations saved to NVRAM</li>
+</ul>
+
+<!-- Testing Procedures -->
+<div class="section-title">🧪 Testing Procedures</div>
+
+<strong>Test 1: Verify HTTP Traffic Routing</strong>
+<div class="code-block">
+! On Local router, generate HTTP-like traffic<br>
+Local# telnet 8.8.8.8 80 /source-interface Loopback0<br>
+<br>
+! Check route-map statistics<br>
+Local# show route-map PBR-TRAFFIC<br>
+! Verify sequence 10 (HTTP) match counter increased
+</div>
+
+<strong>Test 2: Verify HTTPS Traffic Routing</strong>
+<div class="code-block">
+! On Local router, generate HTTPS-like traffic<br>
+Local# telnet 8.8.8.8 443 /source-interface Loopback0<br>
+<br>
+! Check route-map statistics<br>
+Local# show route-map PBR-TRAFFIC<br>
+! Verify sequence 20 (HTTPS) match counter increased
+</div>
+
+<strong>Test 3: Verify Other Traffic Routing</strong>
+<div class="code-block">
+! On Local router, generate non-web traffic<br>
+Local# ping 8.8.8.8 source Loopback0<br>
+<br>
+! Check route-map statistics<br>
+Local# show route-map PBR-TRAFFIC<br>
+! Verify sequence 30 (other) match counter increased
+</div>
+
+<strong>Test 4: Verify Failover Capability</strong>
+<div class="code-block">
+! Simulate ISP-1 link failure<br>
+Site-1# configure terminal<br>
+Site-1(config)# interface GigabitEthernet1/0<br>
+Site-1(config-if)# shutdown<br>
+Site-1(config-if)# exit<br>
+<br>
+! On Local router, verify routing changes<br>
+Local# show ip route<br>
+! Verify traffic now uses backup path through Site-2<br>
+<br>
+! Restore the link<br>
+Site-1(config)# interface GigabitEthernet1/0<br>
+Site-1(config-if)# no shutdown<br>
+Site-1(config-if)# exit
+</div>
+
+<!-- Troubleshooting Guide -->
+<div class="section-title">🔧 Troubleshooting Guide</div>
+
+<div class="alert alert-danger">
+<strong>Problem 1: Policy-Based Routing Not Working</strong><br><br>
+<strong>Symptoms:</strong><br>
+• Traffic not following policy routes<br>
+• Route-map match counters not incrementing<br>
+• All traffic using default routing table<br><br>
+
+<strong>Possible Causes & Solutions:</strong><br>
+1. <strong>Route-map not applied to interface:</strong><br>
+   → Verify with: <code>show ip policy</code><br>
+   → Apply with: <code>interface Loopback0</code> then <code>ip policy route-map PBR-TRAFFIC</code><br><br>
+
+2. <strong>ACL not matching traffic correctly:</strong><br>
+   → Verify with: <code>show access-lists</code><br>
+   → Check match counters are incrementing<br>
+   → Review ACL permit statements for correct port numbers<br><br>
+
+3. <strong>Incorrect next-hop address:</strong><br>
+   → Verify with: <code>show route-map</code><br>
+   → Ensure next-hop addresses are reachable<br>
+   → Verify with: <code>ping 192.168.10.2</code> and <code>ping 192.168.20.2</code><br><br>
+
+4. <strong>Traffic not sourced from correct interface:</strong><br>
+   → PBR only affects traffic entering the interface where it's applied<br>
+   → Use: <code>ping 8.8.8.8 source Loopback0</code> to test properly
+</div>
+
+<div class="alert alert-danger">
+<strong>Problem 2: RIP Routes Not Appearing</strong><br><br>
+<strong>Symptoms:</strong><br>
+• <code>show ip route rip</code> shows no routes<br>
+• No RIP neighbor relationships<br>
+• Cannot reach remote networks<br><br>
+
+<strong>Possible Causes & Solutions:</strong><br>
+1. <strong>RIP not enabled properly:</strong><br>
+   → Verify with: <code>show ip protocols</code><br>
+   → Ensure version 2 is configured: <code>router rip</code> then <code>version 2</code><br><br>
+
+2. <strong>Auto-summary enabled (causes issues with discontiguous networks):</strong><br>
+   → Verify with: <code>show ip protocols</code><br>
+   → Disable with: <code>router rip</code> then <code>no auto-summary</code><br><br>
+
+3. <strong>Network statements missing or incorrect:</strong><br>
+   → Verify with: <code>show ip protocols</code><br>
+   → Add missing networks: <code>router rip</code> then <code>network x.x.x.x</code><br><br>
+
+4. <strong>Interface configured as passive:</strong><br>
+   → Verify with: <code>show ip protocols</code><br>
+   → Remove if needed: <code>no passive-interface GigabitEthernet0/0</code><br><br>
+
+5. <strong>Interfaces down or misconfigured:</strong><br>
+   → Verify with: <code>show ip interface brief</code><br>
+   → Enable interfaces: <code>interface GigabitEthernet0/0</code> then <code>no shutdown</code>
+</div>
+
+<div class="alert alert-danger">
+<strong>Problem 3: Cannot Reach Internet Router (8.8.8.8)</strong><br><br>
+<strong>Symptoms:</strong><br>
+• Ping to 8.8.8.8 fails<br>
+• Traceroute shows incomplete path<br>
+• Traffic stops at intermediate router<br><br>
+
+<strong>Possible Causes & Solutions:</strong><br>
+1. <strong>Missing return routes:</strong><br>
+   → Internet router needs routes back to internal networks<br>
+   → Add RIP or static routes on Internet router<br><br>
+
+2. <strong>Next-hop address unreachable:</strong><br>
+   → Verify next-hops are in routing table<br>
+   → Check with: <code>show ip route 192.168.10.2</code><br><br>
+
+3. <strong>Routing loop or suboptimal routing:</strong><br>
+   → Use: <code>traceroute 8.8.8.8 source Loopback0</code><br>
+   → Verify path matches expected policy<br><br>
+
+4. <strong>ACL blocking traffic:</strong><br>
+   → Check ACL match counters<br>
+   → Verify ACL permits the traffic type you're testing
+</div>
+
+<div class="alert alert-danger">
+<strong>Problem 4: Route-Map Sequence Numbers Out of Order</strong><br><br>
+<strong>Symptoms:</strong><br>
+• Wrong traffic getting matched<br>
+• Some traffic not being policy-routed<br>
+• Unexpected routing behavior<br><br>
+
+<strong>Solution:</strong><br>
+Route-map entries are processed in sequence order (10, 20, 30...). The first match wins.<br>
+→ Ensure most specific matches come first<br>
+→ Verify with: <code>show route-map</code><br>
+→ Reorder if needed by removing and recreating entries<br><br>
+
+<strong>Correct Order:</strong><br>
+1. Sequence 10: HTTP (port 80)<br>
+2. Sequence 20: HTTPS (port 443)<br>
+3. Sequence 30: All other traffic (catch-all)
+</div>
+
+<div class="alert alert-danger">
+<strong>Problem 5: High CPU or Performance Issues</strong><br><br>
+<strong>Symptoms:</strong><br>
+• Router CPU usage high<br>
+• Slow routing performance<br>
+• Debug output overwhelming<br><br>
+
+<strong>Possible Causes & Solutions:</strong><br>
+1. <strong>Debug commands left enabled:</strong><br>
+   → Disable all debugs: <code>undebug all</code><br>
+   → Verify with: <code>show debugging</code><br><br>
+
+2. <strong>PBR on high-traffic interface:</strong><br>
+   → PBR is process-switched (uses CPU)<br>
+   → Consider Cisco Express Forwarding (CEF) based PBR in production<br><br>
+
+3. <strong>Too many ACL entries:</strong><br>
+   → Consolidate ACL entries where possible<br>
+   → Use object-groups for complex ACLs
+</div>
+
+<!-- Troubleshooting Commands Reference -->
+<div class="section-title">🔍 Troubleshooting Commands Reference</div>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+<th>What to Look For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show ip policy</code></td>
+<td>Display PBR configuration</td>
+<td>Route-map applied to correct interface</td>
+</tr>
+<tr>
+<td><code>show route-map</code></td>
+<td>Show route-map details</td>
+<td>Match counters, sequence order, set actions</td>
+</tr>
+<tr>
+<td><code>show access-lists</code></td>
+<td>Display ACL configuration</td>
+<td>Match counters, permit/deny statements</td>
+</tr>
+<tr>
+<td><code>show ip route</code></td>
+<td>Display routing table</td>
+<td>Routes present for all networks</td>
+</tr>
+<tr>
+<td><code>show ip route rip</code></td>
+<td>Display RIP routes only</td>
+<td>RIP-learned routes present</td>
+</tr>
+<tr>
+<td><code>show ip protocols</code></td>
+<td>Display routing protocol info</td>
+<td>RIP version, networks, timers</td>
+</tr>
+<tr>
+<td><code>show ip interface brief</code></td>
+<td>Show interface status</td>
+<td>All interfaces up/up</td>
+</tr>
+<tr>
+<td><code>debug ip policy</code></td>
+<td>Debug PBR operations</td>
+<td>Route-map matches, next-hop selection</td>
+</tr>
+<tr>
+<td><code>debug ip rip</code></td>
+<td>Debug RIP protocol</td>
+<td>RIP updates sent/received</td>
+</tr>
+<tr>
+<td><code>traceroute</code></td>
+<td>Trace packet path</td>
+<td>Path matches policy expectations</td>
+</tr>
+<tr>
+<td><code>ping source</code></td>
+<td>Test connectivity</td>
+<td>Successful replies, correct source</td>
+</tr>
+<tr>
+<td><code>show running-config</code></td>
+<td>Display active configuration</td>
+<td>Verify all commands present</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-warning">
+<strong>⚠️ Debug Command Warning:</strong> Always use debug commands with caution, especially in production environments. Debug output can overwhelm the console and consume CPU resources. Always disable debugging when finished: <code>undebug all</code>
+</div>
+
+<!-- Key Learning Points -->
+<div class="section-title">📚 Key Learning Points</div>
+
+<div class="note-box">
+<strong>1. Policy-Based Routing (PBR) Concepts:</strong><br>
+• PBR allows routing decisions based on factors other than destination IP<br>
+• Useful for traffic engineering, load distribution, and QoS implementation<br>
+• PBR overrides the routing table for matched traffic<br>
+• Applied to incoming interfaces (where traffic enters the router)<br>
+• Unmatched traffic follows normal routing table lookup
+</div>
+
+<div class="note-box">
+<strong>2. Route-Map Processing:</strong><br>
+• Route-maps are processed sequentially by sequence number<br>
+• First match wins - processing stops after first successful match<br>
+• Each entry has: sequence number, permit/deny, match criteria, set actions<br>
+• <code>permit</code> means "apply this policy"<br>
+• <code>deny</code> means "don't apply policy, use normal routing"<br>
+• Implicit deny at end if no match (uses normal routing table)
+</div>
+
+<div class="note-box">
+<strong>3. RIP Version 2 Characteristics:</strong><br>
+• Classless routing protocol (includes subnet mask in updates)<br>
+• Uses multicast 224.0.0.9 (vs. RIPv1's broadcast)<br>
+• Supports VLSM and CIDR<br>
+• Distance vector protocol with 15 hop limit<br>
+• 30-second update interval<br>
+• Uses Bellman-Ford algorithm<br>
+• Metric = hop count (simple but not optimal for complex networks)
+</div>
+
+<div class="note-box">
+<strong>4. ACL Usage in PBR:</strong><br>
+• ACLs classify traffic for policy routing<br>
+• Extended ACLs allow matching on source, destination, protocol, ports<br>
+• Match counters help verify traffic is being classified correctly<br>
+• Order matters: first match wins within an ACL<br>
+• Use descriptive remarks to document ACL purpose
+</div>
+
+<div class="note-box">
+<strong>5. Traffic Engineering Best Practices:</strong><br>
+• Always have a fallback mechanism (default route, catch-all policy)<br>
+• Test thoroughly before implementing in production<br>
+• Monitor PBR statistics regularly<br>
+• Document policy decisions for troubleshooting<br>
+• Consider performance impact (PBR is process-switched)<br>
+• Use CEF-based PBR in high-performance environments
+</div>
+
+<div class="note-box">
+<strong>6. Common PBR Use Cases:</strong><br>
+• Load distribution across multiple WAN links<br>
+• QoS implementation (route priority traffic differently)<br>
+• Source-based routing (route based on source network)<br>
+• Service provider traffic engineering<br>
+• Security policy enforcement (route certain traffic through firewalls)<br>
+• Application-aware routing (route based on application type)
+</div>
+
+<!-- Advanced Topics -->
+<div class="section-title">🚀 Advanced Topics & Extensions</div>
+
+<div class="alert alert-info">
+<strong>Extension 1: Add Track Objects for Next-Hop Monitoring</strong><br>
+Enhance PBR reliability by tracking next-hop availability:
+</div>
+
+<div class="code-block">
+! Create track objects to monitor next-hops<br>
+Local(config)# track 1 ip sla 1 reachability<br>
+Local(config)# ip sla 1<br>
+Local(config-ip-sla)# icmp-echo 192.168.10.2<br>
+Local(config-ip-sla)# frequency 10<br>
+Local(config-ip-sla)# exit<br>
+Local(config)# ip sla schedule 1 life forever start-time now<br>
+<br>
+! Modify route-map to use tracked next-hop<br>
+Local(config)# route-map PBR-TRAFFIC permit 10<br>
+Local(config-route-map)# set ip next-hop verify-availability 192.168.10.2 1 track 1<br>
+Local(config-route-map)# exit
+</div>
+
+<div class="alert alert-info">
+<strong>Extension 2: Implement Local Policy-Based Routing</strong><br>
+Apply PBR to locally generated traffic (traffic originating from the router itself):
+</div>
+
+<div class="code-block">
+! Apply PBR to local traffic<br>
+Local(config)# ip local policy route-map PBR-TRAFFIC<br>
+<br>
+! Verify<br>
+Local# show ip local policy
+</div>
+
+<div class="alert alert-info">
+<strong>Extension 3: Add Authentication to RIP</strong><br>
+Secure RIP updates with MD5 authentication:
+</div>
+
+<div class="code-block">
+! Configure key chain<br>
+Local(config)# key chain RIP-KEY<br>
+Local(config-keychain)# key 1<br>
+Local(config-keychain-key)# key-string Cisco123<br>
+Local(config-keychain-key)# exit<br>
+Local(config-keychain)# exit<br>
+<br>
+! Apply to interfaces<br>
+Local(config)# interface GigabitEthernet0/0<br>
+Local(config-if)# ip rip authentication mode md5<br>
+Local(config-if)# ip rip authentication key-chain RIP-KEY<br>
+Local(config-if)# exit<br>
+<br>
+! Repeat on all RIP-enabled interfaces on all routers
+</div>
+
+<div class="alert alert-info">
+<strong>Extension 4: Implement Quality of Service (QoS)</strong><br>
+Combine PBR with QoS marking:
+</div>
+
+<div class="code-block">
+! Modify route-map to set DSCP values<br>
+Local(config)# route-map PBR-TRAFFIC permit 10<br>
+Local(config-route-map)# match ip address 100<br>
+Local(config-route-map)# set ip next-hop 192.168.10.2<br>
+Local(config-route-map)# set ip dscp ef<br>
+Local(config-route-map)# exit<br>
+<br>
+! EF (Expedited Forwarding) marks traffic as high priority
+</div>
+
+<!-- Lab Summary -->
+<div class="section-title">📋 Lab Summary</div>
+
+<div class="alert alert-success">
+<strong>✅ Congratulations!</strong> You have successfully completed Lab 11.1: Policy-Based Routing with RIP v2.<br><br>
+
+<strong>Skills Demonstrated:</strong><br>
+✓ Configured Policy-Based Routing (PBR) using route-maps<br>
+✓ Implemented RIP version 2 for dynamic routing<br>
+✓ Created and applied access control lists for traffic classification<br>
+✓ Applied routing policies to interfaces<br>
+✓ Implemented traffic engineering for load distribution<br>
+✓ Verified and troubleshot PBR and RIP configurations<br>
+✓ Tested failover and redundancy mechanisms<br><br>
+
+<strong>Real-World Applications:</strong><br>
+• Enterprise WAN optimization and load balancing<br>
+• ISP traffic engineering and policy routing<br>
+• Application-aware routing in corporate networks<br>
+• Disaster recovery and business continuity planning<br>
+• Cost optimization through intelligent path selection
+</div>
+
+<!-- Configuration Backup -->
+<div class="section-title">💾 Complete Configuration Reference</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Quick Configuration Summary:</strong> Below are the complete configurations for reference and backup purposes.
+</div>
+
+<strong>Local Router - Complete Configuration:</strong>
+<div class="code-block">
+hostname Local<br>
+no ip domain-lookup<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** WAN Link to Site-1 **<br>
+ ip address 192.168.10.1 255.255.255.0<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** WAN Link to Site-2 **<br>
+ ip address 192.168.20.1 255.255.255.0<br>
+ no shutdown<br>
+!<br>
+interface Loopback0<br>
+ description ** Local LAN Simulation **<br>
+ ip address 10.0.0.1 255.255.255.0<br>
+ ip policy route-map PBR-TRAFFIC<br>
+!<br>
+router rip<br>
+ version 2<br>
+ network 10.0.0.0<br>
+ network 192.168.10.0<br>
+ network 192.168.20.0<br>
+ no auto-summary<br>
+ passive-interface Loopback0<br>
+!<br>
+ip route 0.0.0.0 0.0.0.0 192.168.10.2 10<br>
+ip route 0.0.0.0 0.0.0.0 192.168.20.2 20<br>
+!<br>
+access-list 100 remark === Identify HTTP Traffic ===<br>
+access-list 100 permit tcp any any eq 80<br>
+access-list 101 remark === Identify HTTPS Traffic ===<br>
+access-list 101 permit tcp any any eq 443<br>
+access-list 102 remark === Identify All Other Traffic ===<br>
+access-list 102 permit ip any any<br>
+!<br>
+route-map PBR-TRAFFIC permit 10<br>
+ description === Route HTTP Traffic to ISP-1 ===<br>
+ match ip address 100<br>
+ set ip next-hop 192.168.10.2<br>
+!<br>
+route-map PBR-TRAFFIC permit 20<br>
+ description === Route HTTPS Traffic to ISP-1 ===<br>
+ match ip address 101<br>
+ set ip next-hop 192.168.10.2<br>
+!<br>
+route-map PBR-TRAFFIC permit 30<br>
+ description === Route All Other Traffic to ISP-2 ===<br>
+ match ip address 102<br>
+ set ip next-hop 192.168.20.2<br>
+!<br>
+line con 0<br>
+ logging synchronous<br>
+ exec-timeout 0 0<br>
+!<br>
+end
+</div>
+
+<strong>Site-1 Router - Complete Configuration:</strong>
+<div class="code-block">
+hostname Site-1<br>
+no ip domain-lookup<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** WAN Link to Local **<br>
+ ip address 192.168.10.2 255.255.255.0<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet1/0<br>
+ description ** ISP-1 Connection **<br>
+ ip address 203.0.113.1 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface Loopback0<br>
+ description ** Site-1 LAN Simulation **<br>
+ ip address 172.16.1.1 255.255.255.0<br>
+!<br>
+router rip<br>
+ version 2<br>
+ network 172.16.0.0<br>
+ network 192.168.10.0<br>
+ network 203.0.113.0<br>
+ no auto-summary<br>
+ passive-interface Loopback0<br>
+ passive-interface GigabitEthernet1/0<br>
+!<br>
+line con 0<br>
+ logging synchronous<br>
+ exec-timeout 0 0<br>
+!<br>
+end
+</div>
+
+<strong>Site-2 Router - Complete Configuration:</strong>
+<div class="code-block">
+hostname Site-2<br>
+no ip domain-lookup<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** WAN Link to Local **<br>
+ ip address 192.168.20.2 255.255.255.0<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet1/1<br>
+ description ** ISP-2 Connection **<br>
+ ip address 203.0.113.5 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface Loopback0<br>
+ description ** Site-2 LAN Simulation **<br>
+ ip address 172.16.2.1 255.255.255.0<br>
+!<br>
+router rip<br>
+ version 2<br>
+ network 172.16.0.0<br>
+ network 192.168.20.0<br>
+ network 203.0.113.0<br>
+ no auto-summary<br>
+ passive-interface Loopback0<br>
+ passive-interface GigabitEthernet1/1<br>
+!<br>
+line con 0<br>
+ logging synchronous<br>
+ exec-timeout 0 0<br>
+!<br>
+end
+</div>
+
+<strong>Internet Router - Complete Configuration:</strong>
+<div class="code-block">
+hostname Internet<br>
+no ip domain-lookup<br>
+!<br>
+interface GigabitEthernet1/0<br>
+ description ** ISP-1 to Site-1 **<br>
+ ip address 203.0.113.2 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet1/1<br>
+ description ** ISP-2 to Site-2 **<br>
+ ip address 203.0.113.6 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface Loopback0<br>
+ description ** Public DNS 8.8.8.8 Simulation **<br>
+ ip address 8.8.8.8 255.255.255.255<br>
+!<br>
+router rip<br>
+ version 2<br>
+ network 8.0.0.0<br>
+ network 203.0.113.0<br>
+ no auto-summary<br>
+ passive-interface Loopback0<br>
+!<br>
+line con 0<br>
+ logging synchronous<br>
+ exec-timeout 0 0<br>
+!<br>
+end
+</div>
+
+<!-- Final Notes -->
+<div class="section-title">📝 Final Notes & Best Practices</div>
+
+<div class="note-box">
+<strong>Production Deployment Considerations:</strong><br>
+1. <strong>Testing:</strong> Always test PBR in a lab before deploying to production<br>
+2. <strong>Documentation:</strong> Thoroughly document all policy routing decisions<br>
+3. <strong>Monitoring:</strong> Implement monitoring for next-hop availability<br>
+4. <strong>Performance:</strong> Consider hardware-accelerated PBR (CEF) for high-bandwidth links<br>
+5. <strong>Security:</strong> Combine PBR with firewall policies and ACLs<br>
+6. <strong>Scalability:</strong> Use object-groups and modular route-maps for large deployments<br>
+7. <strong>Redundancy:</strong> Always have fallback paths for critical traffic<br>
+8. <strong>Change Control:</strong> Follow change management procedures for policy modifications
+</div>
+
+<div class="note-box">
+<strong>Common Mistakes to Avoid:</strong><br>
+❌ Applying PBR to outgoing interface instead of incoming<br>
+❌ Forgetting to save configuration with <code>write memory</code><br>
+❌ Using RIP v1 instead of v2 (no VLSM support)<br>
+❌ Not disabling auto-summary in RIP v2<br>
+❌ Creating circular routing with incorrect next-hop addresses<br>
+❌ Leaving debug commands enabled in production<br>
+❌ Not testing failover scenarios<br>
+❌ Forgetting to configure return routes on Internet router
+</div>
+
+<div class="alert alert-success">
+<strong>🎓 Next Steps:</strong><br>
+• Explore advanced PBR features (IP SLA tracking, performance routing)<br>
+• Study other routing protocols (EIGRP, OSPF) for comparison<br>
+• Learn about BGP for Internet routing and path manipulation<br>
+• Investigate SD-WAN solutions that automate traffic engineering<br>
+• Practice troubleshooting complex multi-protocol scenarios
+</div>
+
+</div>
+<!-- End of content wrapper -->
+
+</div>
+
+<!-- Footer -->
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<!-- Enhanced Password Protection & Anti-Tampering Script -->
+<script>
+// ==================== SECURITY CONFIGURATION ====================
+const MASTER_PASSWORD = "CCNP@2026";
+const PROTECTED_CONTENT = true;
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+let isUnlocked = false;
+let sessionTimer = null;
+let editMode = false;
+
+// Initialize security on page load
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+setupSecurityMonitoring();
+});
+
+// ==================== SESSION MANAGEMENT ====================
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+// ==================== PASSWORD VERIFICATION ====================
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+logSecurityEvent('FAILED_LOGIN_ATTEMPT', { timestamp: new Date().toISOString() });
+}
+}
+
+// ==================== CONTENT LOCKING/UNLOCKING ====================
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+enableEditMode();
+}
+
+function lockPage() {
+isUnlocked = false;
+editMode = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+disableEditMode();
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+// ==================== EDIT MODE MANAGEMENT ====================
+function enableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'true');
+});
+editMode = true;
+logSecurityEvent('EDIT_MODE_ENABLED');
+}
+
+function disableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'false');
+});
+editMode = false;
+logSecurityEvent('EDIT_MODE_DISABLED');
+}
+
+// ==================== CONTENT PROTECTION ====================
+function protectElement(elementId) {
+const element = document.getElementById(elementId);
+if (element) {
+element.addEventListener('keydown', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 This content is protected. Please unlock with password first.');
+showPasswordModal();
+return false;
+}
+});
+
+element.addEventListener('paste', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Paste not allowed on protected content');
+return false;
+}
+});
+
+element.addEventListener('drop', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Drag and drop not allowed on protected content');
+return false;
+}
+});
+}
+}
+
+// Make protected elements editable when unlocked
+protectElement('protectedHeader');
+protectElement('protectedBody');
+protectElement('protectedFooter');
+
+// ==================== ANTI-TAMPERING MEASURES ====================
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+// Disable text selection and dragging
+document.addEventListener('selectstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+document.addEventListener('dragstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable dangerous keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+// F12 - Developer Tools
+if (e.keyCode === 123) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+I - Developer Tools
+if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+C - Element Inspector
+if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+J - Console
+if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+e.preventDefault();
+return false;
+}
+// Ctrl+U - View Source
+if (e.ctrlKey && e.keyCode === 85) {
+e.preventDefault();
+return false;
+}
+// Ctrl+S - Save Page (only works with password)
+if (e.ctrlKey && e.keyCode === 83) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+}
+});
+
+// Disable copying
+document.addEventListener('copy', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable cutting
+document.addEventListener('cut', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Prevent right-click
+document.addEventListener('mousedown', function(e) {
+if (e.button === 2) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable double-click selection
+document.addEventListener('dblclick', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// ==================== SECURITY MONITORING ====================
+function setupSecurityMonitoring() {
+// DevTools detection
+let devTools = { open: false };
+setInterval(function() {
+if (window.outerHeight - window.innerHeight > 150) {
+if (!devTools.open) {
+devTools.open = true;
+logSecurityEvent('DEVTOOLS_DETECTED');
+}
+} else {
+devTools.open = false;
+}
+}, 500);
+
+// Monitor window focus
+window.addEventListener('blur', function() {
+logSecurityEvent('WINDOW_BLUR');
+});
+
+window.addEventListener('focus', function() {
+logSecurityEvent('WINDOW_FOCUS');
+if (!isUnlocked) {
+showPasswordModal();
+}
+});
+}
+
+// ==================== SECURITY LOGGING ====================
+function logSecurityEvent(eventType, details = {}) {
+const event = {
+type: eventType,
+timestamp: new Date().toISOString(),
+userAgent: navigator.userAgent,
+...details
+};
+console.log('[SECURITY LOG]', event);
+}
+
+// ==================== ANTI-EXPORT MEASURES ====================
+// Prevent printing
+window.addEventListener('beforeprint', function() {
+if (!isUnlocked) {
+alert('🔒 Printing is not allowed without password authentication');
+}
+});
+
+// Prevent iframe embedding
+if (self !== top) {
+top.location = self.location;
+}
+
+// Prevent drag & drop files
+document.addEventListener('dragover', function(e) {
+e.preventDefault();
+return false;
+});
+
+document.addEventListener('drop', function(e) {
+e.preventDefault();
+return false;
+});
+
+// ==================== INITIALIZATION ====================
+function initializeProtection() {
+// Any additional initialization code
+}
+
+// ==================== SESSION EXPIRY WARNING ====================
+window.addEventListener('beforeunload', function() {
+if (isUnlocked) {
+logSecurityEvent('PAGE_UNLOAD', {
+isAuthenticated: isUnlocked,
+sessionExpires: new Date(Date.now() + SESSION_TIMEOUT).toISOString()
+});
+}
+});
+
+</script>
+
+</body>
+</html>
