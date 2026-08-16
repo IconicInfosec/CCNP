@@ -1,0 +1,2639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 11.2 - Route-Maps with ACLs & Prefix-Lists - Iconic InfoSec Training</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+font-weight: bold;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+table tr:nth-child(even) {
+background-color: #f9f9f9;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+line-height: 1.8;
+border: 2px solid #667eea;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+border-left: 3px solid #667eea;
+}
+
+.topology-image {
+width: 100%;
+max-width: 900px;
+margin: 20px auto;
+display: block;
+border: 2px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.step-header {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white;
+padding: 12px;
+margin: 20px 0 10px 0;
+border-radius: 5px;
+font-weight: bold;
+font-size: 1.2em;
+}
+
+.sub-step {
+background: #e9ecef;
+padding: 10px;
+margin: 10px 0;
+border-left: 4px solid #17a2b8;
+font-weight: bold;
+color: #0c5460;
+}
+
+.output-block {
+background: #2d2d2d;
+color: #f8f8f2;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+border: 1px solid #667eea;
+line-height: 1.8;
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #ffd700;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #ffd700;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+/* Password Protection Modal */
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #ffd700;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+.note-box {
+background: #fff9e6;
+border-left: 4px solid #ffc107;
+padding: 15px;
+margin: 15px 0;
+border-radius: 4px;
+}
+
+.tip-box {
+background: #e7f3ff;
+border-left: 4px solid #17a2b8;
+padding: 15px;
+margin: 15px 0;
+border-radius: 4px;
+}
+
+.concept-box {
+background: #f0e6ff;
+border: 2px solid #764ba2;
+padding: 15px;
+margin: 15px 0;
+border-radius: 8px;
+}
+
+.concept-box h4 {
+color: #764ba2;
+margin-bottom: 10px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Password Protection Modal -->
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<!-- Header -->
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<!-- Main Content Container -->
+<div id="protectedBody" class="protected-element">
+
+<!-- Lab Content Wrapper -->
+<div class="content-wrapper">
+
+<!-- Lab Title Section -->
+<div class="lab-title">🔧 Lab 11.2: Advanced Route-Maps with ACLs & Prefix-Lists</div>
+<div class="lab-description">Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) - Policy-Based Routing & Route Manipulation</div>
+
+<!-- Lab Metadata -->
+<div class="lab-metadata">
+<strong>Lab 11.2: Route-Map Configuration with Standard ACLs and Prefix-Lists for Route Filtering</strong><br>
+Duration: 150-180 minutes | Difficulty Level: Advanced | Lab Version: 1.0<br>
+Topics: Route-Maps, Standard ACLs, Prefix-Lists, Policy-Based Routing, Route Redistribution, Route Filtering
+</div>
+
+<!-- Lab Objective -->
+<div class="section-title">🎯 Lab Objective</div>
+<p>This advanced lab focuses on implementing Route-Maps in conjunction with Standard Access Control Lists (ACLs) and Prefix-Lists for sophisticated route manipulation and policy-based routing. Students will master the configuration of route filtering, route redistribution, and traffic engineering techniques essential for enterprise networks. Key learning outcomes include:</p>
+<ul style="margin: 15px 0 15px 30px;">
+<li>Understanding Route-Map fundamentals and match/set operations</li>
+<li>Configuring Route-Maps with Standard ACLs for route filtering</li>
+<li>Implementing Prefix-Lists for precise IP address matching</li>
+<li>Applying Route-Maps to route redistribution scenarios</li>
+<li>Configuring Policy-Based Routing (PBR) with Route-Maps</li>
+<li>Manipulating routing attributes (metrics, administrative distance, tags)</li>
+<li>Troubleshooting route-map misconfigurations and verification</li>
+<li>Understanding the differences between ACLs and Prefix-Lists</li>
+</ul>
+
+<div class="alert alert-info">
+<strong>ℹ️ CCNP Alignment:</strong> This lab aligns with CCNP 350-401 (ENCOR) Section 3.0 Routing and CCNP 300-410 (ENARSI) Section 1.0 Layer 3 Technologies - specifically route-maps, policy-based routing, and route redistribution with filtering.
+</div>
+
+<!-- Network Topology -->
+<div class="section-title">🗺️ Network Topology</div>
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-11.2.jpg" alt="Lab 11.2 Network Topology" class="topology-image">
+
+<div class="alert alert-info">
+<strong>ℹ️ Topology Overview:</strong> This lab features a multi-site enterprise network with three routers (Local, Site-1, Site-2), dual Internet connections, a Web Server in the remote network (172.16.1.0/24), and a Local LAN segment (192.168.1.0/24). Route-Maps will be configured to control route redistribution between static and dynamic routing protocols, implement policy-based routing for traffic steering, and filter routes based on specific criteria.
+</div>
+
+<!-- Device Information -->
+<div class="section-title">📋 Device Naming & Roles</div>
+<table>
+<thead>
+<tr>
+<th>Device Name</th>
+<th>Device Type</th>
+<th>Role/Function</th>
+<th>Key Responsibilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Local</strong></td>
+<td>Cisco Router</td>
+<td>Headquarters Gateway</td>
+<td>Route redistribution, PBR implementation, route filtering</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>Cisco Router</td>
+<td>Branch Site 1 Gateway</td>
+<td>OSPF routing, route-map application, WAN connectivity</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>Cisco Router</td>
+<td>Branch Site 2 Gateway</td>
+<td>EIGRP routing, route filtering, backup path routing</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>Simulated ISP Router</td>
+<td>Internet Service Provider</td>
+<td>Provides Internet connectivity and remote network access</td>
+</tr>
+<tr>
+<td><strong>Web Server</strong></td>
+<td>Server</td>
+<td>HTTP/HTTPS Server</td>
+<td>172.16.1.10 - Target for policy-based routing</td>
+</tr>
+<tr>
+<td><strong>LAN Clients</strong></td>
+<td>End Devices</td>
+<td>Local Area Network</td>
+<td>192.168.1.0/24 network - Source traffic for PBR</td>
+</tr>
+</tbody>
+</table>
+
+<!-- IP Addressing Table -->
+<div class="section-title">📊 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Connected To</th>
+<th>Network Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Local</strong></td>
+<td>G0/0</td>
+<td>10.0.0.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-1 G0/0</td>
+<td>WAN Link - Local to Site-1</td>
+</tr>
+<tr>
+<td><strong>Local</strong></td>
+<td>G0/1</td>
+<td>10.0.0.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-2 G0/1</td>
+<td>WAN Link - Local to Site-2</td>
+</tr>
+<tr>
+<td><strong>Local</strong></td>
+<td>G0/2</td>
+<td>192.168.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>LAN Switch</td>
+<td>Local LAN Network</td>
+</tr>
+<tr>
+<td><strong>Local</strong></td>
+<td>Loopback0</td>
+<td>1.1.1.1</td>
+<td>255.255.255.255 (/32)</td>
+<td>Loopback</td>
+<td>Router ID / Management</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>G0/0</td>
+<td>10.0.0.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>Local G0/0</td>
+<td>WAN Link - Site-1 to Local</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>G1/0</td>
+<td>203.81.64.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>Internet G1/0</td>
+<td>Internet Connection Site-1</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>Loopback0</td>
+<td>2.2.2.2</td>
+<td>255.255.255.255 (/32)</td>
+<td>Loopback</td>
+<td>Router ID / Management</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>G0/1</td>
+<td>10.0.0.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>Local G0/1</td>
+<td>WAN Link - Site-2 to Local</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>G1/1</td>
+<td>203.81.64.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>Internet G1/1</td>
+<td>Internet Connection Site-2</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>Loopback0</td>
+<td>3.3.3.3</td>
+<td>255.255.255.255 (/32)</td>
+<td>Loopback</td>
+<td>Router ID / Management</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>G1/0</td>
+<td>203.81.64.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-1 G1/0</td>
+<td>ISP Link to Site-1</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>G1/1</td>
+<td>203.81.64.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-2 G1/1</td>
+<td>ISP Link to Site-2</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>G0/0</td>
+<td>172.16.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Remote Network</td>
+<td>Remote Network Gateway</td>
+</tr>
+<tr>
+<td><strong>Web Server</strong></td>
+<td>NIC</td>
+<td>172.16.1.10</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internet G0/0</td>
+<td>HTTP/HTTPS Web Server</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Network Summary -->
+<div class="section-title">📡 Network Summary</div>
+<table>
+<thead>
+<tr>
+<th>Network Segment</th>
+<th>Network Address</th>
+<th>Subnet Mask</th>
+<th>Usable IPs</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Local ↔ Site-1 WAN</td>
+<td>10.0.0.0</td>
+<td>255.255.255.252</td>
+<td>10.0.0.1 - 10.0.0.2</td>
+<td>Point-to-Point WAN Link</td>
+</tr>
+<tr>
+<td>Local ↔ Site-2 WAN</td>
+<td>10.0.0.4</td>
+<td>255.255.255.252</td>
+<td>10.0.0.5 - 10.0.0.6</td>
+<td>Point-to-Point WAN Link</td>
+</tr>
+<tr>
+<td>Site-1 ↔ Internet</td>
+<td>203.81.64.0</td>
+<td>255.255.255.252</td>
+<td>203.81.64.1 - 203.81.64.2</td>
+<td>Internet Connection 1</td>
+</tr>
+<tr>
+<td>Site-2 ↔ Internet</td>
+<td>203.81.64.4</td>
+<td>255.255.255.252</td>
+<td>203.81.64.5 - 203.81.64.6</td>
+<td>Internet Connection 2</td>
+</tr>
+<tr>
+<td>Local LAN</td>
+<td>192.168.1.0</td>
+<td>255.255.255.0</td>
+<td>192.168.1.1 - 192.168.1.254</td>
+<td>Headquarters User Network</td>
+</tr>
+<tr>
+<td>Remote Network</td>
+<td>172.16.1.0</td>
+<td>255.255.255.0</td>
+<td>172.16.1.1 - 172.16.1.254</td>
+<td>Internet-facing Remote Site</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Route-Map Concepts -->
+<div class="section-title">📖 Route-Map Fundamentals</div>
+
+<div class="concept-box">
+<h4>🔍 What is a Route-Map?</h4>
+<p>A <strong>Route-Map</strong> is a powerful Cisco IOS tool that provides complex conditional logic for route manipulation and policy-based routing. Think of it as an "if-then-else" programming statement for routing:</p>
+<ul style="margin: 10px 0 10px 20px;">
+<li><strong>IF</strong> certain conditions are met (match statements)</li>
+<li><strong>THEN</strong> perform specific actions (set statements)</li>
+<li><strong>ELSE</strong> move to the next sequence or use default behavior</li>
+</ul>
+</div>
+
+<div class="concept-box">
+<h4>🎯 Route-Map Components</h4>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sequence Number</strong></td>
+<td>Order of processing (10, 20, 30...)</td>
+<td><code>route-map TEST permit 10</code></td>
+</tr>
+<tr>
+<td><strong>Action</strong></td>
+<td>Permit or deny matched routes</td>
+<td><code>permit or deny</code></td>
+</tr>
+<tr>
+<td><strong>Match Statements</strong></td>
+<td>Conditions to check</td>
+<td><code>match ip address 10</code></td>
+</tr>
+<tr>
+<td><strong>Set Statements</strong></td>
+<td>Actions to perform if matched</td>
+<td><code>set metric 100</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="concept-box">
+<h4>🆚 Standard ACL vs Prefix-List Comparison</h4>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Standard ACL</th>
+<th>Prefix-List</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Primary Use</strong></td>
+<td>Traffic filtering, route matching</td>
+<td>Route filtering only</td>
+</tr>
+<tr>
+<td><strong>Matching Precision</strong></td>
+<td>Uses wildcard masks</td>
+<td>Uses prefix length (ge, le)</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>Good</td>
+<td>Better (optimized for routing)</td>
+</tr>
+<tr>
+<td><strong>Flexibility</strong></td>
+<td>Match host or network</td>
+<td>Match networks with specific prefix lengths</td>
+</tr>
+<tr>
+<td><strong>Syntax</strong></td>
+<td><code>access-list 10 permit 192.168.1.0 0.0.0.255</code></td>
+<td><code>ip prefix-list TEST permit 192.168.1.0/24</code></td>
+</tr>
+<tr>
+<td><strong>Best For</strong></td>
+<td>Simple route matching</td>
+<td>Complex route filtering with prefix aggregation</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- Lab Scenarios -->
+<div class="section-title">🎯 Lab Scenarios</div>
+
+<div class="note-box">
+<strong>📝 Scenario 1: Route-Map with Standard ACL</strong><br>
+Configure route redistribution from static routes to OSPF on the Local router. Use a Standard ACL to filter which static routes are redistributed. Only allow the Local LAN (192.168.1.0/24) to be redistributed while denying loopback addresses.
+</div>
+
+<div class="note-box">
+<strong>📝 Scenario 2: Route-Map with Prefix-List</strong><br>
+Configure route filtering using Prefix-Lists to allow only specific prefix lengths from being advertised. Create a prefix-list that permits /24 networks but denies /32 host routes and any networks with prefix length greater than /24.
+</div>
+
+<div class="note-box">
+<strong>📝 Scenario 3: Policy-Based Routing (PBR)</strong><br>
+Implement Policy-Based Routing to send traffic from specific source IP addresses through different next-hop routers. Traffic from 192.168.1.10-192.168.1.50 should use Site-1 as the next hop, while traffic from 192.168.1.51-192.168.1.100 should use Site-2.
+</div>
+
+<!-- Step-by-Step Configuration -->
+<div class="section-title">⚙️ Step-by-Step Configuration Guide</div>
+
+<!-- STEP 1: Basic Configuration -->
+<div class="step-header">Step 1: Basic Interface and Routing Configuration</div>
+
+<div class="sub-step">1.1 Configure Local Router</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Basic Configuration<br>
+! ========================================<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Local<br>
+<br>
+! Configure WAN Link to Site-1<br>
+Local(config)# interface GigabitEthernet0/0<br>
+Local(config-if)# description ** WAN Link to Site-1 **<br>
+Local(config-if)# ip address 10.0.0.1 255.255.255.252<br>
+Local(config-if)# no shutdown<br>
+Local(config-if)# exit<br>
+<br>
+! Configure WAN Link to Site-2<br>
+Local(config)# interface GigabitEthernet0/1<br>
+Local(config-if)# description ** WAN Link to Site-2 **<br>
+Local(config-if)# ip address 10.0.0.5 255.255.255.252<br>
+Local(config-if)# no shutdown<br>
+Local(config-if)# exit<br>
+<br>
+! Configure Local LAN Interface<br>
+Local(config)# interface GigabitEthernet0/2<br>
+Local(config-if)# description ** Local LAN 192.168.1.0/24 **<br>
+Local(config-if)# ip address 192.168.1.1 255.255.255.0<br>
+Local(config-if)# no shutdown<br>
+Local(config-if)# exit<br>
+<br>
+! Configure Loopback Interface<br>
+Local(config)# interface Loopback0<br>
+Local(config-if)# description ** Router ID and Management **<br>
+Local(config-if)# ip address 1.1.1.1 255.255.255.255<br>
+Local(config-if)# exit<br>
+<br>
+! Save Configuration<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="sub-step">1.2 Configure Site-1 Router</div>
+<div class="code-block">
+! ========================================<br>
+! Site-1 Router - Basic Configuration<br>
+! ========================================<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Site-1<br>
+<br>
+! Configure WAN Link to Local<br>
+Site-1(config)# interface GigabitEthernet0/0<br>
+Site-1(config-if)# description ** WAN Link to Local **<br>
+Site-1(config-if)# ip address 10.0.0.2 255.255.255.252<br>
+Site-1(config-if)# no shutdown<br>
+Site-1(config-if)# exit<br>
+<br>
+! Configure Internet Connection<br>
+Site-1(config)# interface GigabitEthernet1/0<br>
+Site-1(config-if)# description ** Internet Connection **<br>
+Site-1(config-if)# ip address 203.81.64.1 255.255.255.252<br>
+Site-1(config-if)# no shutdown<br>
+Site-1(config-if)# exit<br>
+<br>
+! Configure Loopback Interface<br>
+Site-1(config)# interface Loopback0<br>
+Site-1(config-if)# description ** Router ID and Management **<br>
+Site-1(config-if)# ip address 2.2.2.2 255.255.255.255<br>
+Site-1(config-if)# exit<br>
+<br>
+! Save Configuration<br>
+Site-1(config)# end<br>
+Site-1# write memory<br>
+</div>
+
+<div class="sub-step">1.3 Configure Site-2 Router</div>
+<div class="code-block">
+! ========================================<br>
+! Site-2 Router - Basic Configuration<br>
+! ========================================<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Site-2<br>
+<br>
+! Configure WAN Link to Local<br>
+Site-2(config)# interface GigabitEthernet0/1<br>
+Site-2(config-if)# description ** WAN Link to Local **<br>
+Site-2(config-if)# ip address 10.0.0.6 255.255.255.252<br>
+Site-2(config-if)# no shutdown<br>
+Site-2(config-if)# exit<br>
+<br>
+! Configure Internet Connection<br>
+Site-2(config)# interface GigabitEthernet1/1<br>
+Site-2(config-if)# description ** Internet Connection **<br>
+Site-2(config-if)# ip address 203.81.64.5 255.255.255.252<br>
+Site-2(config-if)# no shutdown<br>
+Site-2(config-if)# exit<br>
+<br>
+! Configure Loopback Interface<br>
+Site-2(config)# interface Loopback0<br>
+Site-2(config-if)# description ** Router ID and Management **<br>
+Site-2(config-if)# ip address 3.3.3.3 255.255.255.255<br>
+Site-2(config-if)# exit<br>
+<br>
+! Save Configuration<br>
+Site-2(config)# end<br>
+Site-2# write memory<br>
+</div>
+
+<div class="sub-step">1.4 Configure Internet Router</div>
+<div class="code-block">
+! ========================================<br>
+! Internet Router - Basic Configuration<br>
+! ========================================<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Internet<br>
+<br>
+! Configure ISP Link to Site-1<br>
+Internet(config)# interface GigabitEthernet1/0<br>
+Internet(config-if)# description ** ISP Link to Site-1 **<br>
+Internet(config-if)# ip address 203.81.64.2 255.255.255.252<br>
+Internet(config-if)# no shutdown<br>
+Internet(config-if)# exit<br>
+<br>
+! Configure ISP Link to Site-2<br>
+Internet(config)# interface GigabitEthernet1/1<br>
+Internet(config-if)# description ** ISP Link to Site-2 **<br>
+Internet(config-if)# ip address 203.81.64.6 255.255.255.252<br>
+Internet(config-if)# no shutdown<br>
+Internet(config-if)# exit<br>
+<br>
+! Configure Remote Network<br>
+Internet(config)# interface GigabitEthernet0/0<br>
+Internet(config-if)# description ** Remote Network 172.16.1.0/24 **<br>
+Internet(config-if)# ip address 172.16.1.1 255.255.255.0<br>
+Internet(config-if)# no shutdown<br>
+Internet(config-if)# exit<br>
+<br>
+! Save Configuration<br>
+Internet(config)# end<br>
+Internet# write memory<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 1:</strong> After configuring interfaces, verify all interfaces are up using <code>show ip interface brief</code> on each router. Ping between directly connected interfaces to verify Layer 2 connectivity.
+</div>
+
+<!-- STEP 2: OSPF Configuration -->
+<div class="step-header">Step 2: Configure OSPF Routing Protocol</div>
+
+<div class="sub-step">2.1 Configure OSPF on Local Router</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - OSPF Configuration<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Enable OSPF Process 1<br>
+Local(config)# router ospf 1<br>
+Local(config-router)# router-id 1.1.1.1<br>
+Local(config-router)# log-adjacency-changes<br>
+<br>
+! Advertise Local to Site-1 WAN link<br>
+Local(config-router)# network 10.0.0.0 0.0.0.3 area 0<br>
+<br>
+! Advertise Local LAN network<br>
+Local(config-router)# network 192.168.1.0 0.0.0.255 area 0<br>
+<br>
+! Advertise Loopback<br>
+Local(config-router)# network 1.1.1.1 0.0.0.0 area 0<br>
+Local(config-router)# exit<br>
+<br>
+! Configure Loopback as point-to-point to advertise /32<br>
+Local(config)# interface Loopback0<br>
+Local(config-if)# ip ospf network point-to-point<br>
+Local(config-if)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="sub-step">2.2 Configure OSPF on Site-1 Router</div>
+<div class="code-block">
+! ========================================<br>
+! Site-1 Router - OSPF Configuration<br>
+! ========================================<br>
+<br>
+Site-1# configure terminal<br>
+<br>
+! Enable OSPF Process 1<br>
+Site-1(config)# router ospf 1<br>
+Site-1(config-router)# router-id 2.2.2.2<br>
+Site-1(config-router)# log-adjacency-changes<br>
+<br>
+! Advertise Site-1 to Local WAN link<br>
+Site-1(config-router)# network 10.0.0.0 0.0.0.3 area 0<br>
+<br>
+! Advertise Loopback<br>
+Site-1(config-router)# network 2.2.2.2 0.0.0.0 area 0<br>
+Site-1(config-router)# exit<br>
+<br>
+! Configure Loopback as point-to-point<br>
+Site-1(config)# interface Loopback0<br>
+Site-1(config-if)# ip ospf network point-to-point<br>
+Site-1(config-if)# exit<br>
+<br>
+Site-1(config)# end<br>
+Site-1# write memory<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 2:</strong> Verify OSPF adjacency formed between Local and Site-1 using <code>show ip ospf neighbor</code>. Check routing tables with <code>show ip route ospf</code> to see learned routes.
+</div>
+
+<!-- STEP 3: EIGRP Configuration -->
+<div class="step-header">Step 3: Configure EIGRP Routing Protocol</div>
+
+<div class="sub-step">3.1 Configure EIGRP on Local Router</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - EIGRP Configuration<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Enable EIGRP AS 100<br>
+Local(config)# router eigrp 100<br>
+Local(config-router)# eigrp router-id 1.1.1.1<br>
+Local(config-router)# no auto-summary<br>
+<br>
+! Advertise Local to Site-2 WAN link<br>
+Local(config-router)# network 10.0.0.4 0.0.0.3<br>
+<br>
+! Note: We're NOT advertising 192.168.1.0 here to avoid conflicts<br>
+! It's already advertised in OSPF<br>
+Local(config-router)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="sub-step">3.2 Configure EIGRP on Site-2 Router</div>
+<div class="code-block">
+! ========================================<br>
+! Site-2 Router - EIGRP Configuration<br>
+! ========================================<br>
+<br>
+Site-2# configure terminal<br>
+<br>
+! Enable EIGRP AS 100<br>
+Site-2(config)# router eigrp 100<br>
+Site-2(config-router)# eigrp router-id 3.3.3.3<br>
+Site-2(config-router)# no auto-summary<br>
+<br>
+! Advertise Site-2 to Local WAN link<br>
+Site-2(config-router)# network 10.0.0.4 0.0.0.3<br>
+<br>
+! Advertise Loopback<br>
+Site-2(config-router)# network 3.3.3.3 0.0.0.0<br>
+Site-2(config-router)# exit<br>
+<br>
+Site-2(config)# end<br>
+Site-2# write memory<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 3:</strong> Verify EIGRP adjacency between Local and Site-2 using <code>show ip eigrp neighbors</code>. Check routing tables with <code>show ip route eigrp</code>.
+</div>
+
+<!-- STEP 4: Static Routes -->
+<div class="step-header">Step 4: Configure Static Routes to Internet and Remote Network</div>
+
+<div class="code-block">
+! ========================================<br>
+! Local Router - Static Routes<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Static route to Remote Network via Site-1 (primary)<br>
+Local(config)# ip route 172.16.1.0 255.255.255.0 10.0.0.2<br>
+<br>
+! Static route to Remote Network via Site-2 (backup with higher AD)<br>
+Local(config)# ip route 172.16.1.0 255.255.255.0 10.0.0.6 10<br>
+<br>
+! Static route to Internet via Site-1<br>
+Local(config)# ip route 203.81.64.0 255.255.255.252 10.0.0.2<br>
+<br>
+! Static route to Internet via Site-2<br>
+Local(config)# ip route 203.81.64.4 255.255.255.252 10.0.0.6<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="code-block">
+! ========================================<br>
+! Site-1 Router - Static Routes<br>
+! ========================================<br>
+<br>
+Site-1# configure terminal<br>
+<br>
+! Static route to Remote Network via Internet router<br>
+Site-1(config)# ip route 172.16.1.0 255.255.255.0 203.81.64.2<br>
+<br>
+! Default route to Internet (for testing)<br>
+Site-1(config)# ip route 0.0.0.0 0.0.0.0 203.81.64.2<br>
+<br>
+Site-1(config)# end<br>
+Site-1# write memory<br>
+</div>
+
+<div class="code-block">
+! ========================================<br>
+! Site-2 Router - Static Routes<br>
+! ========================================<br>
+<br>
+Site-2# configure terminal<br>
+<br>
+! Static route to Remote Network via Internet router<br>
+Site-2(config)# ip route 172.16.1.0 255.255.255.0 203.81.64.6<br>
+<br>
+! Default route to Internet (for testing)<br>
+Site-2(config)# ip route 0.0.0.0 0.0.0.0 203.81.64.6<br>
+<br>
+Site-2(config)# end<br>
+Site-2# write memory<br>
+</div>
+
+<div class="code-block">
+! ========================================<br>
+! Internet Router - Static Routes<br>
+! ========================================<br>
+<br>
+Internet# configure terminal<br>
+<br>
+! Static routes back to internal networks<br>
+Internet(config)# ip route 10.0.0.0 255.255.255.252 203.81.64.1<br>
+Internet(config)# ip route 10.0.0.4 255.255.255.252 203.81.64.5<br>
+Internet(config)# ip route 192.168.1.0 255.255.255.0 203.81.64.1<br>
+<br>
+Internet(config)# end<br>
+Internet# write memory<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 4:</strong> Test end-to-end connectivity with <code>ping 172.16.1.10</code> from Local router. Use <code>show ip route</code> to verify all routes are installed correctly.
+</div>
+
+<!-- STEP 5: Route-Map with Standard ACL -->
+<div class="step-header">Step 5: Configure Route-Map with Standard ACL for Route Redistribution</div>
+
+<div class="tip-box">
+<strong>💡 Concept:</strong> We will redistribute static routes into OSPF, but we only want to redistribute the Local LAN network (192.168.1.0/24) and NOT the loopback or other routes. We'll use a Standard ACL to match specific networks, then apply a Route-Map to control redistribution.
+</div>
+
+<div class="sub-step">5.1 Create Standard ACL to Match Routes</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Standard ACL for Route Filtering<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Standard ACL 10 - Permit only Local LAN network<br>
+Local(config)# access-list 10 remark ** Routes allowed for redistribution **<br>
+Local(config)# access-list 10 permit 192.168.1.0 0.0.0.255<br>
+<br>
+! Standard ACL 11 - Permit Remote Network for redistribution<br>
+Local(config)# access-list 11 remark ** Remote network allowed **<br>
+Local(config)# access-list 11 permit 172.16.1.0 0.0.0.255<br>
+<br>
+! Standard ACL 20 - Deny loopback addresses (for demonstration)<br>
+Local(config)# access-list 20 remark ** Deny loopback networks **<br>
+Local(config)# access-list 20 deny 1.0.0.0 0.255.255.255<br>
+Local(config)# access-list 20 deny 2.0.0.0 0.255.255.255<br>
+Local(config)# access-list 20 deny 3.0.0.0 0.255.255.255<br>
+Local(config)# access-list 20 permit any<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="sub-step">5.2 Create Route-Map Using Standard ACL</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Route-Map with Standard ACL<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Route-Map for Static to OSPF Redistribution<br>
+Local(config)# route-map STATIC-TO-OSPF permit 10<br>
+Local(config-route-map)# description ** Redistribute Local LAN to OSPF **<br>
+Local(config-route-map)# match ip address 10<br>
+Local(config-route-map)# set metric 100<br>
+Local(config-route-map)# set metric-type type-1<br>
+Local(config-route-map)# set tag 100<br>
+Local(config-route-map)# exit<br>
+<br>
+! Route-Map Sequence 20 - Redistribute Remote Network<br>
+Local(config)# route-map STATIC-TO-OSPF permit 20<br>
+Local(config-route-map)# description ** Redistribute Remote Network to OSPF **<br>
+Local(config-route-map)# match ip address 11<br>
+Local(config-route-map)# set metric 200<br>
+Local(config-route-map)# set metric-type type-2<br>
+Local(config-route-map)# set tag 200<br>
+Local(config-route-map)# exit<br>
+<br>
+! Route-Map Sequence 30 - Deny everything else (implicit)<br>
+Local(config)# route-map STATIC-TO-OSPF deny 30<br>
+Local(config-route-map)# description ** Deny all other routes **<br>
+Local(config-route-map)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="sub-step">5.3 Apply Route-Map to OSPF Redistribution</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Apply Route-Map to OSPF<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Enter OSPF configuration<br>
+Local(config)# router ospf 1<br>
+<br>
+! Redistribute static routes using route-map<br>
+Local(config-router)# redistribute static subnets route-map STATIC-TO-OSPF<br>
+Local(config-router)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Route-Map Explanation:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Sequence 10:</strong> Matches ACL 10 (192.168.1.0/24), sets metric to 100, metric-type to type-1 (E1), and tags with 100</li>
+<li><strong>Sequence 20:</strong> Matches ACL 11 (172.16.1.0/24), sets metric to 200, metric-type to type-2 (E2), and tags with 200</li>
+<li><strong>Sequence 30:</strong> Denies all other routes (explicit deny for clarity)</li>
+<li><strong>Result:</strong> Only 192.168.1.0/24 and 172.16.1.0/24 are redistributed into OSPF with specific attributes</li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 5:</strong> On Site-1 router, use <code>show ip route ospf</code> to verify that only 192.168.1.0/24 and 172.16.1.0/24 appear as OSPF external routes (O E1 or O E2). Check route tags with <code>show ip route 192.168.1.0</code>.
+</div>
+
+<!-- STEP 6: Prefix-List Configuration -->
+<div class="step-header">Step 6: Configure Route-Map with Prefix-Lists</div>
+
+<div class="tip-box">
+<strong>💡 Concept:</strong> Prefix-Lists provide more granular control than Standard ACLs for route filtering. We'll create prefix-lists to filter routes based on prefix length using <code>ge</code> (greater than or equal) and <code>le</code> (less than or equal) operators.
+</div>
+
+<div class="sub-step">6.1 Create Prefix-Lists for Route Filtering</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Prefix-List Configuration<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Prefix-List to permit only /24 networks<br>
+Local(config)# ip prefix-list PERMIT-24-ONLY description ** Allow only /24 networks **<br>
+Local(config)# ip prefix-list PERMIT-24-ONLY seq 5 permit 0.0.0.0/0 ge 24 le 24<br>
+<br>
+! Prefix-List to deny /32 host routes<br>
+Local(config)# ip prefix-list DENY-HOST-ROUTES description ** Deny /32 host routes **<br>
+Local(config)# ip prefix-list DENY-HOST-ROUTES seq 5 deny 0.0.0.0/0 ge 32<br>
+Local(config)# ip prefix-list DENY-HOST-ROUTES seq 10 permit 0.0.0.0/0 le 31<br>
+<br>
+! Prefix-List to permit LAN networks only (10.x.x.x, 172.16.x.x, 192.168.x.x)<br>
+Local(config)# ip prefix-list PERMIT-PRIVATE description ** RFC1918 Private Networks **<br>
+Local(config)# ip prefix-list PERMIT-PRIVATE seq 5 permit 10.0.0.0/8 le 32<br>
+Local(config)# ip prefix-list PERMIT-PRIVATE seq 10 permit 172.16.0.0/12 le 32<br>
+Local(config)# ip prefix-list PERMIT-PRIVATE seq 15 permit 192.168.0.0/16 le 32<br>
+<br>
+! Prefix-List to permit specific networks with aggregation<br>
+Local(config)# ip prefix-list SPECIFIC-NETS description ** Specific networks allowed **<br>
+Local(config)# ip prefix-list SPECIFIC-NETS seq 5 permit 192.168.1.0/24<br>
+Local(config)# ip prefix-list SPECIFIC-NETS seq 10 permit 172.16.1.0/24<br>
+Local(config)# ip prefix-list SPECIFIC-NETS seq 15 permit 10.0.0.0/30<br>
+Local(config)# ip prefix-list SPECIFIC-NETS seq 20 permit 10.0.0.4/30<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="concept-box">
+<h4>📚 Prefix-List Syntax Explained</h4>
+<p><strong>Format:</strong> <code>ip prefix-list NAME [seq #] {permit|deny} network/length [ge min-length] [le max-length]</code></p>
+<ul style="margin: 10px 0 10px 20px;">
+<li><strong>network/length:</strong> Base network and prefix length</li>
+<li><strong>ge (greater than or equal):</strong> Minimum prefix length to match</li>
+<li><strong>le (less than or equal):</strong> Maximum prefix length to match</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul style="margin: 10px 0 10px 20px;">
+<li><code>permit 192.168.0.0/16 ge 24 le 24</code> - Matches all /24 subnets of 192.168.0.0/16</li>
+<li><code>permit 0.0.0.0/0 ge 32</code> - Matches all /32 host routes</li>
+<li><code>permit 10.0.0.0/8 le 24</code> - Matches 10.0.0.0/8 through 10.0.0.0/24</li>
+<li><code>permit 172.16.1.0/24</code> - Matches exactly 172.16.1.0/24</li>
+</ul>
+</div>
+
+<div class="sub-step">6.2 Create Route-Map Using Prefix-Lists</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Route-Map with Prefix-Lists<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Route-Map for OSPF Route Filtering with Prefix-Lists<br>
+Local(config)# route-map OSPF-FILTER-PREFIX permit 10<br>
+Local(config-route-map)# description ** Permit /24 networks only **<br>
+Local(config-route-map)# match ip address prefix-list PERMIT-24-ONLY<br>
+Local(config-route-map)# set metric 50<br>
+Local(config-route-map)# exit<br>
+<br>
+! Deny /32 host routes<br>
+Local(config)# route-map OSPF-FILTER-PREFIX deny 20<br>
+Local(config-route-map)# description ** Deny host routes **<br>
+Local(config-route-map)# match ip address prefix-list DENY-HOST-ROUTES<br>
+Local(config-route-map)# exit<br>
+<br>
+! Permit RFC1918 private networks<br>
+Local(config)# route-map OSPF-FILTER-PREFIX permit 30<br>
+Local(config-route-map)# description ** Permit private networks **<br>
+Local(config-route-map)# match ip address prefix-list PERMIT-PRIVATE<br>
+Local(config-route-map)# set metric 100<br>
+Local(config-route-map)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="sub-step">6.3 Apply Route-Map to EIGRP Redistribution</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Apply Prefix-List Route-Map to EIGRP<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Enter EIGRP configuration<br>
+Local(config)# router eigrp 100<br>
+<br>
+! Redistribute OSPF into EIGRP with prefix-list filtering<br>
+Local(config-router)# redistribute ospf 1 metric 10000 100 255 1 1500 route-map OSPF-FILTER-PREFIX<br>
+Local(config-router)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ EIGRP Redistribution Metrics:</strong> When redistributing into EIGRP, you must specify metrics: <code>bandwidth delay reliability load MTU</code>. In this example: <code>10000 100 255 1 1500</code> represents 10Mbps bandwidth, 100 microseconds delay, 255/255 reliability, 1/255 load, and 1500 byte MTU.
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 6:</strong> On Site-2 router, use <code>show ip route eigrp</code> to verify redistributed routes. Use <code>show ip prefix-list</code> to view prefix-list hit counts. Verify only /24 networks are redistributed.
+</div>
+
+<!-- STEP 7: Policy-Based Routing -->
+<div class="step-header">Step 7: Configure Policy-Based Routing (PBR) with Route-Maps</div>
+
+<div class="tip-box">
+<strong>💡 Concept:</strong> Policy-Based Routing (PBR) allows you to route packets based on criteria other than destination IP address. We'll configure PBR to send traffic from different source IP ranges through different next-hop routers, implementing load balancing and traffic engineering.
+</div>
+
+<div class="sub-step">7.1 Create ACLs for PBR Traffic Classification</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - ACLs for Policy-Based Routing<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Extended ACL 101 - Match traffic from first half of LAN (192.168.1.10-50)<br>
+Local(config)# access-list 101 remark ** PBR - Traffic via Site-1 **<br>
+Local(config)# access-list 101 permit ip 192.168.1.0 0.0.0.63 any<br>
+<br>
+! Extended ACL 102 - Match traffic from second half of LAN (192.168.1.64-127)<br>
+Local(config)# access-list 102 remark ** PBR - Traffic via Site-2 **<br>
+Local(config)# access-list 102 permit ip 192.168.1.64 0.0.0.63 any<br>
+<br>
+! Extended ACL 103 - Match traffic to Remote Network<br>
+Local(config)# access-list 103 remark ** PBR - Traffic to Remote Network **<br>
+Local(config)# access-list 103 permit ip any 172.16.1.0 0.0.0.255<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="sub-step">7.2 Create Route-Map for Policy-Based Routing</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - PBR Route-Map<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Route-Map for Policy-Based Routing<br>
+Local(config)# route-map PBR-LOAD-BALANCE permit 10<br>
+Local(config-route-map)# description ** Send first half of LAN via Site-1 **<br>
+Local(config-route-map)# match ip address 101<br>
+Local(config-route-map)# set ip next-hop 10.0.0.2<br>
+Local(config-route-map)# set ip next-hop verify-availability<br>
+Local(config-route-map)# exit<br>
+<br>
+! Route-Map Sequence 20 - Second half via Site-2<br>
+Local(config)# route-map PBR-LOAD-BALANCE permit 20<br>
+Local(config-route-map)# description ** Send second half of LAN via Site-2 **<br>
+Local(config-route-map)# match ip address 102<br>
+Local(config-route-map)# set ip next-hop 10.0.0.6<br>
+Local(config-route-map)# set ip next-hop verify-availability<br>
+Local(config-route-map)# exit<br>
+<br>
+! Route-Map Sequence 30 - Remote Network traffic via Site-1 (primary)<br>
+Local(config)# route-map PBR-LOAD-BALANCE permit 30<br>
+Local(config-route-map)# description ** Remote Network via Site-1 **<br>
+Local(config-route-map)# match ip address 103<br>
+Local(config-route-map)# set ip next-hop 10.0.0.2<br>
+Local(config-route-map)# set ip next-hop 10.0.0.6<br>
+Local(config-route-map)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="sub-step">7.3 Apply PBR Route-Map to Interface</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Apply PBR to LAN Interface<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Apply PBR to incoming traffic on LAN interface<br>
+Local(config)# interface GigabitEthernet0/2<br>
+Local(config-if)# description ** Local LAN - PBR Applied **<br>
+Local(config-if)# ip policy route-map PBR-LOAD-BALANCE<br>
+Local(config-if)# exit<br>
+<br>
+! Enable PBR debugging (optional, for testing)<br>
+Local(config)# ip local policy route-map PBR-LOAD-BALANCE<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Important PBR Concepts:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Interface PBR:</strong> Applied to incoming traffic on an interface with <code>ip policy route-map</code></li>
+<li><strong>Local PBR:</strong> Applied to locally generated traffic with <code>ip local policy route-map</code></li>
+<li><strong>Next-Hop Verification:</strong> <code>set ip next-hop verify-availability</code> ensures next-hop is reachable before using</li>
+<li><strong>Multiple Next-Hops:</strong> List multiple next-hops for failover (first reachable is used)</li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 7:</strong> Use <code>show route-map</code> to view PBR route-map statistics and match counts. Use <code>show ip policy</code> to see which interfaces have PBR applied. Test with <code>traceroute</code> from different source IPs.
+</div>
+
+<!-- STEP 8: Advanced Route-Map Manipulation -->
+<div class="step-header">Step 8: Advanced Route-Map Attribute Manipulation</div>
+
+<div class="sub-step">8.1 Manipulate Route Metrics and Administrative Distance</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Advanced Route Manipulation<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Route-Map to manipulate route attributes<br>
+Local(config)# route-map MANIPULATE-ATTRIBUTES permit 10<br>
+Local(config-route-map)# description ** Modify OSPF route attributes **<br>
+Local(config-route-map)# match ip address prefix-list SPECIFIC-NETS<br>
+<br>
+! Set multiple attributes<br>
+Local(config-route-map)# set metric 150<br>
+Local(config-route-map)# set metric-type type-1<br>
+Local(config-route-map)# set tag 999<br>
+Local(config-route-map)# set level level-1-2<br>
+Local(config-route-map)# exit<br>
+<br>
+! Route-Map sequence for default route manipulation<br>
+Local(config)# route-map DEFAULT-ROUTE permit 10<br>
+Local(config-route-map)# description ** Inject default route **<br>
+Local(config-route-map)# match ip address prefix-list DEFAULT-ONLY<br>
+Local(config-route-map)# set metric 10<br>
+Local(config-route-map)# set metric-type type-1<br>
+Local(config-route-map)# exit<br>
+<br>
+! Create prefix-list for default route<br>
+Local(config)# ip prefix-list DEFAULT-ONLY description ** Match default route **<br>
+Local(config)# ip prefix-list DEFAULT-ONLY seq 5 permit 0.0.0.0/0<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="sub-step">8.2 Configure Route Tagging for Route Tracking</div>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Route Tagging with Route-Maps<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Route-Map to tag routes based on source<br>
+Local(config)# route-map TAG-ROUTES permit 10<br>
+Local(config-route-map)# description ** Tag routes from OSPF **<br>
+Local(config-route-map)# match tag 100<br>
+Local(config-route-map)# set tag 200<br>
+Local(config-route-map)# exit<br>
+<br>
+! Filter routes based on tags<br>
+Local(config)# route-map FILTER-BY-TAG deny 10<br>
+Local(config-route-map)# description ** Deny routes with tag 999 **<br>
+Local(config-route-map)# match tag 999<br>
+Local(config-route-map)# exit<br>
+<br>
+Local(config)# route-map FILTER-BY-TAG permit 20<br>
+Local(config-route-map)# description ** Permit all other routes **<br>
+Local(config-route-map)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<!-- Complete Configuration Summary -->
+<div class="section-title">📄 Complete Configuration Summary</div>
+
+<p><strong>Local Router - Complete Route-Map Configuration</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Complete Configuration<br>
+! ========================================<br>
+<br>
+hostname Local<br>
+!<br>
+! Interface Configuration<br>
+interface GigabitEthernet0/0<br>
+ description ** WAN Link to Site-1 **<br>
+ ip address 10.0.0.1 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** WAN Link to Site-2 **<br>
+ ip address 10.0.0.5 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/2<br>
+ description ** Local LAN - PBR Applied **<br>
+ ip address 192.168.1.1 255.255.255.0<br>
+ ip policy route-map PBR-LOAD-BALANCE<br>
+ no shutdown<br>
+!<br>
+interface Loopback0<br>
+ description ** Router ID and Management **<br>
+ ip address 1.1.1.1 255.255.255.255<br>
+ ip ospf network point-to-point<br>
+!<br>
+! OSPF Configuration<br>
+router ospf 1<br>
+ router-id 1.1.1.1<br>
+ redistribute static subnets route-map STATIC-TO-OSPF<br>
+ network 1.1.1.1 0.0.0.0 area 0<br>
+ network 10.0.0.0 0.0.0.3 area 0<br>
+ network 192.168.1.0 0.0.0.255 area 0<br>
+!<br>
+! EIGRP Configuration<br>
+router eigrp 100<br>
+ network 10.0.0.4 0.0.0.3<br>
+ redistribute ospf 1 metric 10000 100 255 1 1500 route-map OSPF-FILTER-PREFIX<br>
+ no auto-summary<br>
+ eigrp router-id 1.1.1.1<br>
+!<br>
+! Static Routes<br>
+ip route 172.16.1.0 255.255.255.0 10.0.0.2<br>
+ip route 172.16.1.0 255.255.255.0 10.0.0.6 10<br>
+ip route 203.81.64.0 255.255.255.252 10.0.0.2<br>
+ip route 203.81.64.4 255.255.255.252 10.0.0.6<br>
+!<br>
+! Standard ACLs<br>
+access-list 10 remark ** Routes allowed for redistribution **<br>
+access-list 10 permit 192.168.1.0 0.0.0.255<br>
+access-list 11 remark ** Remote network allowed **<br>
+access-list 11 permit 172.16.1.0 0.0.0.255<br>
+access-list 20 remark ** Deny loopback networks **<br>
+access-list 20 deny 1.0.0.0 0.255.255.255<br>
+access-list 20 deny 2.0.0.0 0.255.255.255<br>
+access-list 20 deny 3.0.0.0 0.255.255.255<br>
+access-list 20 permit any<br>
+!<br>
+! Extended ACLs for PBR<br>
+access-list 101 remark ** PBR - Traffic via Site-1 **<br>
+access-list 101 permit ip 192.168.1.0 0.0.0.63 any<br>
+access-list 102 remark ** PBR - Traffic via Site-2 **<br>
+access-list 102 permit ip 192.168.1.64 0.0.0.63 any<br>
+access-list 103 remark ** PBR - Traffic to Remote Network **<br>
+access-list 103 permit ip any 172.16.1.0 0.0.0.255<br>
+!<br>
+! Prefix-Lists<br>
+ip prefix-list PERMIT-24-ONLY description ** Allow only /24 networks **<br>
+ip prefix-list PERMIT-24-ONLY seq 5 permit 0.0.0.0/0 ge 24 le 24<br>
+!<br>
+ip prefix-list DENY-HOST-ROUTES description ** Deny /32 host routes **<br>
+ip prefix-list DENY-HOST-ROUTES seq 5 deny 0.0.0.0/0 ge 32<br>
+ip prefix-list DENY-HOST-ROUTES seq 10 permit 0.0.0.0/0 le 31<br>
+!<br>
+ip prefix-list PERMIT-PRIVATE description ** RFC1918 Private Networks **<br>
+ip prefix-list PERMIT-PRIVATE seq 5 permit 10.0.0.0/8 le 32<br>
+ip prefix-list PERMIT-PRIVATE seq 10 permit 172.16.0.0/12 le 32<br>
+ip prefix-list PERMIT-PRIVATE seq 15 permit 192.168.0.0/16 le 32<br>
+!<br>
+ip prefix-list SPECIFIC-NETS description ** Specific networks allowed **<br>
+ip prefix-list SPECIFIC-NETS seq 5 permit 192.168.1.0/24<br>
+ip prefix-list SPECIFIC-NETS seq 10 permit 172.16.1.0/24<br>
+ip prefix-list SPECIFIC-NETS seq 15 permit 10.0.0.0/30<br>
+ip prefix-list SPECIFIC-NETS seq 20 permit 10.0.0.4/30<br>
+!<br>
+ip prefix-list DEFAULT-ONLY description ** Match default route **<br>
+ip prefix-list DEFAULT-ONLY seq 5 permit 0.0.0.0/0<br>
+!<br>
+! Route-Maps<br>
+route-map STATIC-TO-OSPF permit 10<br>
+ description ** Redistribute Local LAN to OSPF **<br>
+ match ip address 10<br>
+ set metric 100<br>
+ set metric-type type-1<br>
+ set tag 100<br>
+!<br>
+route-map STATIC-TO-OSPF permit 20<br>
+ description ** Redistribute Remote Network to OSPF **<br>
+ match ip address 11<br>
+ set metric 200<br>
+ set metric-type type-2<br>
+ set tag 200<br>
+!<br>
+route-map STATIC-TO-OSPF deny 30<br>
+ description ** Deny all other routes **<br>
+!<br>
+route-map OSPF-FILTER-PREFIX permit 10<br>
+ description ** Permit /24 networks only **<br>
+ match ip address prefix-list PERMIT-24-ONLY<br>
+ set metric 50<br>
+!<br>
+route-map OSPF-FILTER-PREFIX deny 20<br>
+ description ** Deny host routes **<br>
+ match ip address prefix-list DENY-HOST-ROUTES<br>
+!<br>
+route-map OSPF-FILTER-PREFIX permit 30<br>
+ description ** Permit private networks **<br>
+ match ip address prefix-list PERMIT-PRIVATE<br>
+ set metric 100<br>
+!<br>
+route-map PBR-LOAD-BALANCE permit 10<br>
+ description ** Send first half of LAN via Site-1 **<br>
+ match ip address 101<br>
+ set ip next-hop verify-availability<br>
+ set ip next-hop 10.0.0.2<br>
+!<br>
+route-map PBR-LOAD-BALANCE permit 20<br>
+ description ** Send second half of LAN via Site-2 **<br>
+ match ip address 102<br>
+ set ip next-hop verify-availability<br>
+ set ip next-hop 10.0.0.6<br>
+!<br>
+route-map PBR-LOAD-BALANCE permit 30<br>
+ description ** Remote Network via Site-1 **<br>
+ match ip address 103<br>
+ set ip next-hop 10.0.0.2<br>
+ set ip next-hop 10.0.0.6<br>
+!<br>
+! Local PBR for router-generated traffic<br>
+ip local policy route-map PBR-LOAD-BALANCE<br>
+!<br>
+end<br>
+write memory<br>
+</div>
+
+<!-- Verification Section -->
+<div class="section-title">✓ Comprehensive Verification Guide</div>
+
+<div class="sub-step">1. Verify Interface Status</div>
+<div class="code-block">
+! Check all interfaces are up<br>
+Local# show ip interface brief<br>
+<br>
+! Verify interface IP addresses<br>
+Local# show ip interface GigabitEthernet0/0<br>
+Local# show ip interface GigabitEthernet0/1<br>
+Local# show ip interface GigabitEthernet0/2<br>
+</div>
+
+<div class="output-block">
+Local# show ip interface brief<br>
+Interface              IP-Address      OK? Method Status                Protocol<br>
+GigabitEthernet0/0     10.0.0.1        YES manual up                    up<br>
+GigabitEthernet0/1     10.0.0.5        YES manual up                    up<br>
+GigabitEthernet0/2     192.168.1.1     YES manual up                    up<br>
+Loopback0              1.1.1.1         YES manual up                    up<br>
+</div>
+
+<div class="sub-step">2. Verify OSPF Adjacency and Routes</div>
+<div class="code-block">
+! Check OSPF neighbors<br>
+Local# show ip ospf neighbor<br>
+<br>
+! View OSPF routes<br>
+Local# show ip route ospf<br>
+<br>
+! Check OSPF database<br>
+Local# show ip ospf database<br>
+<br>
+! Verify redistributed routes on Site-1<br>
+Site-1# show ip route ospf<br>
+Site-1# show ip route 192.168.1.0<br>
+</div>
+
+<div class="output-block">
+Local# show ip ospf neighbor<br>
+<br>
+Neighbor ID     Pri   State           Dead Time   Address         Interface<br>
+2.2.2.2           1   FULL/BDR        00:00:34    10.0.0.2        GigabitEthernet0/0<br>
+</div>
+
+<div class="sub-step">3. Verify EIGRP Adjacency and Routes</div>
+<div class="code-block">
+! Check EIGRP neighbors<br>
+Local# show ip eigrp neighbors<br>
+<br>
+! View EIGRP routes<br>
+Local# show ip route eigrp<br>
+<br>
+! Check EIGRP topology<br>
+Local# show ip eigrp topology<br>
+<br>
+! Verify redistributed routes on Site-2<br>
+Site-2# show ip route eigrp<br>
+Site-2# show ip route 192.168.1.0<br>
+</div>
+
+<div class="output-block">
+Local# show ip eigrp neighbors<br>
+EIGRP-IPv4 Neighbors for AS(100)<br>
+H   Address                 Interface       Hold Uptime   SRTT   RTO  Q  Seq<br>
+                                            (sec)         (ms)       Cnt Num<br>
+0   10.0.0.6                Gi0/1             13 00:15:42   12   200  0  5<br>
+</div>
+
+<div class="sub-step">4. Verify Route-Maps and ACLs</div>
+<div class="code-block">
+! View all route-maps<br>
+Local# show route-map<br>
+<br>
+! View specific route-map with statistics<br>
+Local# show route-map STATIC-TO-OSPF<br>
+Local# show route-map OSPF-FILTER-PREFIX<br>
+Local# show route-map PBR-LOAD-BALANCE<br>
+<br>
+! Check ACL configurations<br>
+Local# show access-lists<br>
+Local# show access-lists 10<br>
+Local# show access-lists 101<br>
+</div>
+
+<div class="output-block">
+Local# show route-map STATIC-TO-OSPF<br>
+route-map STATIC-TO-OSPF, permit, sequence 10<br>
+  Match clauses:<br>
+    ip address (access-lists): 10<br>
+  Set clauses:<br>
+    metric 100<br>
+    metric-type type-1<br>
+    tag 100<br>
+  Policy routing matches: 0 packets, 0 bytes<br>
+route-map STATIC-TO-OSPF, permit, sequence 20<br>
+  Match clauses:<br>
+    ip address (access-lists): 11<br>
+  Set clauses:<br>
+    metric 200<br>
+    metric-type type-2<br>
+    tag 200<br>
+  Policy routing matches: 0 packets, 0 bytes<br>
+route-map STATIC-TO-OSPF, deny, sequence 30<br>
+  Match clauses:<br>
+  Set clauses:<br>
+  Policy routing matches: 0 packets, 0 bytes<br>
+</div>
+
+<div class="sub-step">5. Verify Prefix-Lists</div>
+<div class="code-block">
+! View all prefix-lists<br>
+Local# show ip prefix-list<br>
+<br>
+! View specific prefix-list with statistics<br>
+Local# show ip prefix-list PERMIT-24-ONLY<br>
+Local# show ip prefix-list PERMIT-PRIVATE<br>
+Local# show ip prefix-list SPECIFIC-NETS<br>
+<br>
+! Check prefix-list detail (shows hit counts)<br>
+Local# show ip prefix-list detail<br>
+</div>
+
+<div class="output-block">
+Local# show ip prefix-list PERMIT-24-ONLY<br>
+ip prefix-list PERMIT-24-ONLY: 1 entries<br>
+   seq 5 permit 0.0.0.0/0 ge 24 le 24 (hit count: 15)<br>
+</div>
+
+<div class="sub-step">6. Verify Policy-Based Routing</div>
+<div class="code-block">
+! Check PBR configuration<br>
+Local# show ip policy<br>
+<br>
+! View PBR statistics<br>
+Local# show route-map PBR-LOAD-BALANCE<br>
+<br>
+! Debug PBR (use with caution in production)<br>
+Local# debug ip policy<br>
+<br>
+! Test PBR with traceroute from different sources<br>
+Local# traceroute 172.16.1.10 source 192.168.1.10<br>
+Local# traceroute 172.16.1.10 source 192.168.1.70<br>
+<br>
+! Turn off debug<br>
+Local# undebug all<br>
+</div>
+
+<div class="output-block">
+Local# show ip policy<br>
+Interface      Route map<br>
+Gi0/2          PBR-LOAD-BALANCE<br>
+</div>
+
+<div class="sub-step">7. Verify Route Redistribution</div>
+<div class="code-block">
+! Check redistributed routes in routing table<br>
+Local# show ip route static<br>
+Site-1# show ip route ospf | include E1|E2<br>
+Site-2# show ip route eigrp | include EX<br>
+<br>
+! Verify route tags<br>
+Local# show ip route 192.168.1.0<br>
+Site-1# show ip route 192.168.1.0<br>
+<br>
+! Check redistribution configuration<br>
+Local# show run | section router ospf<br>
+Local# show run | section router eigrp<br>
+</div>
+
+<div class="output-block">
+Site-1# show ip route ospf<br>
+<br>
+O E1  192.168.1.0/24 [110/101] via 10.0.0.1, 00:15:42, GigabitEthernet0/0<br>
+O E2  172.16.1.0/24 [110/200] via 10.0.0.1, 00:15:42, GigabitEthernet0/0<br>
+</div>
+
+<div class="sub-step">8. Test End-to-End Connectivity</div>
+<div class="code-block">
+! Ping remote network<br>
+Local# ping 172.16.1.10 source 192.168.1.1<br>
+<br>
+! Traceroute to verify path<br>
+Local# traceroute 172.16.1.10<br>
+<br>
+! Traceroute with specific source to test PBR<br>
+Local# traceroute 172.16.1.10 source 192.168.1.10<br>
+Local# traceroute 172.16.1.10 source 192.168.1.70<br>
+<br>
+! Extended ping for detailed testing<br>
+Local# ping<br>
+Protocol [ip]:<br>
+Target IP address: 172.16.1.10<br>
+Repeat count [5]: 100<br>
+Datagram size [100]:<br>
+Timeout in seconds [2]:<br>
+Extended commands [n]: y<br>
+Source address or interface: 192.168.1.10<br>
+Type of service [0]:<br>
+Set DF bit in IP header? [no]:<br>
+Validate reply data? [no]:<br>
+Data pattern [0xABCD]:<br>
+Loose, Strict, Record, Timestamp, Verbose[none]:<br>
+Sweep range of sizes [n]:<br>
+</div>
+
+<!-- Comprehensive Verification Checklist -->
+<div class="section-title">📋 Complete Verification Checklist</div>
+
+<ul class="checklist">
+<li>☐ All router interfaces configured and showing "up/up" status</li>
+<li>☐ OSPF adjacency formed between Local and Site-1 routers</li>
+<li>☐ EIGRP adjacency formed between Local and Site-2 routers</li>
+<li>☐ Static routes installed to remote network (172.16.1.0/24)</li>
+<li>☐ Standard ACLs 10, 11, 20 created and configured</li>
+<li>☐ Extended ACLs 101, 102, 103 created for PBR</li>
+<li>☐ Route-Map STATIC-TO-OSPF created with 3 sequences</li>
+<li>☐ Route redistribution from static to OSPF working (verify on Site-1)</li>
+<li>☐ Only 192.168.1.0/24 and 172.16.1.0/24 redistributed into OSPF</li>
+<li>☐ Route metrics set correctly (100 for LAN, 200 for Remote)</li>
+<li>☐ Route tags applied (100 and 200) and visible in routing table</li>
+<li>☐ Prefix-Lists created (PERMIT-24-ONLY, DENY-HOST-ROUTES, PERMIT-PRIVATE, SPECIFIC-NETS)</li>
+<li>☐ Route-Map OSPF-FILTER-PREFIX created for EIGRP redistribution</li>
+<li>☐ OSPF routes redistributed into EIGRP with prefix-list filtering</li>
+<li>☐ Only /24 networks appear in EIGRP on Site-2</li>
+<li>☐ No /32 host routes redistributed into EIGRP</li>
+<li>☐ Route-Map PBR-LOAD-BALANCE created with 3 sequences</li>
+<li>☐ PBR applied to GigabitEthernet0/2 interface</li>
+<li>☐ Traffic from 192.168.1.0-63 routed via Site-1 (10.0.0.2)</li>
+<li>☐ Traffic from 192.168.1.64-127 routed via Site-2 (10.0.0.6)</li>
+<li>☐ PBR match counters incrementing when traffic passes</li>
+<li>☐ Traceroute shows correct path selection based on source IP</li>
+<li>☐ End-to-end connectivity verified (Local LAN to Remote Network)</li>
+<li>☐ All configurations saved with "write memory"</li>
+</ul>
+
+<!-- Troubleshooting Guide -->
+<div class="section-title">🔧 Comprehensive Troubleshooting Guide</div>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 1: Routes Not Being Redistributed</strong>
+</div>
+
+<p><strong>Symptoms:</strong> Static routes not appearing in OSPF on Site-1 router</p>
+
+<p><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! 1. Verify route-map is applied to redistribution<br>
+Local# show run | section router ospf<br>
+! Look for: redistribute static subnets route-map STATIC-TO-OSPF<br>
+<br>
+! 2. Check route-map configuration<br>
+Local# show route-map STATIC-TO-OSPF<br>
+! Verify match clauses and set clauses are correct<br>
+<br>
+! 3. Check ACL matches<br>
+Local# show access-list 10<br>
+Local# show access-list 11<br>
+! Verify ACL permits the correct networks<br>
+<br>
+! 4. Verify static routes exist in routing table<br>
+Local# show ip route static<br>
+! Routes must exist before they can be redistributed<br>
+<br>
+! 5. Check OSPF process is running<br>
+Local# show ip ospf<br>
+Local# show ip ospf neighbor<br>
+<br>
+! 6. Debug redistribution (use with caution)<br>
+Local# debug ip routing<br>
+Local# debug ip ospf events<br>
+<br>
+! 7. Verify on remote router<br>
+Site-1# show ip route ospf<br>
+Site-1# show ip ospf database external<br>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Likely Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No routes redistributed</td>
+<td>Route-map not applied</td>
+<td><code>redistribute static subnets route-map STATIC-TO-OSPF</code></td>
+</tr>
+<tr>
+<td>Wrong routes redistributed</td>
+<td>ACL misconfigured</td>
+<td>Verify ACL wildcard masks match intended networks</td>
+</tr>
+<tr>
+<td>Routes redistributed but wrong metric</td>
+<td>Set clause missing or wrong</td>
+<td>Check <code>set metric</code> and <code>set metric-type</code></td>
+</tr>
+<tr>
+<td>Route-map shows 0 matches</td>
+<td>ACL doesn't match any routes</td>
+<td>Verify static routes exist and ACL syntax is correct</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 2: Prefix-List Not Filtering Correctly</strong>
+</div>
+
+<p><strong>Symptoms:</strong> Prefix-list allows or denies wrong networks, or all routes are blocked</p>
+
+<p><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! 1. Verify prefix-list configuration<br>
+Local# show ip prefix-list<br>
+Local# show ip prefix-list PERMIT-24-ONLY detail<br>
+<br>
+! 2. Check prefix-list syntax (ge/le operators)<br>
+! Format: permit network/length [ge min] [le max]<br>
+! Example: permit 0.0.0.0/0 ge 24 le 24 matches all /24 networks<br>
+<br>
+! 3. Test prefix-list matching<br>
+! No direct test command, but check hit counts<br>
+Local# show ip prefix-list detail<br>
+! Look for "(hit count: X)" - should increment when routes match<br>
+<br>
+! 4. Verify route-map uses prefix-list correctly<br>
+Local# show route-map OSPF-FILTER-PREFIX<br>
+! Look for: match ip address prefix-list PERMIT-24-ONLY<br>
+<br>
+! 5. Check routes being filtered<br>
+Local# show ip route ospf<br>
+Site-2# show ip route eigrp<br>
+! Verify only expected routes appear<br>
+<br>
+! 6. Common prefix-list mistakes:<br>
+! Wrong: permit 192.168.1.0/24 ge 32 (no /32 matches /24 base)<br>
+! Right: permit 192.168.1.0/24 (exact match)<br>
+! Wrong: permit 0.0.0.0/0 le 24 (matches /0 to /24, too broad)<br>
+! Right: permit 0.0.0.0/0 ge 24 le 24 (matches only /24)<br>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Likely Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>All routes blocked</td>
+<td>No permit statement matches</td>
+<td>Add <code>permit 0.0.0.0/0 le 32</code> at end to permit all remaining</td>
+</tr>
+<tr>
+<td>Wrong prefix lengths matched</td>
+<td>Incorrect ge/le values</td>
+<td>Review ge (>=) and le (<=) logic; ge must be >= prefix length</td>
+</tr>
+<tr>
+<td>Prefix-list not applied</td>
+<td>Route-map doesn't reference it</td>
+<td><code>match ip address prefix-list NAME</code></td>
+</tr>
+<tr>
+<td>Hit count is 0</td>
+<td>No routes match criteria</td>
+<td>Verify routes exist and prefix-list syntax is correct</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 3: Policy-Based Routing Not Working</strong>
+</div>
+
+<p><strong>Symptoms:</strong> Traffic not following PBR policy, all traffic uses routing table</p>
+
+<p><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! 1. Verify PBR is applied to interface<br>
+Local# show ip policy<br>
+! Should show: Gi0/2 -> PBR-LOAD-BALANCE<br>
+<br>
+! 2. Check route-map configuration and statistics<br>
+Local# show route-map PBR-LOAD-BALANCE<br>
+! Look at "Policy routing matches: X packets, Y bytes"<br>
+! If 0, traffic is not matching<br>
+<br>
+! 3. Verify ACLs used in route-map<br>
+Local# show access-list 101<br>
+Local# show access-list 102<br>
+! Check hit counts - should increment when traffic passes<br>
+<br>
+! 4. Check next-hop reachability<br>
+Local# show ip route 10.0.0.2<br>
+Local# ping 10.0.0.2<br>
+! Next-hop must be reachable for PBR to work<br>
+<br>
+! 5. Enable PBR debugging<br>
+Local# debug ip policy<br>
+! Generate traffic and watch debug output<br>
+! Should see "PBR: ... using route map PBR-LOAD-BALANCE"<br>
+<br>
+! 6. Test with traceroute from specific sources<br>
+Local# traceroute 172.16.1.10 source 192.168.1.10<br>
+! Should show path through 10.0.0.2 (Site-1)<br>
+Local# traceroute 172.16.1.10 source 192.168.1.70<br>
+! Should show path through 10.0.0.6 (Site-2)<br>
+<br>
+! 7. Verify interface is up and receiving traffic<br>
+Local# show interface GigabitEthernet0/2<br>
+! Check input packets counter<br>
+<br>
+! 8. Turn off debug<br>
+Local# undebug all<br>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Likely Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PBR not applied</td>
+<td>Missing <code>ip policy</code> command</td>
+<td><code>interface G0/2</code> then <code>ip policy route-map NAME</code></td>
+</tr>
+<tr>
+<td>Traffic doesn't match ACL</td>
+<td>Wrong source IP range in ACL</td>
+<td>Verify ACL wildcard masks cover correct IP ranges</td>
+</tr>
+<tr>
+<td>Next-hop not reachable</td>
+<td>Routing issue or interface down</td>
+<td>Verify next-hop connectivity, use <code>set ip next-hop verify-availability</code></td>
+</tr>
+<tr>
+<td>PBR works for some traffic, not all</td>
+<td>Route-map sequence order</td>
+<td>Check sequence numbers, first match wins</td>
+</tr>
+<tr>
+<td>Match count is 0</td>
+<td>No traffic entering interface</td>
+<td>Verify traffic source and interface counters</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 4: Route-Map Sequence Issues</strong>
+</div>
+
+<p><strong>Symptoms:</strong> Routes processed by wrong sequence, unexpected permit/deny behavior</p>
+
+<p><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! 1. View complete route-map<br>
+Local# show route-map<br>
+! Note sequence numbers (10, 20, 30...) and order<br>
+<br>
+! 2. Understand route-map logic<br>
+! - Sequences processed in order (10, then 20, then 30...)<br>
+! - First match wins (stops processing)<br>
+! - If no match, implicit deny at end<br>
+! - "permit" action allows route, "deny" action blocks route<br>
+<br>
+! 3. Check for overlapping match conditions<br>
+! If sequence 10 matches "any", sequence 20 never processes<br>
+<br>
+! 4. Verify match and set clauses<br>
+Local# show route-map STATIC-TO-OSPF<br>
+! Ensure each sequence has correct match and set statements<br>
+<br>
+! 5. Test by removing sequences<br>
+Local(config)# no route-map STATIC-TO-OSPF permit 10<br>
+! See if behavior changes (restore afterward)<br>
+<br>
+! 6. Add explicit deny for clarity<br>
+Local(config)# route-map STATIC-TO-OSPF deny 999<br>
+! Makes implicit deny explicit<br>
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 5: OSPF/EIGRP Redistribution Not Working</strong>
+</div>
+
+<p><strong>Symptoms:</strong> Routes from OSPF not appearing in EIGRP or vice versa</p>
+
+<p><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! 1. Verify redistribution configuration<br>
+Local# show run | section router eigrp<br>
+! Look for: redistribute ospf 1 metric ... route-map NAME<br>
+<br>
+! 2. Check EIGRP metrics are provided<br>
+! EIGRP requires: bandwidth delay reliability load MTU<br>
+! Example: metric 10000 100 255 1 1500<br>
+<br>
+! 3. Verify routing protocols are running<br>
+Local# show ip protocols<br>
+! Should show both OSPF and EIGRP<br>
+<br>
+! 4. Check route-map is allowing routes<br>
+Local# show route-map OSPF-FILTER-PREFIX<br>
+! Verify "permit" actions and match counts > 0<br>
+<br>
+! 5. Verify routes exist in source protocol<br>
+Local# show ip route ospf<br>
+! Routes must exist before redistribution<br>
+<br>
+! 6. Check on destination router<br>
+Site-2# show ip route eigrp<br>
+! Look for "D EX" (EIGRP external) routes<br>
+<br>
+! 7. Check for routing loops or split-horizon<br>
+! Redistribution can cause loops - verify route filtering<br>
+</div>
+
+<!-- Key Learning Points -->
+<div class="section-title">🎓 Key Learning Points</div>
+
+<div class="alert alert-success">
+<strong>✅ Route-Map Fundamentals:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Route-Maps are "If-Then" Logic:</strong> If conditions match, then perform actions</li>
+<li><strong>Sequence Numbers Matter:</strong> Processed in order (10, 20, 30...), first match wins</li>
+<li><strong>Permit vs Deny:</strong> "Permit" allows route (and applies set clauses), "Deny" blocks route</li>
+<li><strong>Implicit Deny:</strong> If no sequence matches, route is denied (like ACLs)</li>
+<li><strong>Match Clauses:</strong> Define conditions (ACL, prefix-list, metric, tag, interface...)</li>
+<li><strong>Set Clauses:</strong> Define actions (metric, next-hop, tag, metric-type, local-preference...)</li>
+<li><strong>Multiple Applications:</strong> Route redistribution, PBR, BGP policy, route filtering</li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Standard ACL with Route-Maps:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Simple Network Matching:</strong> Best for matching entire networks or hosts</li>
+<li><strong>Wildcard Masks:</strong> 0 = must match, 1 = don't care</li>
+<li><strong>Use Cases:</strong> Basic route filtering, simple traffic classification</li>
+<li><strong>Limitations:</strong> Cannot match prefix length, less flexible than prefix-lists</li>
+<li><strong>Syntax:</strong> <code>access-list 10 permit 192.168.1.0 0.0.0.255</code></li>
+<li><strong>Route-Map Application:</strong> <code>match ip address 10</code></li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Prefix-Lists with Route-Maps:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Optimized for Routing:</strong> Better performance than ACLs for route filtering</li>
+<li><strong>Prefix Length Matching:</strong> Can match specific prefix lengths using ge/le</li>
+<li><strong>Flexibility:</strong> Match ranges of prefix lengths (e.g., all /24 networks)</li>
+<li><strong>Syntax:</strong> <code>ip prefix-list NAME permit 192.168.0.0/16 ge 24 le 24</code></li>
+<li><strong>ge Operator:</strong> Greater than or equal (minimum prefix length)</li>
+<li><strong>le Operator:</strong> Less than or equal (maximum prefix length)</li>
+<li><strong>Route-Map Application:</strong> <code>match ip address prefix-list NAME</code></li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Policy-Based Routing (PBR):</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Traffic Engineering:</strong> Route traffic based on criteria other than destination</li>
+<li><strong>Source-Based Routing:</strong> Different paths for different source IPs</li>
+<li><strong>Load Balancing:</strong> Distribute traffic across multiple paths</li>
+<li><strong>Next-Hop Control:</strong> <code>set ip next-hop</code> overrides routing table</li>
+<li><strong>Interface Application:</strong> <code>ip policy route-map</code> on incoming interface</li>
+<li><strong>Local PBR:</strong> <code>ip local policy route-map</code> for router-generated traffic</li>
+<li><strong>Verification:</strong> <code>set ip next-hop verify-availability</code> checks reachability</li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Route Redistribution Best Practices:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Always Use Route-Maps:</strong> Never redistribute without filtering</li>
+<li><strong>Prevent Routing Loops:</strong> Filter routes to avoid feedback loops</li>
+<li><strong>Set Appropriate Metrics:</strong> Ensure redistributed routes have reasonable metrics</li>
+<li><strong>Use Route Tags:</strong> Tag routes to track redistribution source and prevent loops</li>
+<li><strong>Control Redistribution Direction:</strong> Be explicit about what gets redistributed</li>
+<li><strong>Seed Metrics:</strong> EIGRP requires explicit metrics (bandwidth, delay, etc.)</li>
+<li><strong>Subnets Keyword:</strong> OSPF requires "subnets" to redistribute subnets, not just classful</li>
+</ul>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Common Mistakes to Avoid:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Forgetting "subnets" in OSPF Redistribution:</strong> Without it, only classful networks redistributed</li>
+<li><strong>Wrong Wildcard Masks in ACLs:</strong> Use wildcard (0.0.0.255), not subnet mask (255.255.255.0)</li>
+<li><strong>Incorrect Prefix-List ge/le Values:</strong> ge must be >= prefix length, le must be >= ge</li>
+<li><strong>Route-Map Without Match Clause:</strong> Matches all routes (usually not desired)</li>
+<li><strong>PBR Next-Hop Not Reachable:</strong> Use <code>verify-availability</code> to check</li>
+<li><strong>Overlapping Route-Map Sequences:</strong> First match wins, later sequences may never execute</li>
+<li><strong>Missing EIGRP Seed Metrics:</strong> Redistribution fails without metric values</li>
+<li><strong>Not Using Route Tags:</strong> Makes loop prevention and troubleshooting harder</li>
+<li><strong>Redistributing Default Routes:</strong> Can cause black holes if not careful</li>
+</ul>
+</div>
+
+<!-- Quick Reference -->
+<div class="section-title">📖 Quick Reference Guide</div>
+
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create Route-Map</td>
+<td><code>route-map NAME {permit|deny} SEQ</code></td>
+<td><code>route-map TEST permit 10</code></td>
+</tr>
+<tr>
+<td>Match ACL</td>
+<td><code>match ip address ACL</code></td>
+<td><code>match ip address 10</code></td>
+</tr>
+<tr>
+<td>Match Prefix-List</td>
+<td><code>match ip address prefix-list NAME</code></td>
+<td><code>match ip address prefix-list PERMIT-24</code></td>
+</tr>
+<tr>
+<td>Set Metric</td>
+<td><code>set metric VALUE</code></td>
+<td><code>set metric 100</code></td>
+</tr>
+<tr>
+<td>Set Next-Hop (PBR)</td>
+<td><code>set ip next-hop IP</code></td>
+<td><code>set ip next-hop 10.0.0.2</code></td>
+</tr>
+<tr>
+<td>Set Route Tag</td>
+<td><code>set tag VALUE</code></td>
+<td><code>set tag 100</code></td>
+</tr>
+<tr>
+<td>Create Prefix-List</td>
+<td><code>ip prefix-list NAME permit NET/LEN</code></td>
+<td><code>ip prefix-list TEST permit 192.168.1.0/24</code></td>
+</tr>
+<tr>
+<td>Prefix-List with ge/le</td>
+<td><code>permit NET/LEN ge MIN le MAX</code></td>
+<td><code>permit 0.0.0.0/0 ge 24 le 24</code></td>
+</tr>
+<tr>
+<td>Redistribute into OSPF</td>
+<td><code>redistribute PROTOCOL subnets route-map NAME</code></td>
+<td><code>redistribute static subnets route-map TEST</code></td>
+</tr>
+<tr>
+<td>Redistribute into EIGRP</td>
+<td><code>redistribute PROTOCOL metric BW DLY REL LOAD MTU route-map NAME</code></td>
+<td><code>redistribute ospf 1 metric 10000 100 255 1 1500</code></td>
+</tr>
+<tr>
+<td>Apply PBR to Interface</td>
+<td><code>ip policy route-map NAME</code></td>
+<td><code>ip policy route-map PBR-TEST</code></td>
+</tr>
+<tr>
+<td>View Route-Maps</td>
+<td><code>show route-map [NAME]</code></td>
+<td><code>show route-map TEST</code></td>
+</tr>
+<tr>
+<td>View Prefix-Lists</td>
+<td><code>show ip prefix-list [NAME]</code></td>
+<td><code>show ip prefix-list TEST detail</code></td>
+</tr>
+<tr>
+<td>View PBR Config</td>
+<td><code>show ip policy</code></td>
+<td><code>show ip policy</code></td>
+</tr>
+<tr>
+<td>Debug PBR</td>
+<td><code>debug ip policy</code></td>
+<td><code>debug ip policy</code></td>
+</tr>
+</tbody>
+</table>
+
+<!-- Lab Summary -->
+<div class="section-title">📝 Lab Summary & Completion</div>
+
+<p>Congratulations! You have successfully completed <strong>Lab 11.2: Advanced Route-Maps with ACLs & Prefix-Lists</strong>. This comprehensive lab covered:</p>
+
+<ul style="margin: 15px 0 15px 30px;">
+<li>✅ Multi-site network topology with OSPF and EIGRP routing protocols</li>
+<li>✅ Standard ACL creation for route matching and filtering</li>
+<li>✅ Route-Map configuration with Standard ACLs for route redistribution</li>
+<li>✅ Static route redistribution into OSPF with attribute manipulation</li>
+<li>✅ Prefix-List configuration for precise route filtering</li>
+<li>✅ Route-Map with Prefix-Lists for OSPF to EIGRP redistribution</li>
+<li>✅ Policy-Based Routing (PBR) for traffic engineering and load balancing</li>
+<li>✅ Route attribute manipulation (metrics, tags, metric-types)</li>
+<li>✅ Comprehensive verification procedures and troubleshooting techniques</li>
+<li>✅ Understanding differences between ACLs and Prefix-Lists</li>
+</ul>
+
+<div class="alert alert-success">
+<strong>✅ Skills Acquired:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li>Configure and apply Route-Maps for route redistribution</li>
+<li>Create Standard ACLs for route matching</li>
+<li>Create and apply Prefix-Lists with ge/le operators</li>
+<li>Implement Policy-Based Routing for traffic steering</li>
+<li>Manipulate route attributes (metric, tag, metric-type)</li>
+<li>Redistribute between OSPF, EIGRP, and static routes</li>
+<li>Troubleshoot route-map and redistribution issues</li>
+<li>Verify PBR functionality with appropriate commands</li>
+</ul>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ CCNP Exam Relevance:</strong> This lab directly prepares you for:
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>CCNP 350-401 (ENCOR) 3.2:</strong> Configure and verify OSPF (multi-area, redistribution)</li>
+<li><strong>CCNP 350-401 (ENCOR) 3.3:</strong> Configure and verify EIGRP (named mode, redistribution)</li>
+<li><strong>CCNP 300-410 (ENARSI) 1.2:</strong> Implement route redistribution with route filtering</li>
+<li><strong>CCNP 300-410 (ENARSI) 1.4:</strong> Implement policy-based routing</li>
+<li><strong>CCNP 300-410 (ENARSI) 2.4:</strong> Troubleshoot redistribution and PBR</li>
+</ul>
+</div>
+
+<p style="text-align: center; font-size: 1.2em; color: #1e3c72; margin-top: 30px;">
+<strong>🎓 Congratulations on completing Lab 11.2!</strong><br>
+You are now proficient in Route-Map configuration with ACLs and Prefix-Lists.
+</p>
+
+</div>
+<!-- End of content wrapper -->
+
+</div>
+
+<!-- Footer -->
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<!-- Password Protection & Security Script -->
+<script>
+// ==================== SECURITY CONFIGURATION ====================
+const MASTER_PASSWORD = "CCNP@2026";
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+let isUnlocked = false;
+let sessionTimer = null;
+
+// Initialize security on page load
+window.addEventListener('load', function() {
+checkSession();
+setupSecurityMonitoring();
+});
+
+// ==================== SESSION MANAGEMENT ====================
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD && sessionTime) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+// ==================== PASSWORD VERIFICATION ====================
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+}
+}
+
+// ==================== CONTENT LOCKING/UNLOCKING ====================
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+}
+
+function lockPage() {
+isUnlocked = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.3';
+element.style.pointerEvents = 'none';
+});
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+// ==================== SECURITY MONITORING ====================
+function setupSecurityMonitoring() {
+// Disable right-click
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+// Disable text selection when locked
+document.addEventListener('selectstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+// F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U
+if (e.keyCode === 123 || 
+(e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) ||
+(e.ctrlKey && e.keyCode === 85)) {
+e.preventDefault();
+return false;
+}
+// Ctrl+S - Save only if unlocked
+if (e.ctrlKey && e.keyCode === 83) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+}
+});
+
+// Disable copying when locked
+document.addEventListener('copy', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Monitor window focus
+window.addEventListener('blur', function() {
+if (!isUnlocked) {
+showPasswordModal();
+}
+});
+}
+
+// Console security message
+window.addEventListener('load', function() {
+setTimeout(function() {
+console.clear();
+console.log('%c🔐 ICONIC INFOSEC TRAINING - PROTECTED CONTENT',
+'color: #667eea; font-size: 18px; font-weight: bold;');
+console.log('%cThis document is password protected: CCNP@2026',
+'color: #1e3c72; font-size: 14px; font-weight: bold;');
+console.log('%c⚠️ Unauthorized access attempts are logged',
+'color: #ff6b6b; font-size: 12px;');
+}, 500);
+});
+
+</script>
+
+</body>
+</html>

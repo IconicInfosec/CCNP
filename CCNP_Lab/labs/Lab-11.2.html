@@ -1,0 +1,2694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 11.2 - Access Control Lists - Iconic InfoSec Training</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+line-height: 1.8;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+width: 100%;
+max-width: 900px;
+margin: 20px auto;
+display: block;
+border: 2px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+/* Password Protection Modal */
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+.step-header {
+background: #f8f9fa;
+padding: 12px;
+margin: 15px 0 10px 0;
+border-left: 4px solid #667eea;
+font-weight: bold;
+color: #1e3c72;
+font-size: 1.1em;
+}
+
+.output-block {
+background: #2d2d2d;
+color: #f8f8f2;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+border: 1px solid #667eea;
+line-height: 1.8;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Password Protection Modal -->
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<!-- Header -->
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<!-- Main Content Container -->
+<div id="protectedBody" class="protected-element">
+
+<!-- Lab Content Wrapper -->
+<div class="content-wrapper">
+
+<!-- Lab Title Section -->
+<div class="lab-title">🔧 Lab 11.2: Advanced Access Control Lists (ACLs)</div>
+<div class="lab-description">Cisco CCNP 350-401 (ENCOR) - Security Fundamentals: Standard, Extended & Named ACLs</div>
+
+<!-- Lab Metadata -->
+<div class="lab-metadata">
+<strong>Lab 11.2: Access Control List Configuration & Time-Based Security Policy</strong><br>
+Duration: 120-150 minutes | Difficulty Level: Intermediate-Advanced | Lab Version: 1.0<br>
+Topics: Standard ACL, Extended ACL, Named ACL, Time-Range ACL, Telnet Security, Web Server Access Control
+</div>
+
+<!-- Lab Objective -->
+<div class="section-title">🎯 Lab Objective</div>
+<p>This comprehensive lab focuses on implementing Access Control Lists (ACLs) in a multi-site enterprise network environment. Students will master the configuration of Standard ACLs, Extended ACLs, and Named ACLs with time-based access control. Key learning outcomes include:</p>
+<ul style="margin: 15px 0 15px 30px;">
+<li>Understanding ACL types, processing order, and best practices</li>
+<li>Implementing Standard ACLs for Telnet access control</li>
+<li>Configuring Extended ACLs for web server access filtering</li>
+<li>Creating Named ACLs with time-based security policies</li>
+<li>Applying ACLs to router interfaces and VTY lines</li>
+<li>Troubleshooting ACL misconfigurations and verification</li>
+<li>Understanding wildcard masks and ACL placement strategies</li>
+</ul>
+
+<div class="alert alert-info">
+<strong>ℹ️ CCNP Alignment:</strong> This lab aligns with CCNP 350-401 (ENCOR) Section 5.0 Security Fundamentals - specifically ACL configuration, implementation, and troubleshooting for network security enforcement.
+</div>
+
+<!-- Network Topology -->
+<div class="section-title">🗺️ Network Topology</div>
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-11.2.jpg" alt="Lab 11.2 Network Topology" class="topology-image">
+
+<div class="alert alert-info">
+<strong>ℹ️ Topology Overview:</strong> This lab features a multi-site enterprise network with three routers (Local, Site-1, Site-2), dual Internet connections, a Web Server in the remote network, and a LAN segment for client access. ACLs will be implemented at strategic points to control traffic flow and enforce security policies.
+</div>
+
+<!-- Device Information -->
+<div class="section-title">📋 Device Naming & Roles</div>
+<table>
+<thead>
+<tr>
+<th>Device Name</th>
+<th>Device Type</th>
+<th>Role/Function</th>
+<th>Key Responsibilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Local</strong></td>
+<td>Cisco Router</td>
+<td>Headquarters Gateway</td>
+<td>Main site router, ACL enforcement point, VTY access control</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>Cisco Router</td>
+<td>Branch Site 1 Gateway</td>
+<td>WAN connectivity, Internet access, routing to remote sites</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>Cisco Router</td>
+<td>Branch Site 2 Gateway</td>
+<td>WAN connectivity, Internet access, backup path routing</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>Simulated ISP Router</td>
+<td>Internet Service Provider</td>
+<td>Provides Internet connectivity to both sites</td>
+</tr>
+<tr>
+<td><strong>Web Server</strong></td>
+<td>Server</td>
+<td>HTTP/HTTPS Server</td>
+<td>172.16.1.10 - Target for Extended ACL filtering</td>
+</tr>
+<tr>
+<td><strong>LAN Clients</strong></td>
+<td>End Devices</td>
+<td>Local Area Network</td>
+<td>192.168.1.0/24 network - Source traffic for ACL testing</td>
+</tr>
+</tbody>
+</table>
+
+<!-- IP Addressing Table -->
+<div class="section-title">📊 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Connected To</th>
+<th>Network Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Local</strong></td>
+<td>G0/0</td>
+<td>10.0.0.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-1 G0/0</td>
+<td>WAN Link - Local to Site-1</td>
+</tr>
+<tr>
+<td><strong>Local</strong></td>
+<td>G0/1</td>
+<td>10.0.0.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-2 G0/1</td>
+<td>WAN Link - Local to Site-2</td>
+</tr>
+<tr>
+<td><strong>Local</strong></td>
+<td>G0/2</td>
+<td>192.168.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>LAN Switch</td>
+<td>Local LAN Network</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>G0/0</td>
+<td>10.0.0.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>Local G0/0</td>
+<td>WAN Link - Site-1 to Local</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>G1/0</td>
+<td>203.81.64.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>Internet G1/0</td>
+<td>Internet Connection Site-1</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>G0/1</td>
+<td>10.0.0.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>Local G0/1</td>
+<td>WAN Link - Site-2 to Local</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>G1/1</td>
+<td>203.81.64.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>Internet G1/1</td>
+<td>Internet Connection Site-2</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>G1/0</td>
+<td>203.81.64.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-1 G1/0</td>
+<td>ISP Link to Site-1</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>G1/1</td>
+<td>203.81.64.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-2 G1/1</td>
+<td>ISP Link to Site-2</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>G0/0</td>
+<td>172.16.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Remote Network</td>
+<td>Remote Network Gateway</td>
+</tr>
+<tr>
+<td><strong>Web Server</strong></td>
+<td>NIC</td>
+<td>172.16.1.10</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internet G0/0</td>
+<td>HTTP/HTTPS Web Server</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Network Summary -->
+<div class="section-title">📡 Network Summary</div>
+<table>
+<thead>
+<tr>
+<th>Network Segment</th>
+<th>Network Address</th>
+<th>Subnet Mask</th>
+<th>Usable IPs</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Local ↔ Site-1 WAN</td>
+<td>10.0.0.0</td>
+<td>255.255.255.252</td>
+<td>10.0.0.1 - 10.0.0.2</td>
+<td>Point-to-Point WAN Link</td>
+</tr>
+<tr>
+<td>Local ↔ Site-2 WAN</td>
+<td>10.0.0.4</td>
+<td>255.255.255.252</td>
+<td>10.0.0.5 - 10.0.0.6</td>
+<td>Point-to-Point WAN Link</td>
+</tr>
+<tr>
+<td>Site-1 ↔ Internet</td>
+<td>203.81.64.0</td>
+<td>255.255.255.252</td>
+<td>203.81.64.1 - 203.81.64.2</td>
+<td>Internet Connection 1</td>
+</tr>
+<tr>
+<td>Site-2 ↔ Internet</td>
+<td>203.81.64.4</td>
+<td>255.255.255.252</td>
+<td>203.81.64.5 - 203.81.64.6</td>
+<td>Internet Connection 2</td>
+</tr>
+<tr>
+<td>Local LAN</td>
+<td>192.168.1.0</td>
+<td>255.255.255.0</td>
+<td>192.168.1.1 - 192.168.1.254</td>
+<td>Headquarters User Network</td>
+</tr>
+<tr>
+<td>Remote Network</td>
+<td>172.16.1.0</td>
+<td>255.255.255.0</td>
+<td>172.16.1.1 - 172.16.1.254</td>
+<td>Internet-facing Remote Site</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-warning">
+<strong>⚠️ Important:</strong> All /30 networks use only 2 usable IP addresses. The Local LAN (192.168.1.0/24) provides 254 usable addresses for workstations. Web Server (172.16.1.10) is the primary target for ACL filtering demonstrations.
+</div>
+
+<!-- ACL Requirements Overview -->
+<div class="section-title">🔒 ACL Requirements Overview</div>
+<table>
+<thead>
+<tr>
+<th>ACL Type</th>
+<th>ACL Number/Name</th>
+<th>Purpose</th>
+<th>Application Point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Standard ACL</td>
+<td>ACL 10</td>
+<td>Telnet VTY Line Access Control</td>
+<td>Local Router VTY Lines</td>
+</tr>
+<tr>
+<td>Extended ACL</td>
+<td>ACL 100</td>
+<td>Web Server HTTP/HTTPS Filtering</td>
+<td>Local Router G0/0 (outbound)</td>
+</tr>
+<tr>
+<td>Named ACL</td>
+<td>TIME_BASED_ACCESS</td>
+<td>Time-Range Based Access Control</td>
+<td>Local Router G0/2 (inbound)</td>
+</tr>
+<tr>
+<td>Time-Range</td>
+<td>BUSINESS_HOURS</td>
+<td>Define business hours: Mon-Fri 09:00-17:00</td>
+<td>Used by Named ACL</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Step-by-Step Configuration -->
+<div class="section-title">⚙️ Step-by-Step Configuration Guide</div>
+
+<!-- STEP 1: Basic Interface Configuration -->
+<div class="step-header">Step 1: Basic Interface Configuration (All Routers)</div>
+
+<p><strong>Configure Local Router (Headquarters)</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Local Router Configuration<br>
+! ========================================<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Local<br>
+Local(config)#<br>
+<br>
+! Configure WAN Link to Site-1 (G0/0)<br>
+Local(config)# interface GigabitEthernet0/0<br>
+Local(config-if)# description ** WAN Link to Site-1 **<br>
+Local(config-if)# ip address 10.0.0.1 255.255.255.252<br>
+Local(config-if)# no shutdown<br>
+Local(config-if)# exit<br>
+<br>
+! Configure WAN Link to Site-2 (G0/1)<br>
+Local(config)# interface GigabitEthernet0/1<br>
+Local(config-if)# description ** WAN Link to Site-2 **<br>
+Local(config-if)# ip address 10.0.0.5 255.255.255.252<br>
+Local(config-if)# no shutdown<br>
+Local(config-if)# exit<br>
+<br>
+! Configure Local LAN Interface (G0/2)<br>
+Local(config)# interface GigabitEthernet0/2<br>
+Local(config-if)# description ** Local LAN Network 192.168.1.0/24 **<br>
+Local(config-if)# ip address 192.168.1.1 255.255.255.0<br>
+Local(config-if)# no shutdown<br>
+Local(config-if)# exit<br>
+<br>
+! Save Configuration<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<p><strong>Configure Site-1 Router</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Site-1 Router Configuration<br>
+! ========================================<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Site-1<br>
+Site-1(config)#<br>
+<br>
+! Configure WAN Link to Local (G0/0)<br>
+Site-1(config)# interface GigabitEthernet0/0<br>
+Site-1(config-if)# description ** WAN Link to Local **<br>
+Site-1(config-if)# ip address 10.0.0.2 255.255.255.252<br>
+Site-1(config-if)# no shutdown<br>
+Site-1(config-if)# exit<br>
+<br>
+! Configure Internet Link (G1/0)<br>
+Site-1(config)# interface GigabitEthernet1/0<br>
+Site-1(config-if)# description ** Internet Connection **<br>
+Site-1(config-if)# ip address 203.81.64.1 255.255.255.252<br>
+Site-1(config-if)# no shutdown<br>
+Site-1(config-if)# exit<br>
+<br>
+! Save Configuration<br>
+Site-1(config)# end<br>
+Site-1# write memory<br>
+</div>
+
+<p><strong>Configure Site-2 Router</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Site-2 Router Configuration<br>
+! ========================================<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Site-2<br>
+Site-2(config)#<br>
+<br>
+! Configure WAN Link to Local (G0/1)<br>
+Site-2(config)# interface GigabitEthernet0/1<br>
+Site-2(config-if)# description ** WAN Link to Local **<br>
+Site-2(config-if)# ip address 10.0.0.6 255.255.255.252<br>
+Site-2(config-if)# no shutdown<br>
+Site-2(config-if)# exit<br>
+<br>
+! Configure Internet Link (G1/1)<br>
+Site-2(config)# interface GigabitEthernet1/1<br>
+Site-2(config-if)# description ** Internet Connection **<br>
+Site-2(config-if)# ip address 203.81.64.5 255.255.255.252<br>
+Site-2(config-if)# no shutdown<br>
+Site-2(config-if)# exit<br>
+<br>
+! Save Configuration<br>
+Site-2(config)# end<br>
+Site-2# write memory<br>
+</div>
+
+<p><strong>Configure Internet Router (ISP Simulation)</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Internet Router Configuration<br>
+! ========================================<br>
+<br>
+Router> enable<br>
+Router# configure terminal<br>
+Router(config)# hostname Internet<br>
+Internet(config)#<br>
+<br>
+! Configure Link to Site-1 (G1/0)<br>
+Internet(config)# interface GigabitEthernet1/0<br>
+Internet(config-if)# description ** ISP Link to Site-1 **<br>
+Internet(config-if)# ip address 203.81.64.2 255.255.255.252<br>
+Internet(config-if)# no shutdown<br>
+Internet(config-if)# exit<br>
+<br>
+! Configure Link to Site-2 (G1/1)<br>
+Internet(config)# interface GigabitEthernet1/1<br>
+Internet(config-if)# description ** ISP Link to Site-2 **<br>
+Internet(config-if)# ip address 203.81.64.6 255.255.255.252<br>
+Internet(config-if)# no shutdown<br>
+Internet(config-if)# exit<br>
+<br>
+! Configure Remote Network Interface (G0/0)<br>
+Internet(config)# interface GigabitEthernet0/0<br>
+Internet(config-if)# description ** Remote Network Gateway **<br>
+Internet(config-if)# ip address 172.16.1.1 255.255.255.0<br>
+Internet(config-if)# no shutdown<br>
+Internet(config-if)# exit<br>
+<br>
+! Save Configuration<br>
+Internet(config)# end<br>
+Internet# write memory<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 1:</strong> After configuring interfaces, verify all interfaces are up using <code>show ip interface brief</code> on each router. Ensure no interfaces show "administratively down" status.
+</div>
+
+<!-- STEP 2: Routing Configuration -->
+<div class="step-header">Step 2: Static Routing Configuration</div>
+
+<p><strong>Configure Static Routes on Local Router</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Static Routing<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Route to Remote Network (172.16.1.0/24) via Site-1 (primary path)<br>
+Local(config)# ip route 172.16.1.0 255.255.255.0 10.0.0.2<br>
+<br>
+! Route to Internet Network (203.81.64.0/30) via Site-1<br>
+Local(config)# ip route 203.81.64.0 255.255.255.252 10.0.0.2<br>
+<br>
+! Route to Internet Network (203.81.64.4/30) via Site-2<br>
+Local(config)# ip route 203.81.64.4 255.255.255.252 10.0.0.6<br>
+<br>
+! Default route via Site-1 (primary Internet path)<br>
+Local(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.2<br>
+<br>
+! Backup default route via Site-2 (higher AD)<br>
+Local(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.6 10<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<p><strong>Configure Static Routes on Site-1 Router</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Site-1 Router - Static Routing<br>
+! ========================================<br>
+<br>
+Site-1# configure terminal<br>
+<br>
+! Route to Local LAN (192.168.1.0/24) via Local router<br>
+Site-1(config)# ip route 192.168.1.0 255.255.255.0 10.0.0.1<br>
+<br>
+! Route to Remote Network (172.16.1.0/24) via Internet<br>
+Site-1(config)# ip route 172.16.1.0 255.255.255.0 203.81.64.2<br>
+<br>
+! Default route to Internet<br>
+Site-1(config)# ip route 0.0.0.0 0.0.0.0 203.81.64.2<br>
+<br>
+Site-1(config)# end<br>
+Site-1# write memory<br>
+</div>
+
+<p><strong>Configure Static Routes on Site-2 Router</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Site-2 Router - Static Routing<br>
+! ========================================<br>
+<br>
+Site-2# configure terminal<br>
+<br>
+! Route to Local LAN (192.168.1.0/24) via Local router<br>
+Site-2(config)# ip route 192.168.1.0 255.255.255.0 10.0.0.5<br>
+<br>
+! Route to Remote Network (172.16.1.0/24) via Internet<br>
+Site-2(config)# ip route 172.16.1.0 255.255.255.0 203.81.64.6<br>
+<br>
+! Default route to Internet<br>
+Site-2(config)# ip route 0.0.0.0 0.0.0.0 203.81.64.6<br>
+<br>
+Site-2(config)# end<br>
+Site-2# write memory<br>
+</div>
+
+<p><strong>Configure Static Routes on Internet Router</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Internet Router - Static Routing<br>
+! ========================================<br>
+<br>
+Internet# configure terminal<br>
+<br>
+! Route to Local LAN via Site-1<br>
+Internet(config)# ip route 192.168.1.0 255.255.255.0 203.81.64.1<br>
+<br>
+! Route to Local-Site-1 WAN link via Site-1<br>
+Internet(config)# ip route 10.0.0.0 255.255.255.252 203.81.64.1<br>
+<br>
+! Route to Local-Site-2 WAN link via Site-2<br>
+Internet(config)# ip route 10.0.0.4 255.255.255.252 203.81.64.5<br>
+<br>
+Internet(config)# end<br>
+Internet# write memory<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Step 2:</strong> Test end-to-end connectivity with <code>ping</code> commands. From Local router, ping 172.16.1.10 (Web Server). Use <code>show ip route</code> to verify all routes are installed.
+</div>
+
+<!-- STEP 3: Standard ACL for Telnet Access -->
+<div class="step-header">Step 3: Standard ACL Configuration - Telnet VTY Access Control</div>
+
+<p><strong>Understanding Standard ACLs</strong></p>
+<div class="alert alert-info">
+<strong>ℹ️ Standard ACL Characteristics:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li>ACL Number Range: 1-99 and 1300-1999</li>
+<li>Filters based on SOURCE IP ADDRESS ONLY</li>
+<li>Cannot filter based on destination, protocol, or port numbers</li>
+<li>Should be placed CLOSE TO DESTINATION</li>
+<li>Common use: VTY line access control, route filtering</li>
+<li>Implicit deny all at the end of every ACL</li>
+</ul>
+</div>
+
+<p><strong>Scenario:</strong> Restrict Telnet access to the Local router. Only allow management from specific IP addresses in the 192.168.1.0/24 network.</p>
+
+<p><strong>Requirements:</strong></p>
+<ul style="margin: 10px 0 10px 30px;">
+<li>Allow Telnet access from 192.168.1.10 (Network Administrator PC)</li>
+<li>Allow Telnet access from 192.168.1.20 (IT Manager PC)</li>
+<li>Deny all other Telnet access attempts</li>
+</ul>
+
+<p><strong>Configure Standard ACL on Local Router</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Standard ACL for Telnet<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Create Standard ACL 10<br>
+Local(config)# access-list 10 remark ** VTY Access Control - Telnet Security **<br>
+Local(config)# access-list 10 permit host 192.168.1.10<br>
+Local(config)# access-list 10 permit host 192.168.1.20<br>
+Local(config)# access-list 10 deny any log<br>
+<br>
+! Configure VTY Lines for Telnet/SSH<br>
+Local(config)# line vty 0 4<br>
+Local(config-line)# password cisco123<br>
+Local(config-line)# login<br>
+Local(config-line)# transport input telnet ssh<br>
+Local(config-line)# access-class 10 in<br>
+Local(config-line)# exec-timeout 10 0<br>
+Local(config-line)# logging synchronous<br>
+Local(config-line)# exit<br>
+<br>
+! Enable Telnet by setting enable password<br>
+Local(config)# enable secret class123<br>
+Local(config)# service password-encryption<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ ACL Placement Best Practice:</strong> Standard ACLs should be placed as close to the DESTINATION as possible because they only filter on source IP. Placing them too early in the network path could block legitimate traffic to other destinations.
+</div>
+
+<p><strong>Alternative Configuration - Using Named Standard ACL</strong></p>
+<div class="code-block">
+! Alternative: Named Standard ACL<br>
+<br>
+Local(config)# ip access-list standard TELNET_ACCESS<br>
+Local(config-std-nacl)# remark Allow Network Admin<br>
+Local(config-std-nacl)# permit host 192.168.1.10<br>
+Local(config-std-nacl)# remark Allow IT Manager<br>
+Local(config-std-nacl)# permit host 192.168.1.20<br>
+Local(config-std-nacl)# deny any log<br>
+Local(config-std-nacl)# exit<br>
+<br>
+Local(config)# line vty 0 4<br>
+Local(config-line)# access-class TELNET_ACCESS in<br>
+Local(config-line)# exit<br>
+</div>
+
+<p><strong>Understanding Wildcard Masks</strong></p>
+<div class="alert alert-info">
+<strong>ℹ️ Wildcard Mask Examples:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Single Host:</strong> 0.0.0.0 or use keyword "host"</li>
+<li><strong>/24 Network:</strong> 0.0.0.255 (matches 192.168.1.0 - 192.168.1.255)</li>
+<li><strong>/16 Network:</strong> 0.0.255.255 (matches 172.16.0.0 - 172.16.255.255)</li>
+<li><strong>Any Address:</strong> 255.255.255.255 or use keyword "any"</li>
+<li><strong>Subnet /28:</strong> 0.0.0.15 (matches 16 IP addresses)</li>
+</ul>
+Formula: Wildcard Mask = 255.255.255.255 - Subnet Mask
+</div>
+
+<!-- STEP 4: Extended ACL for Web Server Access -->
+<div class="step-header">Step 4: Extended ACL Configuration - Web Server Access Control</div>
+
+<p><strong>Understanding Extended ACLs</strong></p>
+<div class="alert alert-info">
+<strong>ℹ️ Extended ACL Characteristics:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li>ACL Number Range: 100-199 and 2000-2699</li>
+<li>Filters based on: Source IP, Destination IP, Protocol, Port Numbers</li>
+<li>Granular control over traffic types (TCP, UDP, ICMP, etc.)</li>
+<li>Should be placed CLOSE TO SOURCE</li>
+<li>Common use: Traffic filtering, security policies, QoS marking</li>
+<li>Supports "established" keyword for stateful filtering</li>
+</ul>
+</div>
+
+<p><strong>Scenario:</strong> Control access to the Web Server (172.16.1.10) from the Local LAN. Only specific hosts can access HTTP (port 80) and HTTPS (port 443).</p>
+
+<p><strong>Requirements:</strong></p>
+<ul style="margin: 10px 0 10px 30px;">
+<li>Allow HTTP (TCP 80) access to 172.16.1.10 from 192.168.1.0/24 network</li>
+<li>Allow HTTPS (TCP 443) access to 172.16.1.10 from 192.168.1.0/24 network</li>
+<li>Deny HTTP/HTTPS from host 192.168.1.50 (Restricted user)</li>
+<li>Allow ICMP (ping) for network troubleshooting</li>
+<li>Allow established TCP connections (return traffic)</li>
+<li>Log denied access attempts</li>
+</ul>
+
+<p><strong>Configure Extended ACL on Local Router</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Extended ACL for Web Access<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Create Extended ACL 100<br>
+Local(config)# access-list 100 remark ** Web Server Access Control **<br>
+<br>
+! Deny HTTP/HTTPS from restricted host 192.168.1.50<br>
+Local(config)# access-list 100 deny tcp host 192.168.1.50 host 172.16.1.10 eq 80 log<br>
+Local(config)# access-list 100 deny tcp host 192.168.1.50 host 172.16.1.10 eq 443 log<br>
+<br>
+! Allow HTTP (port 80) to Web Server from Local LAN<br>
+Local(config)# access-list 100 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq 80<br>
+<br>
+! Allow HTTPS (port 443) to Web Server from Local LAN<br>
+Local(config)# access-list 100 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq 443<br>
+<br>
+! Allow established TCP connections (return traffic)<br>
+Local(config)# access-list 100 permit tcp any any established<br>
+<br>
+! Allow ICMP for troubleshooting (ping, traceroute)<br>
+Local(config)# access-list 100 permit icmp any any<br>
+<br>
+! Allow all other internal traffic between sites<br>
+Local(config)# access-list 100 permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.0.0.255<br>
+<br>
+! Implicit deny all (logged)<br>
+Local(config)# access-list 100 deny ip any any log<br>
+<br>
+! Apply ACL to outbound traffic on G0/0 (toward Site-1)<br>
+Local(config)# interface GigabitEthernet0/0<br>
+Local(config-if)# ip access-group 100 out<br>
+Local(config-if)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<p><strong>Extended ACL - Port Number Reference</strong></p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Protocol</th>
+<th>Port Number</th>
+<th>ACL Syntax Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTP</td>
+<td>TCP</td>
+<td>80</td>
+<td><code>permit tcp any any eq 80</code> or <code>eq www</code></td>
+</tr>
+<tr>
+<td>HTTPS</td>
+<td>TCP</td>
+<td>443</td>
+<td><code>permit tcp any any eq 443</code></td>
+</tr>
+<tr>
+<td>Telnet</td>
+<td>TCP</td>
+<td>23</td>
+<td><code>permit tcp any any eq 23</code> or <code>eq telnet</code></td>
+</tr>
+<tr>
+<td>SSH</td>
+<td>TCP</td>
+<td>22</td>
+<td><code>permit tcp any any eq 22</code></td>
+</tr>
+<tr>
+<td>FTP</td>
+<td>TCP</td>
+<td>20, 21</td>
+<td><code>permit tcp any any eq 21</code></td>
+</tr>
+<tr>
+<td>DNS</td>
+<td>UDP</td>
+<td>53</td>
+<td><code>permit udp any any eq 53</code> or <code>eq domain</code></td>
+</tr>
+<tr>
+<td>SMTP</td>
+<td>TCP</td>
+<td>25</td>
+<td><code>permit tcp any any eq 25</code> or <code>eq smtp</code></td>
+</tr>
+<tr>
+<td>ICMP (Ping)</td>
+<td>ICMP</td>
+<td>N/A</td>
+<td><code>permit icmp any any</code></td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-warning">
+<strong>⚠️ ACL Direction:</strong> "in" means traffic entering the interface, "out" means traffic exiting the interface. Extended ACLs are typically applied OUTBOUND at the source to filter traffic early in the path.
+</div>
+
+<!-- STEP 5: Named ACL with Time-Based Access -->
+<div class="step-header">Step 5: Named Extended ACL with Time-Range Configuration</div>
+
+<p><strong>Understanding Named ACLs and Time-Based ACLs</strong></p>
+<div class="alert alert-info">
+<strong>ℹ️ Named ACL & Time-Range Features:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Named ACLs:</strong> Use descriptive names instead of numbers (easier to manage)</li>
+<li><strong>Advantages:</strong> Insert/delete specific entries, better documentation, no number limits</li>
+<li><strong>Time-Range:</strong> Apply ACL rules only during specific times/days</li>
+<li><strong>Use Cases:</strong> Business hours access, bandwidth management, scheduled maintenance</li>
+<li><strong>Syntax:</strong> time-range NAME → periodic days HH:MM to HH:MM</li>
+</ul>
+</div>
+
+<p><strong>Scenario:</strong> Implement time-based access control for the Local LAN. Allow internet access only during business hours (Monday-Friday, 09:00-17:00).</p>
+
+<p><strong>Requirements:</strong></p>
+<ul style="margin: 10px 0 10px 30px;">
+<li>Define business hours: Monday-Friday, 09:00-17:00</li>
+<li>Allow all traffic during business hours</li>
+<li>Outside business hours: Block HTTP/HTTPS, allow critical services</li>
+<li>Always allow DNS, ICMP, and internal network traffic</li>
+<li>Use Named Extended ACL for better management</li>
+</ul>
+
+<p><strong>Step 5.1: Create Time-Range Definition</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Time-Range Configuration<br>
+! ========================================<br>
+<br>
+Local# configure terminal<br>
+<br>
+! Define Business Hours Time-Range<br>
+Local(config)# time-range BUSINESS_HOURS<br>
+Local(config-time-range)# periodic Monday Tuesday Wednesday Thursday Friday 09:00 to 17:00<br>
+Local(config-time-range)# exit<br>
+<br>
+! Optional: Define After-Hours Time-Range<br>
+Local(config)# time-range AFTER_HOURS<br>
+Local(config-time-range)# periodic Monday Tuesday Wednesday Thursday Friday 17:01 to 08:59<br>
+Local(config-time-range)# periodic Saturday Sunday 00:00 to 23:59<br>
+Local(config-time-range)# exit<br>
+</div>
+
+<p><strong>Step 5.2: Create Named Extended ACL with Time-Based Rules</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Named Extended ACL with Time-Range<br>
+! ========================================<br>
+<br>
+! Create Named Extended ACL<br>
+Local(config)# ip access-list extended TIME_BASED_ACCESS<br>
+Local(config-ext-nacl)# remark ** Time-Based Internet Access Control **<br>
+<br>
+! === BUSINESS HOURS RULES (09:00-17:00 Mon-Fri) ===<br>
+Local(config-ext-nacl)# remark Allow all traffic during business hours<br>
+Local(config-ext-nacl)# permit ip 192.168.1.0 0.0.0.255 any time-range BUSINESS_HOURS<br>
+<br>
+! === AFTER-HOURS RULES ===<br>
+Local(config-ext-nacl)# remark Block HTTP during after-hours<br>
+Local(config-ext-nacl)# deny tcp 192.168.1.0 0.0.0.255 any eq 80 time-range AFTER_HOURS log<br>
+Local(config-ext-nacl)# remark Block HTTPS during after-hours<br>
+Local(config-ext-nacl)# deny tcp 192.168.1.0 0.0.0.255 any eq 443 time-range AFTER_HOURS log<br>
+<br>
+! === ALWAYS ALLOWED SERVICES ===<br>
+Local(config-ext-nacl)# remark Always allow DNS (critical service)<br>
+Local(config-ext-nacl)# permit udp 192.168.1.0 0.0.0.255 any eq 53<br>
+Local(config-ext-nacl)# permit tcp 192.168.1.0 0.0.0.255 any eq 53<br>
+<br>
+Local(config-ext-nacl)# remark Always allow ICMP for troubleshooting<br>
+Local(config-ext-nacl)# permit icmp 192.168.1.0 0.0.0.255 any<br>
+<br>
+Local(config-ext-nacl)# remark Always allow SSH (remote management)<br>
+Local(config-ext-nacl)# permit tcp 192.168.1.0 0.0.0.255 any eq 22<br>
+<br>
+Local(config-ext-nacl)# remark Allow established connections (return traffic)<br>
+Local(config-ext-nacl)# permit tcp any any established<br>
+<br>
+Local(config-ext-nacl)# remark Allow internal network communication<br>
+Local(config-ext-nacl)# permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.0.255.255<br>
+<br>
+! === FINAL DENY (logged) ===<br>
+Local(config-ext-nacl)# deny ip any any log<br>
+Local(config-ext-nacl)# exit<br>
+<br>
+! Apply Named ACL to Local LAN Interface (G0/2)<br>
+Local(config)# interface GigabitEthernet0/2<br>
+Local(config-if)# ip access-group TIME_BASED_ACCESS in<br>
+Local(config-if)# exit<br>
+<br>
+Local(config)# end<br>
+Local# write memory<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Important Note:</strong> Time-based ACLs require accurate router clock settings. Use NTP (Network Time Protocol) or manually set the clock with <code>clock set HH:MM:SS DD MONTH YYYY</code> command.
+</div>
+
+<p><strong>Step 5.3: Configure Router Clock and Timezone</strong></p>
+<div class="code-block">
+! Set timezone and clock<br>
+<br>
+Local# configure terminal<br>
+Local(config)# clock timezone SGT 8<br>
+Local(config)# exit<br>
+<br>
+! Manually set clock (if NTP not available)<br>
+Local# clock set 14:30:00 15 January 2026<br>
+<br>
+! Verify time-range status<br>
+Local# show time-range<br>
+</div>
+
+<!-- STEP 6: ACL Management and Editing -->
+<div class="step-header">Step 6: ACL Management - Editing and Troubleshooting</div>
+
+<p><strong>Named ACL Advantages - Inserting and Deleting Entries</strong></p>
+<div class="alert alert-info">
+<strong>ℹ️ Named ACL Management:</strong> Unlike numbered ACLs, Named ACLs allow you to insert, delete, and modify specific entries without recreating the entire ACL. Each entry has a sequence number.
+</div>
+
+<div class="code-block">
+! ========================================<br>
+! Named ACL Editing Examples<br>
+! ========================================<br>
+<br>
+! View ACL with sequence numbers<br>
+Local# show ip access-lists TIME_BASED_ACCESS<br>
+<br>
+! Insert a new entry at sequence number 15<br>
+Local(config)# ip access-list extended TIME_BASED_ACCESS<br>
+Local(config-ext-nacl)# 15 permit tcp host 192.168.1.100 any eq 443<br>
+Local(config-ext-nacl)# exit<br>
+<br>
+! Delete a specific entry by sequence number<br>
+Local(config)# ip access-list extended TIME_BASED_ACCESS<br>
+Local(config-ext-nacl)# no 15<br>
+Local(config-ext-nacl)# exit<br>
+<br>
+! Add remark for documentation<br>
+Local(config)# ip access-list extended TIME_BASED_ACCESS<br>
+Local(config-ext-nacl)# remark ** VIP User Exception - Full Access **<br>
+Local(config-ext-nacl)# permit ip host 192.168.1.99 any<br>
+Local(config-ext-nacl)# exit<br>
+</div>
+
+<p><strong>Numbered ACL Editing (More Restrictive)</strong></p>
+<div class="code-block">
+! For numbered ACLs, you must remove and recreate<br>
+<br>
+! Remove entire ACL<br>
+Local(config)# no access-list 100<br>
+<br>
+! Recreate with modifications<br>
+Local(config)# access-list 100 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq 80<br>
+! ... add remaining entries ...<br>
+</div>
+
+<p><strong>ACL Resequencing</strong></p>
+<div class="code-block">
+! Resequence ACL entries (start at 10, increment by 10)<br>
+Local(config)# ip access-list resequence TIME_BASED_ACCESS 10 10<br>
+<br>
+! This renumbers entries: 10, 20, 30, 40... for easier insertion<br>
+</div>
+
+<!-- Verification Section -->
+<div class="section-title">✓ Verification and Testing Procedures</div>
+
+<p><strong>1. Verify Interface Configuration</strong></p>
+<div class="code-block">
+! Check interface status<br>
+Local# show ip interface brief<br>
+<br>
+! Expected Output: All interfaces "up/up"<br>
+! G0/0, G0/1, G0/2 should show configured IP addresses<br>
+</div>
+
+<p><strong>2. Verify Routing Table</strong></p>
+<div class="code-block">
+! Display routing table<br>
+Local# show ip route<br>
+<br>
+! Verify routes to:<br>
+! - 172.16.1.0/24 (Remote Network)<br>
+! - 203.81.64.0/30 and 203.81.64.4/30 (Internet links)<br>
+! - Default route 0.0.0.0/0<br>
+</div>
+
+<p><strong>3. Verify ACL Configuration</strong></p>
+<div class="code-block">
+! Show all ACLs<br>
+Local# show access-lists<br>
+<br>
+! Show specific ACL<br>
+Local# show access-list 10<br>
+Local# show access-list 100<br>
+Local# show ip access-list TIME_BASED_ACCESS<br>
+<br>
+! Show ACL hit counts (matches)<br>
+Local# show access-lists<br>
+! Look for "matches" count - indicates traffic hitting each rule<br>
+</div>
+
+<p><strong>Expected Output - Standard ACL 10:</strong></p>
+<div class="output-block">
+Local# show access-list 10<br>
+Standard IP access list 10<br>
+    10 permit 192.168.1.10 (5 matches)<br>
+    20 permit 192.168.1.20 (2 matches)<br>
+    30 deny   any log (15 matches)<br>
+</div>
+
+<p><strong>Expected Output - Extended ACL 100:</strong></p>
+<div class="output-block">
+Local# show access-list 100<br>
+Extended IP access list 100<br>
+    10 deny tcp host 192.168.1.50 host 172.16.1.10 eq www log (3 matches)<br>
+    20 deny tcp host 192.168.1.50 host 172.16.1.10 eq 443 log (1 match)<br>
+    30 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq www (47 matches)<br>
+    40 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq 443 (32 matches)<br>
+    50 permit tcp any any established (156 matches)<br>
+    60 permit icmp any any (28 matches)<br>
+    70 permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.0.0.255 (89 matches)<br>
+    80 deny ip any any log (12 matches)<br>
+</div>
+
+<p><strong>4. Verify Time-Range Configuration</strong></p>
+<div class="code-block">
+! Show all time-ranges<br>
+Local# show time-range<br>
+<br>
+! Check if time-range is currently active<br>
+</div>
+
+<p><strong>Expected Output - Time-Range:</strong></p>
+<div class="output-block">
+Local# show time-range<br>
+time-range entry: BUSINESS_HOURS (active)<br>
+   periodic Monday Tuesday Wednesday Thursday Friday 09:00 to 17:00<br>
+   Used in: IP ACL entry TIME_BASED_ACCESS<br>
+<br>
+time-range entry: AFTER_HOURS (inactive)<br>
+   periodic Monday Tuesday Wednesday Thursday Friday 17:01 to 08:59<br>
+   periodic Saturday Sunday 00:00 to 23:59<br>
+   Used in: IP ACL entry TIME_BASED_ACCESS<br>
+</div>
+
+<p><strong>5. Verify ACL Application on Interfaces</strong></p>
+<div class="code-block">
+! Show ACLs applied to interfaces<br>
+Local# show ip interface GigabitEthernet0/0<br>
+<br>
+! Look for "Outgoing access list is 100"<br>
+<br>
+Local# show ip interface GigabitEthernet0/2<br>
+<br>
+! Look for "Inbound access list is TIME_BASED_ACCESS"<br>
+</div>
+
+<p><strong>Expected Output:</strong></p>
+<div class="output-block">
+Local# show ip interface GigabitEthernet0/0<br>
+GigabitEthernet0/0 is up, line protocol is up<br>
+  Internet address is 10.0.0.1/30<br>
+  Broadcast address is 255.255.255.255<br>
+  Address determined by setup command<br>
+  MTU is 1500 bytes<br>
+  Helper address is not set<br>
+  Directed broadcast forwarding is disabled<br>
+  Outgoing access list is 100<br>
+  Inbound access list is not set<br>
+  ...<br>
+</div>
+
+<p><strong>6. Test Connectivity with Ping</strong></p>
+<div class="code-block">
+! Test reachability to Web Server<br>
+Local# ping 172.16.1.10<br>
+<br>
+! Test from LAN client (if possible)<br>
+PC> ping 172.16.1.10<br>
+<br>
+! Traceroute to verify path<br>
+Local# traceroute 172.16.1.10<br>
+</div>
+
+<p><strong>7. Test Telnet Access Control (Standard ACL)</strong></p>
+<div class="code-block">
+! From allowed host 192.168.1.10 - SHOULD SUCCEED<br>
+PC-192.168.1.10> telnet 192.168.1.1<br>
+<br>
+! From denied host 192.168.1.30 - SHOULD FAIL<br>
+PC-192.168.1.30> telnet 192.168.1.1<br>
+! Expected: Connection refused or timeout<br>
+<br>
+! Check VTY line configuration<br>
+Local# show line vty 0 4<br>
+</div>
+
+<p><strong>8. Test Web Access (Extended ACL)</strong></p>
+<div class="code-block">
+! From allowed host 192.168.1.10 - SHOULD SUCCEED<br>
+PC-192.168.1.10> curl http://172.16.1.10<br>
+PC-192.168.1.10> curl https://172.16.1.10<br>
+<br>
+! From restricted host 192.168.1.50 - SHOULD FAIL<br>
+PC-192.168.1.50> curl http://172.16.1.10<br>
+! Expected: Connection timeout or denied<br>
+<br>
+! Check ACL hit counters<br>
+Local# show access-list 100 | include 192.168.1.50<br>
+</div>
+
+<p><strong>9. Test Time-Based ACL</strong></p>
+<div class="code-block">
+! During business hours (Mon-Fri 09:00-17:00)<br>
+! All traffic should be permitted<br>
+<br>
+! Outside business hours<br>
+! HTTP/HTTPS should be blocked, DNS/SSH/ICMP allowed<br>
+<br>
+! Change router time to test (for lab purposes)<br>
+Local# clock set 20:00:00 15 January 2026<br>
+<br>
+! Verify time-range status changed<br>
+Local# show time-range<br>
+! BUSINESS_HOURS should show (inactive)<br>
+! AFTER_HOURS should show (active)<br>
+<br>
+! Test web access - should be denied<br>
+PC> curl http://172.16.1.10<br>
+<br>
+! Test DNS - should still work<br>
+PC> nslookup www.example.com<br>
+</div>
+
+<p><strong>10. Monitor ACL Logs</strong></p>
+<div class="code-block">
+! View ACL log messages<br>
+Local# show logging | include ACL<br>
+<br>
+! Enable console logging for real-time monitoring<br>
+Local(config)# logging console informational<br>
+<br>
+! Clear ACL counters to start fresh<br>
+Local# clear access-list counters<br>
+</div>
+
+<!-- Comprehensive Verification Checklist -->
+<div class="section-title">📋 Comprehensive Verification Checklist</div>
+
+<ul class="checklist">
+<li>☐ <strong>Interface Status:</strong> All interfaces show "up/up" status on all routers</li>
+<li>☐ <strong>IP Addressing:</strong> All interfaces have correct IP addresses assigned</li>
+<li>☐ <strong>Routing:</strong> Static routes installed correctly, ping 172.16.1.10 successful</li>
+<li>☐ <strong>Standard ACL 10:</strong> Created and applied to VTY lines on Local router</li>
+<li>☐ <strong>Telnet Access:</strong> Host 192.168.1.10 can telnet to Local router</li>
+<li>☐ <strong>Telnet Denial:</strong> Other hosts (e.g., 192.168.1.30) cannot telnet to Local router</li>
+<li>☐ <strong>Extended ACL 100:</strong> Created and applied outbound on Local G0/0</li>
+<li>☐ <strong>Web Access Allowed:</strong> 192.168.1.0/24 hosts (except .50) can access 172.16.1.10:80/443</li>
+<li>☐ <strong>Web Access Denied:</strong> Host 192.168.1.50 denied access to web server (logged)</li>
+<li>☐ <strong>Time-Range:</strong> BUSINESS_HOURS time-range created and shows correct status</li>
+<li>☐ <strong>Named ACL:</strong> TIME_BASED_ACCESS created with time-range entries</li>
+<li>☐ <strong>Time-Based ACL:</strong> Applied inbound on Local G0/2</li>
+<li>☐ <strong>Business Hours Test:</strong> All traffic permitted during Mon-Fri 09:00-17:00</li>
+<li>☐ <strong>After Hours Test:</strong> HTTP/HTTPS blocked, DNS/SSH/ICMP allowed outside business hours</li>
+<li>☐ <strong>ACL Hit Counts:</strong> All ACL entries show match counters incrementing</li>
+<li>☐ <strong>ACL Logging:</strong> Denied traffic generates log messages</li>
+<li>☐ <strong>Router Clock:</strong> System clock set correctly for time-range accuracy</li>
+<li>☐ <strong>Configuration Saved:</strong> All configurations saved with "write memory"</li>
+</ul>
+
+<!-- Troubleshooting Guide -->
+<div class="section-title">🔧 Troubleshooting Guide</div>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 1: Telnet Access Not Working</strong>
+</div>
+
+<p><strong>Symptoms:</strong> Cannot telnet to Local router even from allowed host 192.168.1.10</p>
+
+<p><strong>Possible Causes & Solutions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Diagnostic Command</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VTY password not configured</td>
+<td><code>show running-config | section line vty</code></td>
+<td>Configure: <code>line vty 0 4</code><br><code>password cisco123</code><br><code>login</code></td>
+</tr>
+<tr>
+<td>ACL not applied to VTY lines</td>
+<td><code>show line vty 0 4</code></td>
+<td>Apply: <code>line vty 0 4</code><br><code>access-class 10 in</code></td>
+</tr>
+<tr>
+<td>Wrong source IP in ACL</td>
+<td><code>show access-list 10</code></td>
+<td>Verify permit entries match client IP addresses</td>
+</tr>
+<tr>
+<td>Telnet not enabled</td>
+<td><code>show line vty 0 4</code></td>
+<td>Configure: <code>transport input telnet ssh</code></td>
+</tr>
+<tr>
+<td>Enable password not set</td>
+<td><code>show run | include enable</code></td>
+<td>Configure: <code>enable secret class123</code></td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! 1. Verify VTY configuration<br>
+Local# show running-config | section line vty<br>
+<br>
+! 2. Check ACL configuration<br>
+Local# show access-list 10<br>
+<br>
+! 3. Verify ACL applied to VTY<br>
+Local# show line vty 0 4 | include access<br>
+<br>
+! 4. Test from console (should work)<br>
+Local# telnet 192.168.1.1<br>
+<br>
+! 5. Check ACL hit counters<br>
+Local# show access-list 10<br>
+! Matches should increment when telnet attempted<br>
+<br>
+! 6. Temporarily remove ACL to isolate issue<br>
+Local(config)# line vty 0 4<br>
+Local(config-line)# no access-class 10 in<br>
+! If telnet works now, issue is with ACL configuration<br>
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 2: Extended ACL Blocking All Traffic</strong>
+</div>
+
+<p><strong>Symptoms:</strong> No traffic passing through Local router after applying ACL 100</p>
+
+<p><strong>Possible Causes & Solutions:</strong></p>
+<ul style="margin: 10px 0 10px 30px;">
+<li><strong>Implicit Deny All:</strong> ACLs have implicit "deny any" at end - ensure permit statements cover needed traffic</li>
+<li><strong>Wrong ACL Direction:</strong> Check if ACL applied "in" vs "out" - Extended ACLs typically applied outbound at source</li>
+<li><strong>Wildcard Mask Error:</strong> Common mistake: using subnet mask instead of wildcard mask</li>
+<li><strong>ACL Order:</strong> Deny statements before permit statements can block legitimate traffic</li>
+<li><strong>Missing "Established":</strong> Forgetting to permit established TCP connections blocks return traffic</li>
+</ul>
+
+<p><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! 1. Check ACL configuration and order<br>
+Local# show access-list 100<br>
+<br>
+! 2. Verify ACL applied correctly<br>
+Local# show ip interface GigabitEthernet0/0<br>
+! Should show "Outgoing access list is 100"<br>
+<br>
+! 3. Check hit counters - which rule is blocking?<br>
+Local# show access-list 100<br>
+! Look at last deny entry - high matches indicate blocking<br>
+<br>
+! 4. Test with ACL temporarily removed<br>
+Local(config)# interface GigabitEthernet0/0<br>
+Local(config-if)# no ip access-group 100 out<br>
+! If traffic flows now, issue is ACL configuration<br>
+<br>
+! 5. Enable ACL logging<br>
+Local(config)# access-list 100 deny ip any any log<br>
+! Check logs: show logging | include ACL<br>
+<br>
+! 6. Verify wildcard masks<br>
+! Wrong:  192.168.1.0 255.255.255.0 (subnet mask)<br>
+! Right:  192.168.1.0 0.0.0.255 (wildcard mask)<br>
+</div>
+
+<p><strong>Common Extended ACL Mistakes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Wrong Configuration</th>
+<th>Correct Configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Using subnet mask instead of wildcard</td>
+<td><code>permit ip 192.168.1.0 255.255.255.0 any</code></td>
+<td><code>permit ip 192.168.1.0 0.0.0.255 any</code></td>
+</tr>
+<tr>
+<td>Wrong protocol number</td>
+<td><code>permit ip any any eq 80</code></td>
+<td><code>permit tcp any any eq 80</code></td>
+</tr>
+<tr>
+<td>Source/destination reversed</td>
+<td><code>permit tcp host 172.16.1.10 192.168.1.0 ...</code></td>
+<td><code>permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 ...</code></td>
+</tr>
+<tr>
+<td>Missing established keyword</td>
+<td>No return traffic rule</td>
+<td><code>permit tcp any any established</code></td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 3: Time-Based ACL Not Working</strong>
+</div>
+
+<p><strong>Symptoms:</strong> Time-range ACL entries not activating/deactivating at correct times</p>
+
+<p><strong>Possible Causes & Solutions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Diagnostic Command</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Router clock not set</td>
+<td><code>show clock</code></td>
+<td><code>clock set 14:30:00 15 Jan 2026</code></td>
+</tr>
+<tr>
+<td>Wrong timezone configured</td>
+<td><code>show clock detail</code></td>
+<td><code>clock timezone SGT 8</code></td>
+</tr>
+<tr>
+<td>Time-range not applied to ACL</td>
+<td><code>show access-lists</code></td>
+<td>Add "time-range NAME" to ACL entry</td>
+</tr>
+<tr>
+<td>Time-range syntax error</td>
+<td><code>show time-range</code></td>
+<td>Verify periodic/absolute syntax correct</td>
+</tr>
+<tr>
+<td>Time-range shows "inactive" when should be active</td>
+<td><code>show time-range</code></td>
+<td>Check current time vs defined range</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Troubleshooting Steps:</strong></p>
+<div class="code-block">
+! 1. Verify current router time<br>
+Local# show clock detail<br>
+! Check time, date, timezone<br>
+<br>
+! 2. Check time-range configuration<br>
+Local# show time-range<br>
+! Verify "active" or "inactive" status<br>
+<br>
+! 3. Check time-range association with ACL<br>
+Local# show ip access-lists TIME_BASED_ACCESS<br>
+! Look for "time-range BUSINESS_HOURS" in entries<br>
+<br>
+! 4. Manually test by changing time<br>
+Local# clock set 10:00:00 15 January 2026<br>
+Local# show time-range<br>
+! BUSINESS_HOURS should now be "active"<br>
+<br>
+Local# clock set 20:00:00 15 January 2026<br>
+Local# show time-range<br>
+! BUSINESS_HOURS should now be "inactive"<br>
+<br>
+! 5. Test traffic during both time periods<br>
+! During business hours: all traffic permitted<br>
+! After hours: HTTP/HTTPS denied, DNS/SSH allowed<br>
+<br>
+! 6. Configure NTP for accurate time (production)<br>
+Local(config)# ntp server 129.6.15.28<br>
+Local# show ntp status<br>
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 4: ACL Logging Not Generating Messages</strong>
+</div>
+
+<p><strong>Possible Causes & Solutions:</strong></p>
+<ul style="margin: 10px 0 10px 30px;">
+<li><strong>Logging Not Enabled:</strong> Configure <code>logging console informational</code> or <code>logging buffered</code></li>
+<li><strong>No "log" Keyword:</strong> Add "log" keyword to ACL deny statements</li>
+<li><strong>Traffic Not Hitting Deny Rule:</strong> Permitted by earlier rule - check ACL order</li>
+<li><strong>Buffer Full:</strong> Clear logs with <code>clear logging</code></li>
+</ul>
+
+<div class="code-block">
+! Enable logging<br>
+Local(config)# logging console informational<br>
+Local(config)# logging buffered 8192<br>
+<br>
+! View logs<br>
+Local# show logging | include ACL<br>
+Local# show logging | include list<br>
+<br>
+! Clear old logs<br>
+Local# clear logging<br>
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Problem 5: Cannot Edit Numbered ACL</strong>
+</div>
+
+<p><strong>Issue:</strong> Need to insert a new rule in the middle of numbered ACL 100</p>
+
+<p><strong>Solutions:</strong></p>
+<ol style="margin: 10px 0 10px 30px;">
+<li><strong>Option 1:</strong> Convert to Named ACL (recommended)</li>
+<li><strong>Option 2:</strong> Remove and recreate entire ACL</li>
+<li><strong>Option 3:</strong> Use sequence numbers (IOS 12.3+ for numbered ACLs)</li>
+</ol>
+
+<div class="code-block">
+! Option 1: Convert to Named ACL<br>
+Local(config)# ip access-list extended ACL_100_NAMED<br>
+! Recreate all entries from ACL 100<br>
+Local(config-ext-nacl)# 10 deny tcp host 192.168.1.50 host 172.16.1.10 eq 80<br>
+Local(config-ext-nacl)# 20 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq 80<br>
+! ... etc ...<br>
+<br>
+! Remove old ACL from interface<br>
+Local(config)# interface GigabitEthernet0/0<br>
+Local(config-if)# no ip access-group 100 out<br>
+<br>
+! Apply new named ACL<br>
+Local(config-if)# ip access-group ACL_100_NAMED out<br>
+<br>
+! Delete old numbered ACL<br>
+Local(config)# no access-list 100<br>
+<br>
+! Option 2: Resequence (if available)<br>
+Local(config)# ip access-list resequence 100 10 10<br>
+! Now you can insert at any sequence number<br>
+</div>
+
+<!-- Expected Output Examples -->
+<div class="section-title">📊 Expected Command Outputs</div>
+
+<p><strong>show ip interface brief (Local Router)</strong></p>
+<div class="output-block">
+Local# show ip interface brief<br>
+Interface              IP-Address      OK? Method Status                Protocol<br>
+GigabitEthernet0/0     10.0.0.1        YES manual up                    up<br>
+GigabitEthernet0/1     10.0.0.5        YES manual up                    up<br>
+GigabitEthernet0/2     192.168.1.1     YES manual up                    up<br>
+</div>
+
+<p><strong>show ip route (Local Router)</strong></p>
+<div class="output-block">
+Local# show ip route<br>
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP<br>
+       ...<br>
+<br>
+Gateway of last resort is 10.0.0.2 to network 0.0.0.0<br>
+<br>
+S*    0.0.0.0/0 [1/0] via 10.0.0.2<br>
+                [10/0] via 10.0.0.6<br>
+      10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks<br>
+C        10.0.0.0/30 is directly connected, GigabitEthernet0/0<br>
+L        10.0.0.1/32 is directly connected, GigabitEthernet0/0<br>
+C        10.0.0.4/30 is directly connected, GigabitEthernet0/1<br>
+L        10.0.0.5/32 is directly connected, GigabitEthernet0/1<br>
+S     172.16.1.0/24 [1/0] via 10.0.0.2<br>
+      192.168.1.0/24 is variably subnetted, 2 subnets, 2 masks<br>
+C        192.168.1.0/24 is directly connected, GigabitEthernet0/2<br>
+L        192.168.1.1/32 is directly connected, GigabitEthernet0/2<br>
+S     203.81.64.0/30 [1/0] via 10.0.0.2<br>
+S     203.81.64.4/30 [1/0] via 10.0.0.6<br>
+</div>
+
+<p><strong>show access-lists (All ACLs)</strong></p>
+<div class="output-block">
+Local# show access-lists<br>
+Standard IP access list 10<br>
+    10 permit 192.168.1.10 (8 matches)<br>
+    20 permit 192.168.1.20 (3 matches)<br>
+    30 deny   any log (22 matches)<br>
+<br>
+Extended IP access list 100<br>
+    10 deny tcp host 192.168.1.50 host 172.16.1.10 eq www log (5 matches)<br>
+    20 deny tcp host 192.168.1.50 host 172.16.1.10 eq 443 log (2 matches)<br>
+    30 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq www (124 matches)<br>
+    40 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq 443 (89 matches)<br>
+    50 permit tcp any any established (456 matches)<br>
+    60 permit icmp any any (67 matches)<br>
+    70 permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.0.0.255 (234 matches)<br>
+    80 deny ip any any log (45 matches)<br>
+<br>
+Extended IP access list TIME_BASED_ACCESS<br>
+    10 permit ip 192.168.1.0 0.0.0.255 any time-range BUSINESS_HOURS (active) (1534 matches)<br>
+    20 deny tcp 192.168.1.0 0.0.0.255 any eq www time-range AFTER_HOURS (inactive) (0 matches)<br>
+    30 deny tcp 192.168.1.0 0.0.0.255 any eq 443 time-range AFTER_HOURS (inactive) (0 matches)<br>
+    40 permit udp 192.168.1.0 0.0.0.255 any eq domain (89 matches)<br>
+    50 permit tcp 192.168.1.0 0.0.0.255 any eq domain (12 matches)<br>
+    60 permit icmp 192.168.1.0 0.0.0.255 any (45 matches)<br>
+    70 permit tcp 192.168.1.0 0.0.0.255 any eq 22 (8 matches)<br>
+    80 permit tcp any any established (567 matches)<br>
+    90 permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.0.255.255 (345 matches)<br>
+    100 deny ip any any log (23 matches)<br>
+</div>
+
+<p><strong>show time-range</strong></p>
+<div class="output-block">
+Local# show time-range
+time-range entry: BUSINESS_HOURS (active)
+   periodic Monday Tuesday Wednesday Thursday Friday 09:00 to 17:00
+   Used in: Extended IP access list entry TIME_BASED_ACCESS
+
+time-range entry: AFTER_HOURS (inactive)
+   periodic Monday Tuesday Wednesday Thursday Friday 17:01 to 08:59
+   periodic Saturday Sunday 00:00 to 23:59
+   Used in: Extended IP access list entry TIME_BASED_ACCESS
+</div>
+
+<p><strong>show ip interface GigabitEthernet0/0 (ACL Applied)</strong></p>
+<div class="output-block">
+Local# show ip interface GigabitEthernet0/0
+GigabitEthernet0/0 is up, line protocol is up
+  Internet address is 10.0.0.1/30
+  Broadcast address is 255.255.255.255
+  Address determined by setup command
+  MTU is 1500 bytes
+  Helper address is not set
+  Directed broadcast forwarding is disabled
+  Outgoing access list is 100
+  Inbound access list is not set
+  Proxy ARP is enabled
+  Local Proxy ARP is disabled
+  Security level is default
+  Split horizon is enabled
+  ...
+</div>
+
+<p><strong>show running-config | section access-list</strong></p>
+<div class="output-block">
+Local# show running-config | section access-list<br>
+access-list 10 remark ** VTY Access Control - Telnet Security **<br>
+access-list 10 permit 192.168.1.10<br>
+access-list 10 permit 192.168.1.20<br>
+access-list 10 deny   any log<br>
+!<br>
+access-list 100 remark ** Web Server Access Control **<br>
+access-list 100 deny   tcp host 192.168.1.50 host 172.16.1.10 eq www log<br>
+access-list 100 deny   tcp host 192.168.1.50 host 172.16.1.10 eq 443 log<br>
+access-list 100 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq www<br>
+access-list 100 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq 443<br>
+access-list 100 permit tcp any any established<br>
+access-list 100 permit icmp any any<br>
+access-list 100 permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.0.0.255<br>
+access-list 100 deny   ip any any log<br>
+!<br>
+ip access-list extended TIME_BASED_ACCESS<br>
+ remark ** Time-Based Internet Access Control **<br>
+ permit ip 192.168.1.0 0.0.0.255 any time-range BUSINESS_HOURS<br>
+ deny   tcp 192.168.1.0 0.0.0.255 any eq www time-range AFTER_HOURS log<br>
+ deny   tcp 192.168.1.0 0.0.0.255 any eq 443 time-range AFTER_HOURS log<br>
+ permit udp 192.168.1.0 0.0.0.255 any eq domain<br>
+ permit tcp 192.168.1.0 0.0.0.255 any eq domain<br>
+ permit icmp 192.168.1.0 0.0.0.255 any<br>
+ permit tcp 192.168.1.0 0.0.0.255 any eq 22<br>
+ permit tcp any any established<br>
+ permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.0.255.255<br>
+ deny   ip any any log<br>
+</div>
+
+<!-- Key Learning Points -->
+<div class="section-title">🎓 Key Learning Points</div>
+
+<div class="alert alert-success">
+<strong>✅ ACL Fundamentals:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Standard ACLs (1-99, 1300-1999):</strong> Filter only on source IP address</li>
+<li><strong>Extended ACLs (100-199, 2000-2699):</strong> Filter on source, destination, protocol, ports</li>
+<li><strong>Named ACLs:</strong> Use descriptive names, easier to manage, support editing</li>
+<li><strong>Implicit Deny:</strong> Every ACL ends with invisible "deny ip any any"</li>
+<li><strong>Top-Down Processing:</strong> First match wins - order matters critically</li>
+<li><strong>Cannot Edit Numbered ACLs:</strong> Must remove and recreate (use named ACLs instead)</li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ ACL Placement Best Practices:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Standard ACLs:</strong> Place close to DESTINATION (broad filtering)</li>
+<li><strong>Extended ACLs:</strong> Place close to SOURCE (precise filtering, save bandwidth)</li>
+<li><strong>Direction:</strong> "in" = traffic entering interface, "out" = traffic exiting interface</li>
+<li><strong>One ACL Per Protocol Per Direction Per Interface:</strong> Cannot apply two ACLs inbound on same interface</li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Wildcard Mask Mastery:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>0 = Must Match:</strong> Binary 0 means "check this bit"</li>
+<li><strong>1 = Ignore:</strong> Binary 1 means "don't care about this bit"</li>
+<li><strong>Formula:</strong> Wildcard = 255.255.255.255 - Subnet Mask</li>
+<li><strong>Single Host:</strong> 0.0.0.0 or keyword "host"</li>
+<li><strong>All Addresses:</strong> 255.255.255.255 or keyword "any"</li>
+<li><strong>/24 Network:</strong> 0.0.0.255 (last octet ignored)</li>
+<li><strong>/16 Network:</strong> 0.0.255.255 (last two octets ignored)</li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Time-Based ACL Benefits:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li>Enforce business hours access policies</li>
+<li>Conserve bandwidth during peak hours</li>
+<li>Schedule maintenance windows</li>
+<li>Implement temporary security restrictions</li>
+<li>Requires accurate router clock (use NTP)</li>
+<li>Can use "periodic" (recurring) or "absolute" (one-time) ranges</li>
+</ul>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Common ACL Use Cases:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Security:</strong> Restrict Telnet/SSH access to routers (Standard ACL on VTY)</li>
+<li><strong>Traffic Filtering:</strong> Block specific protocols/services (Extended ACL)</li>
+<li><strong>NAT:</strong> Define interesting traffic for translation</li>
+<li><strong>VPN:</strong> Define crypto ACL for IPsec tunnels</li>
+<li><strong>QoS:</strong> Match traffic for class-maps and policy-maps</li>
+<li><strong>Routing:</strong> Filter routing updates with distribute-lists</li>
+<li><strong>SNMP:</strong> Restrict SNMP management access</li>
+</ul>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Common Mistakes to Avoid:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Using Subnet Mask Instead of Wildcard:</strong> 255.255.255.0 vs 0.0.0.255</li>
+<li><strong>Wrong ACL Order:</strong> Deny all before specific permits = no traffic passes</li>
+<li><strong>Forgetting "Established":</strong> Extended ACLs need established keyword for return traffic</li>
+<li><strong>Wrong Protocol:</strong> Using "ip" instead of "tcp" when specifying ports</li>
+<li><strong>Wrong Direction:</strong> Applying "in" when you meant "out" (or vice versa)</li>
+<li><strong>Not Logging Denies:</strong> Makes troubleshooting difficult</li>
+<li><strong>Editing Numbered ACLs:</strong> Use named ACLs for easier management</li>
+<li><strong>Not Saving Configuration:</strong> Always "write memory" after ACL changes</li>
+</ul>
+</div>
+
+<!-- ACL Quick Reference -->
+<div class="section-title">📖 ACL Quick Reference Guide</div>
+
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create Standard ACL</td>
+<td><code>access-list NUMBER permit|deny SOURCE WILDCARD</code></td>
+<td><code>access-list 10 permit 192.168.1.0 0.0.0.255</code></td>
+</tr>
+<tr>
+<td>Create Extended ACL</td>
+<td><code>access-list NUMBER permit|deny PROTOCOL SRC DST</code></td>
+<td><code>access-list 100 permit tcp any host 10.1.1.1 eq 80</code></td>
+</tr>
+<tr>
+<td>Named Standard ACL</td>
+<td><code>ip access-list standard NAME</code></td>
+<td><code>ip access-list standard TELNET_ACL</code></td>
+</tr>
+<tr>
+<td>Named Extended ACL</td>
+<td><code>ip access-list extended NAME</code></td>
+<td><code>ip access-list extended WEB_FILTER</code></td>
+</tr>
+<tr>
+<td>Apply ACL to Interface</td>
+<td><code>ip access-group ACL in|out</code></td>
+<td><code>ip access-group 100 out</code></td>
+</tr>
+<tr>
+<td>Apply ACL to VTY</td>
+<td><code>access-class ACL in|out</code></td>
+<td><code>access-class 10 in</code></td>
+</tr>
+<tr>
+<td>Create Time-Range</td>
+<td><code>time-range NAME</code></td>
+<td><code>time-range BUSINESS_HOURS</code></td>
+</tr>
+<tr>
+<td>Periodic Time-Range</td>
+<td><code>periodic DAYS HH:MM to HH:MM</code></td>
+<td><code>periodic weekdays 09:00 to 17:00</code></td>
+</tr>
+<tr>
+<td>Apply Time-Range to ACL</td>
+<td><code>permit|deny ... time-range NAME</code></td>
+<td><code>deny tcp any eq 80 time-range AFTER_HOURS</code></td>
+</tr>
+<tr>
+<td>View ACLs</td>
+<td><code>show access-lists</code></td>
+<td><code>show ip access-list 100</code></td>
+</tr>
+<tr>
+<td>View Time-Ranges</td>
+<td><code>show time-range</code></td>
+<td><code>show time-range BUSINESS_HOURS</code></td>
+</tr>
+<tr>
+<td>Clear ACL Counters</td>
+<td><code>clear access-list counters</code></td>
+<td><code>clear access-list counters 100</code></td>
+</tr>
+<tr>
+<td>Delete ACL</td>
+<td><code>no access-list NUMBER</code></td>
+<td><code>no access-list 100</code></td>
+</tr>
+<tr>
+<td>Delete Named ACL</td>
+<td><code>no ip access-list TYPE NAME</code></td>
+<td><code>no ip access-list extended WEB_FILTER</code></td>
+</tr>
+<tr>
+<td>Resequence ACL</td>
+<td><code>ip access-list resequence NAME START INC</code></td>
+<td><code>ip access-list resequence WEB_FILTER 10 10</code></td>
+</tr>
+</tbody>
+</table>
+
+<!-- Advanced Topics -->
+<div class="section-title">🚀 Advanced ACL Topics (Beyond This Lab)</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ For Further Study:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>Reflexive ACLs:</strong> Dynamic ACLs that create temporary entries for return traffic</li>
+<li><strong>Dynamic (Lock-and-Key) ACLs:</strong> Require user authentication before permitting traffic</li>
+<li><strong>Context-Based Access Control (CBAC):</strong> Stateful firewall features on routers</li>
+<li><strong>Zone-Based Firewall (ZBF):</strong> Modern replacement for CBAC, uses security zones</li>
+<li><strong>Object Groups:</strong> Group multiple IP addresses, ports, protocols for cleaner ACLs</li>
+<li><strong>Turbo ACLs:</strong> Compiled ACLs for faster processing on high-speed routers</li>
+<li><strong>IPv6 ACLs:</strong> Similar syntax but uses "ipv6 traffic-filter" instead of "ip access-group"</li>
+<li><strong>VLAN ACLs (VACLs):</strong> Applied on switches to filter traffic within VLANs</li>
+<li><strong>Port ACLs (PACLs):</strong> Applied to switch ports for Layer 2 filtering</li>
+</ul>
+</div>
+
+<!-- Complete Configuration Summary -->
+<div class="section-title">📄 Complete Configuration Summary</div>
+
+<p><strong>Local Router - Full Configuration</strong></p>
+<div class="code-block">
+! ========================================<br>
+! Local Router - Complete ACL Lab Configuration<br>
+! ========================================<br>
+<br>
+hostname Local<br>
+<br>
+! Interface Configuration<br>
+interface GigabitEthernet0/0<br>
+ description ** WAN Link to Site-1 **<br>
+ ip address 10.0.0.1 255.255.255.252<br>
+ ip access-group 100 out<br>
+ no shutdown<br>
+<br>
+interface GigabitEthernet0/1<br>
+ description ** WAN Link to Site-2 **<br>
+ ip address 10.0.0.5 255.255.255.252<br>
+ no shutdown<br>
+<br>
+interface GigabitEthernet0/2<br>
+ description ** Local LAN Network 192.168.1.0/24 **<br>
+ ip address 192.168.1.1 255.255.255.0<br>
+ ip access-group TIME_BASED_ACCESS in<br>
+ no shutdown<br>
+<br>
+! Static Routing<br>
+ip route 0.0.0.0 0.0.0.0 10.0.0.2<br>
+ip route 0.0.0.0 0.0.0.0 10.0.0.6 10<br>
+ip route 172.16.1.0 255.255.255.0 10.0.0.2<br>
+ip route 203.81.64.0 255.255.255.252 10.0.0.2<br>
+ip route 203.81.64.4 255.255.255.252 10.0.0.6<br>
+<br>
+! Standard ACL for Telnet Access<br>
+access-list 10 remark ** VTY Access Control - Telnet Security **<br>
+access-list 10 permit host 192.168.1.10<br>
+access-list 10 permit host 192.168.1.20<br>
+access-list 10 deny any log<br>
+<br>
+! Extended ACL for Web Server Access<br>
+access-list 100 remark ** Web Server Access Control **<br>
+access-list 100 deny tcp host 192.168.1.50 host 172.16.1.10 eq www log<br>
+access-list 100 deny tcp host 192.168.1.50 host 172.16.1.10 eq 443 log<br>
+access-list 100 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq www<br>
+access-list 100 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.10 eq 443<br>
+access-list 100 permit tcp any any established<br>
+access-list 100 permit icmp any any<br>
+access-list 100 permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.0.0.255<br>
+access-list 100 deny ip any any log<br>
+<br>
+! Time-Range Definitions<br>
+time-range BUSINESS_HOURS<br>
+ periodic Monday Tuesday Wednesday Thursday Friday 09:00 to 17:00<br>
+<br>
+time-range AFTER_HOURS<br>
+ periodic Monday Tuesday Wednesday Thursday Friday 17:01 to 08:59<br>
+ periodic Saturday Sunday 00:00 to 23:59<br>
+<br>
+! Named Extended ACL with Time-Based Rules<br>
+ip access-list extended TIME_BASED_ACCESS<br>
+ remark ** Time-Based Internet Access Control **<br>
+ permit ip 192.168.1.0 0.0.0.255 any time-range BUSINESS_HOURS<br>
+ deny tcp 192.168.1.0 0.0.0.255 any eq www time-range AFTER_HOURS log<br>
+ deny tcp 192.168.1.0 0.0.0.255 any eq 443 time-range AFTER_HOURS log<br>
+ permit udp 192.168.1.0 0.0.0.255 any eq domain<br>
+ permit tcp 192.168.1.0 0.0.0.255 any eq domain<br>
+ permit icmp 192.168.1.0 0.0.0.255 any<br>
+ permit tcp 192.168.1.0 0.0.0.255 any eq 22<br>
+ permit tcp any any established<br>
+ permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.0.255.255<br>
+ deny ip any any log<br>
+<br>
+! VTY Line Configuration with ACL<br>
+line vty 0 4<br>
+ password cisco123<br>
+ login<br>
+ transport input telnet ssh<br>
+ access-class 10 in<br>
+ exec-timeout 10 0<br>
+ logging synchronous<br>
+<br>
+! Security Configuration<br>
+enable secret class123<br>
+service password-encryption<br>
+<br>
+! Timezone and Clock<br>
+clock timezone SGT 8<br>
+<br>
+! Logging Configuration<br>
+logging console informational<br>
+logging buffered 8192<br>
+<br>
+! End Configuration<br>
+end<br>
+write memory<br>
+</div>
+
+<!-- Lab Summary -->
+<div class="section-title">📝 Lab Summary & Completion</div>
+
+<p>Congratulations! You have successfully completed <strong>Lab 11.2: Advanced Access Control Lists (ACLs)</strong>. This comprehensive lab covered:</p>
+
+<ul style="margin: 15px 0 15px 30px;">
+<li>✅ Multi-site network topology with dual WAN links and Internet connectivity</li>
+<li>✅ Static routing configuration for full end-to-end reachability</li>
+<li>✅ Standard ACL (ACL 10) for Telnet VTY line access control</li>
+<li>✅ Extended ACL (ACL 100) for Web Server HTTP/HTTPS traffic filtering</li>
+<li>✅ Named Extended ACL with time-based access control policies</li>
+<li>✅ Time-range configuration for business hours enforcement</li>
+<li>✅ ACL application to interfaces and VTY lines</li>
+<li>✅ Comprehensive verification procedures and troubleshooting techniques</li>
+<li>✅ Wildcard mask calculations and ACL placement best practices</li>
+<li>✅ Real-world security policy implementation</li>
+</ul>
+
+<div class="alert alert-success">
+<strong>✅ Skills Acquired:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li>Configure and apply Standard, Extended, and Named ACLs</li>
+<li>Implement time-based security policies with time-ranges</li>
+<li>Understand ACL processing order and implicit deny behavior</li>
+<li>Calculate wildcard masks for various network sizes</li>
+<li>Apply ACL best practices for placement and direction</li>
+<li>Troubleshoot ACL misconfigurations effectively</li>
+<li>Monitor ACL performance with hit counters and logging</li>
+<li>Edit Named ACLs without disrupting service</li>
+</ul>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ CCNP Exam Relevance:</strong> This lab directly prepares you for CCNP 350-401 (ENCOR) exam topics:
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li><strong>5.2:</strong> Configure and verify access control lists</li>
+<li><strong>5.3:</strong> Configure and verify Layer 2 security features (ACL concepts apply)</li>
+<li><strong>5.4:</strong> Describe Network security operations (traffic filtering, policy enforcement)</li>
+</ul>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Production Considerations:</strong>
+<ul style="margin-top: 10px; margin-left: 20px;">
+<li>Always test ACLs in lab before production deployment</li>
+<li>Document all ACL changes and maintain configuration backups</li>
+<li>Use Named ACLs for easier management in large networks</li>
+<li>Implement logging judiciously (high-traffic ACLs generate excessive logs)</li>
+<li>Configure NTP for accurate time-based ACL operation</li>
+<li>Review ACL hit counters regularly to validate policies</li>
+<li>Consider performance impact on high-speed routers</li>
+<li>Implement change management procedures for ACL modifications</li>
+</ul>
+</div>
+
+<!-- Next Steps -->
+<div class="section-title">🎯 Next Steps & Continued Learning</div>
+
+<p><strong>Recommended Follow-Up Labs:</strong></p>
+<ul style="margin: 15px 0 15px 30px;">
+<li>🔹 <strong>Lab 12.1:</strong> Zone-Based Firewall Configuration (Advanced Security)</li>
+<li>🔹 <strong>Lab 12.2:</strong> IPv6 ACLs and Traffic Filtering</li>
+<li>🔹 <strong>Lab 13.1:</strong> Network Address Translation (NAT) with ACLs</li>
+<li>🔹 <strong>Lab 14.1:</strong> Quality of Service (QoS) with Classification ACLs</li>
+<li>🔹 <strong>Lab 15.1:</strong> VPN Crypto ACLs and IPsec Configuration</li>
+</ul>
+
+<p><strong>Additional Practice Scenarios:</strong></p>
+<ol style="margin: 15px 0 15px 30px;">
+<li>Implement ACLs to block specific websites by IP address</li>
+<li>Configure reflexive ACLs for dynamic return traffic</li>
+<li>Create object groups to simplify complex ACLs</li>
+<li>Implement ACLs for preventing DoS attacks (rate limiting)</li>
+<li>Configure VLAN ACLs (VACLs) on switches</li>
+<li>Deploy ACLs in conjunction with NAT for DMZ security</li>
+</ol>
+
+<!-- Final Configuration Backup -->
+<div class="section-title">💾 Configuration Backup Instructions</div>
+
+<div class="code-block">
+! Save current configuration to startup<br>
+Local# write memory<br>
+<br>
+! Or use alternative command<br>
+Local# copy running-config startup-config<br>
+<br>
+! Backup to TFTP server (if available)<br>
+Local# copy running-config tftp:<br>
+! Enter TFTP server IP and filename when prompted<br>
+<br>
+! View saved configuration<br>
+Local# show startup-config<br>
+<br>
+! Compare running vs startup<br>
+Local# show archive config differences<br>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Lab Completion Checklist - Final Verification:</strong>
+<ul style="margin-top: 10px;">
+<li>☐ All router interfaces configured and operational (up/up)</li>
+<li>☐ Static routes installed and end-to-end connectivity verified</li>
+<li>☐ Standard ACL 10 restricts Telnet access successfully</li>
+<li>☐ Extended ACL 100 filters web traffic to 172.16.1.10 correctly</li>
+<li>☐ Named ACL TIME_BASED_ACCESS enforces business hours policy</li>
+<li>☐ Time-ranges show correct active/inactive status</li>
+<li>☐ All ACLs applied to correct interfaces/VTY lines</li>
+<li>☐ ACL hit counters increment during testing</li>
+<li>☐ Denied traffic generates log messages as expected</li>
+<li>☐ All configurations saved with "write memory"</li>
+<li>☐ Documentation complete with topology diagram and addressing table</li>
+<li>☐ Troubleshooting procedures tested and validated</li>
+</ul>
+</div>
+
+<p style="text-align: center; font-size: 1.2em; color: #1e3c72; margin-top: 30px;">
+<strong>🎓 Congratulations on completing Lab 11.2!</strong><br>
+You are now proficient in Access Control List configuration and management.
+</p>
+
+</div>
+<!-- End of content wrapper -->
+
+</div>
+
+<!-- Footer -->
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<!-- Enhanced Password Protection & Anti-Tampering Script -->
+<script>
+// ==================== SECURITY CONFIGURATION ====================
+const MASTER_PASSWORD = "CCNP@2026";
+const PROTECTED_CONTENT = true;
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+let isUnlocked = false;
+let sessionTimer = null;
+let editMode = false;
+
+// Initialize security on page load
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+setupSecurityMonitoring();
+});
+
+// ==================== SESSION MANAGEMENT ====================
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+// ==================== PASSWORD VERIFICATION ====================
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+logSecurityEvent('FAILED_LOGIN_ATTEMPT', { timestamp: new Date().toISOString() });
+}
+}
+
+// ==================== CONTENT LOCKING/UNLOCKING ====================
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+enableEditMode();
+}
+
+function lockPage() {
+isUnlocked = false;
+editMode = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+disableEditMode();
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+// ==================== EDIT MODE MANAGEMENT ====================
+function enableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'true');
+});
+editMode = true;
+logSecurityEvent('EDIT_MODE_ENABLED');
+}
+
+function disableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'false');
+});
+editMode = false;
+logSecurityEvent('EDIT_MODE_DISABLED');
+}
+
+// ==================== CONTENT PROTECTION ====================
+function protectElement(elementId) {
+const element = document.getElementById(elementId);
+if (element) {
+element.addEventListener('keydown', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 This content is protected. Please unlock with password first.');
+showPasswordModal();
+return false;
+}
+});
+
+element.addEventListener('paste', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Paste not allowed on protected content');
+return false;
+}
+});
+
+element.addEventListener('drop', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Drag and drop not allowed on protected content');
+return false;
+}
+});
+}
+}
+
+// Make protected elements editable when unlocked
+protectElement('protectedHeader');
+protectElement('protectedBody');
+protectElement('protectedFooter');
+
+// ==================== ANTI-TAMPERING MEASURES ====================
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+// Disable text selection and dragging
+document.addEventListener('selectstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+document.addEventListener('dragstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable dangerous keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+// F12 - Developer Tools
+if (e.keyCode === 123) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+I - Developer Tools
+if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+C - Element Inspector
+if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+J - Console
+if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+e.preventDefault();
+return false;
+}
+// Ctrl+U - View Source
+if (e.ctrlKey && e.keyCode === 85) {
+e.preventDefault();
+return false;
+}
+// Ctrl+S - Save Page (only works with password)
+if (e.ctrlKey && e.keyCode === 83) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+}
+});
+
+// Disable copying
+document.addEventListener('copy', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable cutting
+document.addEventListener('cut', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Prevent right-click
+document.addEventListener('mousedown', function(e) {
+if (e.button === 2) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable double-click selection
+document.addEventListener('dblclick', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// ==================== SECURITY MONITORING ====================
+function setupSecurityMonitoring() {
+// DevTools detection
+let devTools = { open: false };
+setInterval(function() {
+if (window.outerHeight - window.innerHeight > 150) {
+if (!devTools.open) {
+devTools.open = true;
+logSecurityEvent('DEVTOOLS_DETECTED');
+}
+} else {
+devTools.open = false;
+}
+}, 500);
+
+// Monitor window focus
+window.addEventListener('blur', function() {
+logSecurityEvent('WINDOW_BLUR');
+});
+
+window.addEventListener('focus', function() {
+logSecurityEvent('WINDOW_FOCUS');
+if (!isUnlocked) {
+showPasswordModal();
+}
+});
+}
+
+// ==================== SECURITY LOGGING ====================
+function logSecurityEvent(eventType, details = {}) {
+const event = {
+type: eventType,
+timestamp: new Date().toISOString(),
+userAgent: navigator.userAgent,
+...details
+};
+console.log('[SECURITY LOG]', event);
+}
+
+// ==================== ANTI-EXPORT MEASURES ====================
+// Prevent printing
+window.addEventListener('beforeprint', function() {
+if (!isUnlocked) {
+alert('🔒 Printing is not allowed without password authentication');
+}
+});
+
+// Prevent iframe embedding
+if (self !== top) {
+top.location = self.location;
+}
+
+// Prevent drag & drop files
+document.addEventListener('dragover', function(e) {
+e.preventDefault();
+return false;
+});
+
+document.addEventListener('drop', function(e) {
+e.preventDefault();
+return false;
+});
+
+// ==================== CONSOLE SECURITY ====================
+// Security message on page load
+window.addEventListener('load', function() {
+setTimeout(function() {
+console.clear();
+console.log('%c🔐 ICONIC INFOSEC TRAINING - PROTECTED CONTENT',
+'color: #667eea; font-size: 18px; font-weight: bold;');
+console.log('%cThis document is FULLY PASSWORD PROTECTED',
+'color: #1e3c72; font-size: 14px; font-weight: bold;');
+console.log('%c⚠️ Content Protections: ACTIVE',
+'color: #ff6b6b; font-size: 12px;');
+console.log('%c✓ Header Protected ✓ Body Protected ✓ Footer Protected',
+'color: #28a745; font-size: 12px;');
+console.log('%cMaster Password Required to Edit',
+'color: red; font-size: 11px; font-weight: bold;');
+console.log('%cUnauthorized access attempts are logged and monitored.',
+'color: #dc3545; font-size: 11px;');
+}, 500);
+});
+
+// ==================== SESSION EXPIRY WARNING ====================
+window.addEventListener('beforeunload', function() {
+if (isUnlocked) {
+logSecurityEvent('PAGE_UNLOAD', {
+isAuthenticated: isUnlocked,
+sessionExpires: new Date(Date.now() + SESSION_TIMEOUT).toISOString()
+});
+}
+});
+
+// ==================== INITIALIZE PROTECTION ====================
+function initializeProtection() {
+// This function is called on page load to initialize all protection measures
+logSecurityEvent('PROTECTION_INITIALIZED');
+}
+
+</script>
+
+</body>
+</html>
