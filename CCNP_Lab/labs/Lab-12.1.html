@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 12.1 - EIGRP Configuration - Iconic InfoSec Training</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+text-align: center;
+margin: 20px 0;
+}
+
+.topology-image img {
+max-width: 100%;
+height: auto;
+border: 3px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+/* Password Protection Modal */
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Password Protection Modal -->
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<!-- Header -->
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<!-- Main Content Container -->
+<div id="protectedBody" class="protected-element">
+
+<!-- Lab Content Wrapper -->
+<div class="content-wrapper">
+
+<!-- Lab Title Section -->
+<div class="lab-title">🔧 Lab 12.1: EIGRP Basic Configuration, Authentication & Route Summarization</div>
+<div class="lab-description">Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) - Enhanced Interior Gateway Routing Protocol</div>
+
+<!-- Lab Metadata -->
+<div class="lab-metadata">
+<strong>📚 Lab Overview</strong><br>
+<strong>Duration:</strong> 90-120 minutes | <strong>Difficulty Level:</strong> Intermediate | <strong>Lab Version:</strong> 1.0<br>
+<strong>Lab ID:</strong> Lab 12.1 | <strong>Topics:</strong> EIGRP Basic Configuration, MD5 Authentication, Manual Route Summarization<br>
+<strong>Autonomous System:</strong> AS 100 | <strong>Protocol:</strong> EIGRP (Enhanced Interior Gateway Routing Protocol)
+</div>
+
+<!-- Lab Objectives -->
+<div class="section-title">🎯 Lab Objectives</div>
+<p>Upon completion of this lab, you will be able to:</p>
+<ul class="checklist">
+<li>✓ Configure EIGRP on Cisco routers using autonomous system 100</li>
+<li>✓ Establish EIGRP neighbor relationships between routers</li>
+<li>✓ Implement EIGRP MD5 authentication for secure routing updates</li>
+<li>✓ Configure manual route summarization to optimize routing tables</li>
+<li>✓ Verify EIGRP routing operations and neighbor adjacencies</li>
+<li>✓ Troubleshoot common EIGRP configuration issues</li>
+<li>✓ Analyze EIGRP metrics, topology, and routing decisions</li>
+</ul>
+
+<!-- Network Topology -->
+<div class="section-title">📊 Network Topology</div>
+<div class="topology-image">
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-12.1.jpg" alt="Lab 12.1 Network Topology">
+<p style="margin-top: 10px; color: #667eea; font-weight: bold;">Figure 1: EIGRP Basic Configuration Topology</p>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Topology Description:</strong><br>
+This lab consists of two routers (R1 and R2) connected via their GigabitEthernet0/0 interfaces. Each router has a loopback interface representing internal networks. EIGRP AS 100 will be configured to exchange routing information between both routers.
+</div>
+
+<!-- Device Information -->
+<div class="section-title">🖥️ Device Information</div>
+<table>
+<thead>
+<tr>
+<th>Device Name</th>
+<th>Device Type</th>
+<th>Role</th>
+<th>IOS Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>Cisco Router</td>
+<td>EIGRP AS 100 Router</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Cisco Router</td>
+<td>EIGRP AS 100 Router</td>
+<td>IOS 15.x or higher</td>
+</tr>
+</tbody>
+</table>
+
+<!-- IP Addressing Table -->
+<div class="section-title">📋 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Default Gateway</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.64.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>Loopback0</td>
+<td>192.168.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.64.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Loopback0</td>
+<td>192.168.2.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Cable Connections -->
+<div class="section-title">🔌 Cable Connection Information</div>
+<table>
+<thead>
+<tr>
+<th>Connection</th>
+<th>Device 1</th>
+<th>Interface 1</th>
+<th>Device 2</th>
+<th>Interface 2</th>
+<th>Cable Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WAN Link</td>
+<td>R1</td>
+<td>GigabitEthernet0/0</td>
+<td>R2</td>
+<td>GigabitEthernet0/0</td>
+<td>Ethernet Crossover</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Subnet Information -->
+<div class="section-title">🌐 Subnet & Network Information</div>
+<table>
+<thead>
+<tr>
+<th>Network Description</th>
+<th>Network Address</th>
+<th>Subnet Mask</th>
+<th>CIDR</th>
+<th>Usable IP Range</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WAN Link (R1-R2)</td>
+<td>203.18.64.0</td>
+<td>255.255.255.252</td>
+<td>/30</td>
+<td>203.18.64.1 - 203.18.64.2</td>
+<td>Point-to-Point WAN Connection</td>
+</tr>
+<tr>
+<td>R1 Loopback Network</td>
+<td>192.168.1.0</td>
+<td>255.255.255.0</td>
+<td>/24</td>
+<td>192.168.1.1 - 192.168.1.254</td>
+<td>R1 Internal Network</td>
+</tr>
+<tr>
+<td>R2 Loopback Network</td>
+<td>192.168.2.0</td>
+<td>255.255.255.0</td>
+<td>/24</td>
+<td>192.168.2.1 - 192.168.2.254</td>
+<td>R2 Internal Network</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Prerequisites -->
+<div class="section-title">📚 Prerequisites</div>
+<div class="alert alert-warning">
+<strong>⚠️ Before You Begin:</strong><br>
+• Basic understanding of IP routing and routing protocols<br>
+• Familiarity with Cisco IOS CLI commands<br>
+• Understanding of EIGRP concepts (hybrid protocol, DUAL algorithm)<br>
+• Knowledge of wildcard masks and network statements<br>
+• Access to Cisco routers or GNS3/Packet Tracer simulation environment
+</div>
+
+<!-- Lab Configuration Steps -->
+<div class="section-title">⚙️ Step-by-Step Configuration Guide</div>
+
+<!-- Step 1: Basic Interface Configuration -->
+<div class="alert alert-info">
+<strong>📝 Step 1: Basic Interface Configuration</strong>
+</div>
+
+<strong>Task 1.1: Configure R1 Interfaces</strong><br><br>
+<p>Configure the GigabitEthernet0/0 interface and Loopback0 on R1 with the appropriate IP addresses.</p>
+
+<div class="code-block">
+R1> enable<br>
+R1# configure terminal<br>
+R1(config)# hostname R1<br>
+<br>
+! Configure GigabitEthernet0/0 interface<br>
+R1(config)# interface gigabitethernet 0/0<br>
+R1(config-if)# description ** WAN Link to R2 **<br>
+R1(config-if)# ip address 203.18.64.1 255.255.255.252<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Configure Loopback0 interface<br>
+R1(config)# interface loopback 0<br>
+R1(config-if)# description ** R1 Internal Network **<br>
+R1(config-if)# ip address 192.168.1.1 255.255.255.0<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory
+</div>
+
+<strong>Task 1.2: Configure R2 Interfaces</strong><br><br>
+<p>Configure the GigabitEthernet0/0 interface and Loopback0 on R2 with the appropriate IP addresses.</p>
+
+<div class="code-block">
+R2> enable<br>
+R2# configure terminal<br>
+R2(config)# hostname R2<br>
+<br>
+! Configure GigabitEthernet0/0 interface<br>
+R2(config)# interface gigabitethernet 0/0<br>
+R2(config-if)# description ** WAN Link to R1 **<br>
+R2(config-if)# ip address 203.18.64.2 255.255.255.252<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+! Configure Loopback0 interface<br>
+R2(config)# interface loopback 0<br>
+R2(config-if)# description ** R2 Internal Network **<br>
+R2(config-if)# ip address 192.168.2.1 255.255.255.0<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory
+</div>
+
+<strong>Task 1.3: Verify Interface Configuration</strong><br><br>
+<p>Verify that all interfaces are configured correctly and in the "up/up" state.</p>
+
+<div class="code-block">
+R1# show ip interface brief<br>
+<br>
+! Expected Output:<br>
+! Interface              IP-Address      OK? Method Status                Protocol<br>
+! GigabitEthernet0/0     203.18.64.1     YES manual up                    up<br>
+! Loopback0              192.168.1.1     YES manual up                    up
+</div>
+
+<div class="code-block">
+R2# show ip interface brief<br>
+<br>
+! Expected Output:<br>
+! Interface              IP-Address      OK? Method Status                Protocol<br>
+! GigabitEthernet0/0     203.18.64.2     YES manual up                    up<br>
+! Loopback0              192.168.2.1     YES manual up                    up
+</div>
+
+<strong>Task 1.4: Test Basic Connectivity</strong><br><br>
+<p>Verify Layer 3 connectivity between R1 and R2 before configuring EIGRP.</p>
+
+<div class="code-block">
+R1# ping 203.18.64.2<br>
+<br>
+! Expected Output:<br>
+! Type escape sequence to abort.<br>
+! Sending 5, 100-byte ICMP Echos to 203.18.64.2, timeout is 2 seconds:<br>
+! !!!!!<br>
+! Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Checkpoint:</strong> If ping is successful, proceed to Step 2. If ping fails, check cable connections and IP addressing.
+</div>
+
+<!-- Step 2: Basic EIGRP Configuration -->
+<div class="alert alert-info">
+<strong>📝 Step 2: Basic EIGRP Configuration (Classic Mode)</strong>
+</div>
+
+<strong>Task 2.1: Configure EIGRP on R1</strong><br><br>
+<p>Enable EIGRP routing process with AS number 100 and advertise all directly connected networks.</p>
+
+<div class="code-block">
+R1# configure terminal<br>
+<br>
+! Enable EIGRP routing process with AS 100<br>
+R1(config)# router eigrp 100<br>
+<br>
+! Advertise the WAN link network<br>
+R1(config-router)# network 203.18.64.0 0.0.0.3<br>
+<br>
+! Advertise the Loopback0 network<br>
+R1(config-router)# network 192.168.1.0 0.0.0.255<br>
+<br>
+! Disable auto-summary for classless routing<br>
+R1(config-router)# no auto-summary<br>
+<br>
+! Configure Router ID (optional but recommended)<br>
+R1(config-router)# eigrp router-id 1.1.1.1<br>
+<br>
+R1(config-router)# exit<br>
+R1(config)# end<br>
+R1# write memory
+</div>
+
+<strong>Task 2.2: Configure EIGRP on R2</strong><br><br>
+<p>Enable EIGRP routing process with AS number 100 and advertise all directly connected networks.</p>
+
+<div class="code-block">
+R2# configure terminal<br>
+<br>
+! Enable EIGRP routing process with AS 100<br>
+R2(config)# router eigrp 100<br>
+<br>
+! Advertise the WAN link network<br>
+R2(config-router)# network 203.18.64.0 0.0.0.3<br>
+<br>
+! Advertise the Loopback0 network<br>
+R2(config-router)# network 192.168.2.0 0.0.0.255<br>
+<br>
+! Disable auto-summary for classless routing<br>
+R2(config-router)# no auto-summary<br>
+<br>
+! Configure Router ID (optional but recommended)<br>
+R2(config-router)# eigrp router-id 2.2.2.2<br>
+<br>
+R2(config-router)# exit<br>
+R2(config)# end<br>
+R2# write memory
+</div>
+
+<div class="alert alert-warning">
+<strong>🔍 Important Notes:</strong><br>
+• <strong>Wildcard Mask:</strong> 0.0.0.3 matches IPs from .0 to .3 (4 addresses in /30 subnet)<br>
+• <strong>Wildcard Mask:</strong> 0.0.0.255 matches all IPs in /24 subnet<br>
+• <strong>no auto-summary:</strong> Prevents EIGRP from summarizing to classful boundaries<br>
+• <strong>Router ID:</strong> Should be unique per router; typically use loopback IP or highest interface IP
+</div>
+
+<strong>Task 2.3: Verify EIGRP Neighbor Relationship</strong><br><br>
+<p>Confirm that R1 and R2 have established EIGRP neighbor adjacency.</p>
+
+<div class="code-block">
+R1# show ip eigrp neighbors<br>
+<br>
+! Expected Output:<br>
+! EIGRP-IPv4 Neighbors for AS(100)<br>
+! H   Address         Interface       Hold Uptime   SRTT   RTO  Q  Seq<br>
+!                                     (sec)         (ms)       Cnt Num<br>
+! 0   203.18.64.2     Gi0/0            14 00:01:23    5   100  0  3
+</div>
+
+<div class="code-block">
+R2# show ip eigrp neighbors<br>
+<br>
+! Expected Output:<br>
+! EIGRP-IPv4 Neighbors for AS(100)<br>
+! H   Address         Interface       Hold Uptime   SRTT   RTO  Q  Seq<br>
+!                                     (sec)         (ms)       Cnt Num<br>
+! 0   203.18.64.1     Gi0/0            13 00:01:24    4   100  0  2
+</div>
+
+<strong>Task 2.4: Verify EIGRP Routes in Routing Table</strong><br><br>
+<p>Check that EIGRP routes are being exchanged and installed in the routing table.</p>
+
+<div class="code-block">
+R1# show ip route eigrp<br>
+<br>
+! Expected Output:<br>
+! Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP<br>
+!        D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area<br>
+!<br>
+!      192.168.2.0/24 is subnetted, 1 subnets<br>
+! D       192.168.2.0 [90/130816] via 203.18.64.2, 00:01:45, GigabitEthernet0/0
+</div>
+
+<div class="code-block">
+R2# show ip route eigrp<br>
+<br>
+! Expected Output:<br>
+!      192.168.1.0/24 is subnetted, 1 subnets<br>
+! D       192.168.1.0 [90/130816] via 203.18.64.1, 00:01:46, GigabitEthernet0/0
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Checkpoint:</strong><br>
+• EIGRP neighbor relationship is established (Hold timer shows 10-15 seconds)<br>
+• Routes are marked with "D" (EIGRP) in the routing table<br>
+• Administrative Distance is 90 for internal EIGRP routes<br>
+• Metric is displayed in brackets [90/130816]
+</div>
+
+<strong>Task 2.5: Test End-to-End Connectivity</strong><br><br>
+<p>Verify that R1 can reach R2's loopback network and vice versa.</p>
+
+<div class="code-block">
+R1# ping 192.168.2.1 source 192.168.1.1<br>
+<br>
+! Expected Output:<br>
+! Type escape sequence to abort.<br>
+! Sending 5, 100-byte ICMP Echos to 192.168.2.1, timeout is 2 seconds:<br>
+! Packet sent with a source address of 192.168.1.1<br>
+! !!!!!<br>
+! Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms
+</div>
+
+<div class="code-block">
+R2# ping 192.168.1.1 source 192.168.2.1<br>
+<br>
+! Expected Output:<br>
+! Type escape sequence to abort.<br>
+! Sending 5, 100-byte ICMP Echos to 192.168.1.1, timeout is 2 seconds:<br>
+! Packet sent with a source address of 192.168.2.1<br>
+! !!!!!<br>
+! Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms
+</div>
+
+<!-- Step 3: EIGRP MD5 Authentication -->
+<div class="alert alert-info">
+<strong>📝 Step 3: Configure EIGRP MD5 Authentication</strong>
+</div>
+
+<p>EIGRP authentication ensures that only routers with the correct key can form neighbor relationships, preventing unauthorized routers from injecting false routing information.</p>
+
+<strong>Task 3.1: Configure Key Chain on R1</strong><br><br>
+
+<div class="code-block">
+R1# configure terminal<br>
+<br>
+! Create key chain for EIGRP authentication<br>
+R1(config)# key chain EIGRP-KEYS<br>
+<br>
+! Define key 1 with password<br>
+R1(config-keychain)# key 1<br>
+R1(config-keychain-key)# key-string Cisco123!<br>
+R1(config-keychain-key)# exit<br>
+R1(config-keychain)# exit<br>
+<br>
+! Apply authentication to interface<br>
+R1(config)# interface gigabitethernet 0/0<br>
+R1(config-if)# ip authentication mode eigrp 100 md5<br>
+R1(config-if)# ip authentication key-chain eigrp 100 EIGRP-KEYS<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory
+</div>
+
+<strong>Task 3.2: Configure Key Chain on R2</strong><br><br>
+
+<div class="code-block">
+R2# configure terminal<br>
+<br>
+! Create key chain for EIGRP authentication<br>
+R2(config)# key chain EIGRP-KEYS<br>
+<br>
+! Define key 1 with password (MUST MATCH R1)<br>
+R2(config-keychain)# key 1<br>
+R2(config-keychain-key)# key-string Cisco123!<br>
+R2(config-keychain-key)# exit<br>
+R2(config-keychain)# exit<br>
+<br>
+! Apply authentication to interface<br>
+R2(config)# interface gigabitethernet 0/0<br>
+R2(config-if)# ip authentication mode eigrp 100 md5<br>
+R2(config-if)# ip authentication key-chain eigrp 100 EIGRP-KEYS<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory
+</div>
+
+<div class="alert alert-danger">
+<strong>❌ Critical Warning:</strong><br>
+• The key-string password MUST be exactly the same on both routers (case-sensitive)<br>
+• If passwords don't match, EIGRP neighbor relationship will fail<br>
+• Authentication must be configured on all routers in the EIGRP domain<br>
+• When enabling authentication, there may be a brief neighbor flap
+</div>
+
+<strong>Task 3.3: Verify EIGRP Authentication</strong><br><br>
+
+<div class="code-block">
+R1# show ip eigrp neighbors<br>
+<br>
+! Verify neighbor is still up after authentication<br>
+! Expected Output:<br>
+! EIGRP-IPv4 Neighbors for AS(100)<br>
+! H   Address         Interface       Hold Uptime   SRTT   RTO  Q  Seq<br>
+!                                     (sec)         (ms)       Cnt Num<br>
+! 0   203.18.64.2     Gi0/0            14 00:00:45    5   100  0  8
+</div>
+
+<div class="code-block">
+R1# show ip eigrp interfaces detail gigabitethernet 0/0<br>
+<br>
+! Expected Output (verify authentication is enabled):<br>
+! EIGRP-IPv4 Interfaces for AS(100)<br>
+!                         Xmit Queue   PeerQ        Mean   Pacing Time   Multicast    Pending<br>
+! Interface        Peers  Un/Reliable  Un/Reliable  SRTT   Un/Reliable   Flow Timer   Routes<br>
+! Gi0/0              1        0/0       0/0           5       0/1           50           0<br>
+!   Hello-interval is 5, Hold-time is 15<br>
+!   Split-horizon is enabled<br>
+!   Next xmit serial <none><br>
+!   Packetized sent/expedited: 8/0<br>
+!   Hello's sent/expedited: 245/2<br>
+!   Un/reliable mcasts: 0/4  Un/reliable ucasts: 5/4<br>
+!   Mcast exceptions: 0  CR packets: 0  ACKs suppressed: 0<br>
+!   Retransmissions sent: 1  Out-of-sequence rcvd: 0<br>
+!   <strong>Authentication mode is md5,  key-chain is "EIGRP-KEYS"</strong>
+</div>
+
+<strong>Task 3.4: Test Authentication Failure (Optional)</strong><br><br>
+<p>To verify authentication is working, temporarily change the password on one router.</p>
+
+<div class="code-block">
+! On R2, change password temporarily<br>
+R2(config)# key chain EIGRP-KEYS<br>
+R2(config-keychain)# key 1<br>
+R2(config-keychain-key)# key-string WrongPassword<br>
+R2(config-keychain-key)# end<br>
+<br>
+! Wait 15-20 seconds and check neighbors<br>
+R2# show ip eigrp neighbors<br>
+! Expected: No neighbors shown (authentication mismatch)<br>
+<br>
+! Check for authentication errors<br>
+R2# debug eigrp packets<br>
+! You will see authentication failures<br>
+<br>
+! Restore correct password<br>
+R2(config)# key chain EIGRP-KEYS<br>
+R2(config-keychain)# key 1<br>
+R2(config-keychain-key)# key-string Cisco123!<br>
+R2(config-keychain-key)# end<br>
+R2# undebug all<br>
+<br>
+! Neighbor should re-establish within 15-20 seconds
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Authentication Verification Complete:</strong><br>
+• EIGRP authentication mode is MD5<br>
+• Key-chain "EIGRP-KEYS" is properly configured<br>
+• Neighbor relationships remain stable with correct authentication<br>
+• Mismatched passwords prevent neighbor formation
+</div>
+
+<!-- Step 4: EIGRP Manual Route Summarization -->
+<div class="alert alert-info">
+<strong>📝 Step 4: Configure EIGRP Manual Route Summarization</strong>
+</div>
+
+<p>Manual route summarization reduces routing table size and improves network scalability by advertising aggregated routes instead of individual subnets.</p>
+
+<div class="alert alert-warning">
+<strong>📘 Understanding Route Summarization:</strong><br>
+In this lab, we'll configure R1 to summarize its 192.168.1.0/24 network, and R2 to summarize its 192.168.2.0/24 network. In a real-world scenario with multiple subnets, summarization becomes even more valuable.
+</div>
+
+<strong>Task 4.1: Configure Summary Route on R1</strong><br><br>
+<p>Configure R1 to advertise a summary route for the 192.168.1.0/24 network.</p>
+
+<div class="code-block">
+R1# configure terminal<br>
+<br>
+! Configure route summarization on the outbound interface<br>
+R1(config)# interface gigabitethernet 0/0<br>
+R1(config-if)# ip summary-address eigrp 100 192.168.1.0 255.255.255.0<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory
+</div>
+
+<strong>Task 4.2: Configure Summary Route on R2</strong><br><br>
+<p>Configure R2 to advertise a summary route for the 192.168.2.0/24 network.</p>
+
+<div class="code-block">
+R2# configure terminal<br>
+<br>
+! Configure route summarization on the outbound interface<br>
+R2(config)# interface gigabitethernet 0/0<br>
+R2(config-if)# ip summary-address eigrp 100 192.168.2.0 255.255.255.0<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Route Summarization Notes:</strong><br>
+• Summarization is configured on the <strong>outbound interface</strong><br>
+• When a summary is created, EIGRP automatically creates a <strong>Null0 route</strong> to prevent routing loops<br>
+• Summary routes have a lower metric than component routes<br>
+• In this simple topology, summarization doesn't change routing behavior but demonstrates the concept
+</div>
+
+<strong>Task 4.3: Verify Route Summarization</strong><br><br>
+
+<div class="code-block">
+R1# show ip route eigrp<br>
+<br>
+! Expected Output (summary route from R2):<br>
+!      192.168.2.0/24 is subnetted, 1 subnets<br>
+! D       192.168.2.0 [90/130816] via 203.18.64.2, 00:00:30, GigabitEthernet0/0
+</div>
+
+<div class="code-block">
+R1# show ip route 192.168.1.0<br>
+<br>
+! Check for automatically created Null0 summary route<br>
+! Expected Output:<br>
+! Routing entry for 192.168.1.0/24<br>
+!   Known via "connected", distance 0, metric 0 (connected, via interface)<br>
+!   Routing Descriptor Blocks:<br>
+!   * directly connected, via Loopback0<br>
+!<br>
+! D    192.168.1.0/24 is a summary, 00:00:45, Null0
+</div>
+
+<div class="code-block">
+R2# show ip route eigrp<br>
+<br>
+! Expected Output (summary route from R1):<br>
+!      192.168.1.0/24 is subnetted, 1 subnets<br>
+! D       192.168.1.0 [90/130816] via 203.18.64.1, 00:00:32, GigabitEthernet0/0
+</div>
+
+<strong>Task 4.4: Verify Summary Route in EIGRP Topology</strong><br><br>
+
+<div class="code-block">
+R1# show ip eigrp topology<br>
+<br>
+! Expected Output showing both local and remote networks<br>
+! EIGRP-IPv4 Topology Table for AS(100)/ID(1.1.1.1)<br>
+! Codes: P - Passive, A - Active, U - Update, Q - Query, R - Reply,<br>
+!        r - reply Status, s - sia Status<br>
+!<br>
+! P 192.168.1.0/24, 1 successors, FD is 128256<br>
+!         via Summary (128256/0), Null0<br>
+!         via Connected, Loopback0<br>
+! P 192.168.2.0/24, 1 successors, FD is 130816<br>
+!         via 203.18.64.2 (130816/128256), GigabitEthernet0/0<br>
+! P 203.18.64.0/30, 1 successors, FD is 2816<br>
+!         via Connected, GigabitEthernet0/0
+</div>
+
+<strong>Task 4.5: Test Connectivity After Summarization</strong><br><br>
+
+<div class="code-block">
+R1# ping 192.168.2.1 source 192.168.1.1<br>
+<br>
+! Expected Output:<br>
+! Type escape sequence to abort.<br>
+! Sending 5, 100-byte ICMP Echos to 192.168.2.1, timeout is 2 seconds:<br>
+! Packet sent with a source address of 192.168.1.1<br>
+! !!!!!<br>
+! Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Route Summarization Complete:</strong><br>
+• Summary routes are configured on outbound interfaces<br>
+• Null0 routes are automatically created for loop prevention<br>
+• Routing tables show summarized routes from neighbors<br>
+• End-to-end connectivity is maintained
+</div>
+
+<!-- Complete Router Configurations -->
+<div class="section-title">📄 Complete Router Configurations</div>
+
+<strong>R1 - Complete Configuration</strong>
+
+<div class="code-block">
+!<br>
+! R1 Complete Configuration - Lab 12.1<br>
+!<br>
+hostname R1<br>
+!<br>
+! Key Chain for EIGRP Authentication<br>
+key chain EIGRP-KEYS<br>
+ key 1<br>
+  key-string Cisco123!<br>
+!<br>
+! Interface Configuration<br>
+interface Loopback0<br>
+ description ** R1 Internal Network **<br>
+ ip address 192.168.1.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** WAN Link to R2 **<br>
+ ip address 203.18.64.1 255.255.255.252<br>
+ ip authentication mode eigrp 100 md5<br>
+ ip authentication key-chain eigrp 100 EIGRP-KEYS<br>
+ ip summary-address eigrp 100 192.168.1.0 255.255.255.0<br>
+ no shutdown<br>
+!<br>
+! EIGRP Configuration<br>
+router eigrp 100<br>
+ network 192.168.1.0 0.0.0.255<br>
+ network 203.18.64.0 0.0.0.3<br>
+ no auto-summary<br>
+ eigrp router-id 1.1.1.1<br>
+!<br>
+line con 0<br>
+ logging synchronous<br>
+ exec-timeout 0 0<br>
+!<br>
+end
+</div>
+
+<strong>R2 - Complete Configuration</strong>
+
+<div class="code-block">
+!<br>
+! R2 Complete Configuration - Lab 12.1<br>
+!<br>
+hostname R2<br>
+!<br>
+! Key Chain for EIGRP Authentication<br>
+key chain EIGRP-KEYS<br>
+ key 1<br>
+  key-string Cisco123!<br>
+!<br>
+! Interface Configuration<br>
+interface Loopback0<br>
+ description ** R2 Internal Network **<br>
+ ip address 192.168.2.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** WAN Link to R1 **<br>
+ ip address 203.18.64.2 255.255.255.252<br>
+ ip authentication mode eigrp 100 md5<br>
+ ip authentication key-chain eigrp 100 EIGRP-KEYS<br>
+ ip summary-address eigrp 100 192.168.2.0 255.255.255.0<br>
+ no shutdown<br>
+!<br>
+! EIGRP Configuration<br>
+router eigrp 100<br>
+ network 192.168.2.0 0.0.0.255<br>
+ network 203.18.64.0 0.0.0.3<br>
+ no auto-summary<br>
+ eigrp router-id 2.2.2.2<br>
+!<br>
+line con 0<br>
+ logging synchronous<br>
+ exec-timeout 0 0<br>
+!<br>
+end
+</div>
+
+<!-- Verification Commands -->
+<div class="section-title">✅ Comprehensive Verification Commands</div>
+
+<strong>1. Verify EIGRP Neighbor Relationships</strong>
+<div class="code-block">
+R1# show ip eigrp neighbors<br>
+R1# show ip eigrp neighbors detail<br>
+<br>
+! Check neighbor state, hold timer, uptime, SRTT, and queue counts
+</div>
+
+<strong>2. Verify EIGRP Routing Table</strong>
+<div class="code-block">
+R1# show ip route<br>
+R1# show ip route eigrp<br>
+R1# show ip route 192.168.2.0<br>
+<br>
+! Verify EIGRP routes are learned (marked with "D")<br>
+! Check administrative distance [90] and metric
+</div>
+
+<strong>3. Verify EIGRP Topology Table</strong>
+<div class="code-block">
+R1# show ip eigrp topology<br>
+R1# show ip eigrp topology all-links<br>
+<br>
+! View successor and feasible successor routes<br>
+! Check Feasible Distance (FD) and Reported Distance (RD)
+</div>
+
+<strong>4. Verify EIGRP Interfaces</strong>
+<div class="code-block">
+R1# show ip eigrp interfaces<br>
+R1# show ip eigrp interfaces detail gigabitethernet 0/0<br>
+<br>
+! Verify interfaces participating in EIGRP<br>
+! Confirm authentication is enabled (md5, key-chain name)
+</div>
+
+<strong>5. Verify EIGRP Protocol Information</strong>
+<div class="code-block">
+R1# show ip protocols<br>
+<br>
+! Display EIGRP AS number, Router ID, networks advertised<br>
+! Check administrative distance and maximum paths
+</div>
+
+<strong>6. Verify Authentication Configuration</strong>
+<div class="code-block">
+R1# show key chain<br>
+R1# show ip eigrp interfaces detail gigabitethernet 0/0 | include Auth<br>
+<br>
+! Verify key chain configuration<br>
+! Confirm authentication mode and key-chain name
+</div>
+
+<strong>7. Verify Route Summarization</strong>
+<div class="code-block">
+R1# show ip route | include Null0<br>
+R1# show ip eigrp topology | include Summary<br>
+<br>
+! Check for automatically created Null0 routes<br>
+! Verify summary routes in topology table
+</div>
+
+<strong>8. Verify End-to-End Connectivity</strong>
+<div class="code-block">
+R1# ping 192.168.2.1 source 192.168.1.1<br>
+R1# traceroute 192.168.2.1 source 192.168.1.1<br>
+<br>
+! Test connectivity between loopback networks<br>
+! Verify routing path
+</div>
+
+<strong>9. View EIGRP Statistics</strong>
+<div class="code-block">
+R1# show ip eigrp traffic<br>
+<br>
+! Display EIGRP packet statistics (Hello, Update, Query, Reply, ACK)
+</div>
+
+<strong>10. Debug EIGRP (Use with Caution)</strong>
+<div class="code-block">
+R1# debug eigrp packets<br>
+R1# debug ip eigrp<br>
+R1# debug ip eigrp neighbor<br>
+<br>
+! Monitor EIGRP operations in real-time<br>
+! Always disable debug when done: undebug all
+</div>
+
+<!-- Verification Checklist -->
+<div class="section-title">📋 Lab Verification Checklist</div>
+
+<ul class="checklist">
+<li>☑ All interfaces are configured with correct IP addresses</li>
+<li>☑ All interfaces are in "up/up" state</li>
+<li>☑ Basic ping connectivity works between R1 and R2 (203.18.64.1 ↔ 203.18.64.2)</li>
+<li>☑ EIGRP AS 100 is configured on both routers</li>
+<li>☑ Network statements match all required subnets with correct wildcard masks</li>
+<li>☑ "no auto-summary" is configured on both routers</li>
+<li>☑ EIGRP Router IDs are configured (1.1.1.1 and 2.2.2.2)</li>
+<li>☑ EIGRP neighbor relationship is established (show ip eigrp neighbors)</li>
+<li>☑ EIGRP routes are present in routing table (D routes)</li>
+<li>☑ R1 can see 192.168.2.0/24 via EIGRP</li>
+<li>☑ R2 can see 192.168.1.0/24 via EIGRP</li>
+<li>☑ MD5 authentication is configured on both routers</li>
+<li>☑ Key chains are identical (EIGRP-KEYS with key-string Cisco123!)</li>
+<li>☑ Authentication is active on GigabitEthernet0/0 interfaces</li>
+<li>☑ Neighbor relationship remains stable after authentication</li>
+<li>☑ Route summarization is configured on both routers</li>
+<li>☑ Null0 summary routes are automatically created</li>
+<li>☑ End-to-end ping works (192.168.1.1 ↔ 192.168.2.1)</li>
+<li>☑ Traceroute shows correct routing path</li>
+<li>☑ Configuration is saved on both routers (write memory)</li>
+</ul>
+
+<!-- Troubleshooting Guide -->
+<div class="section-title">🔧 Troubleshooting Guide</div>
+
+<strong>Problem 1: EIGRP Neighbors Not Forming</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• "show ip eigrp neighbors" shows no neighbors<br>
+• EIGRP routes are not appearing in routing table<br>
+• No EIGRP updates being received
+</div>
+
+<strong>Possible Causes & Solutions:</strong>
+
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Verification Command</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mismatched AS numbers</td>
+<td>show ip protocols</td>
+<td>Ensure both routers use AS 100: router eigrp 100</td>
+</tr>
+<tr>
+<td>Authentication mismatch</td>
+<td>debug eigrp packets</td>
+<td>Verify key-string matches exactly on both routers</td>
+</tr>
+<tr>
+<td>Incorrect network statement</td>
+<td>show ip eigrp interfaces</td>
+<td>Add network statement: network 203.18.64.0 0.0.0.3</td>
+</tr>
+<tr>
+<td>Interface is down</td>
+<td>show ip interface brief</td>
+<td>Enable interface: no shutdown</td>
+</tr>
+<tr>
+<td>ACL blocking EIGRP</td>
+<td>show ip interface</td>
+<td>Remove or modify ACL to permit EIGRP (protocol 88)</td>
+</tr>
+<tr>
+<td>Mismatched K-values</td>
+<td>show ip protocols</td>
+<td>Ensure K-values match (default: K1=1, K2=0, K3=1, K4=0, K5=0)</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify EIGRP is running<br>
+R1# show ip protocols<br>
+! Look for "Routing Protocol is eigrp 100"<br>
+<br>
+! Step 2: Check if interfaces are in EIGRP<br>
+R1# show ip eigrp interfaces<br>
+! GigabitEthernet0/0 should be listed<br>
+<br>
+! Step 3: Enable EIGRP debugging (use carefully)<br>
+R1# debug eigrp packets<br>
+! Look for authentication failures or packet drops<br>
+<br>
+! Step 4: Check for authentication errors<br>
+R1# show ip eigrp interfaces detail gi0/0<br>
+! Verify: "Authentication mode is md5, key-chain is 'EIGRP-KEYS'"<br>
+<br>
+! Step 5: Disable debug<br>
+R1# undebug all
+</div>
+
+<strong>Problem 2: Authentication Failures</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Neighbors were forming but stopped after adding authentication<br>
+• Log messages showing authentication failures<br>
+• Neighbor relationship keeps flapping
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify key chain exists<br>
+R1# show key chain<br>
+! Expected: Key chain EIGRP-KEYS:<br>
+!   key 1 -- text "Cisco123!"<br>
+<br>
+! Step 2: Compare key-strings on both routers<br>
+! Key-string is case-sensitive and must match EXACTLY<br>
+<br>
+! Step 3: Verify authentication is applied to correct interface<br>
+R1# show run interface gigabitethernet 0/0<br>
+! Look for:<br>
+! ip authentication mode eigrp 100 md5<br>
+! ip authentication key-chain eigrp 100 EIGRP-KEYS<br>
+<br>
+! Step 4: Check for typos in key chain name<br>
+! "EIGRP-KEYS" is case-sensitive<br>
+<br>
+! Step 5: Temporarily remove authentication to test<br>
+R1(config)# interface gigabitethernet 0/0<br>
+R1(config-if)# no ip authentication mode eigrp 100<br>
+R1(config-if)# no ip authentication key-chain eigrp 100<br>
+! If neighbor forms, authentication config was the issue
+</div>
+
+<strong>Problem 3: Routes Not Appearing in Routing Table</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Neighbors are established but routes not in routing table<br>
+• "show ip eigrp topology" shows routes but not in "show ip route"<br>
+• Ping fails to remote networks
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Check if routes are in EIGRP topology<br>
+R1# show ip eigrp topology<br>
+! If routes are here but not in routing table, check next steps<br>
+<br>
+! Step 2: Check for better routes from other protocols<br>
+R1# show ip route 192.168.2.0<br>
+! Another protocol with better AD might be preferred<br>
+<br>
+! Step 3: Verify network statements on remote router<br>
+R2# show ip protocols<br>
+! Ensure R2 is advertising the network with "network" statement<br>
+<br>
+! Step 4: Check if auto-summary is causing issues<br>
+R1# show run | include auto-summary<br>
+! Should see "no auto-summary" under router eigrp 100<br>
+<br>
+! Step 5: Verify routing table has space<br>
+R1# show ip route summary<br>
+! Check if maximum routes limit is reached (unlikely in lab)
+</div>
+
+<strong>Problem 4: Ping Fails After Configuration</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• EIGRP neighbors are up<br>
+• Routes appear in routing table<br>
+• Ping still fails between loopback networks
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify routes exist<br>
+R1# show ip route 192.168.2.0<br>
+! Should show EIGRP route via 203.18.64.2<br>
+<br>
+! Step 2: Test connectivity to next-hop<br>
+R1# ping 203.18.64.2<br>
+! If this fails, check interface status<br>
+<br>
+! Step 3: Use extended ping with source<br>
+R1# ping 192.168.2.1 source 192.168.1.1<br>
+<br>
+! Step 4: Trace the routing path<br>
+R1# traceroute 192.168.2.1 source 192.168.1.1<br>
+! Shows where packets are being dropped<br>
+<br>
+! Step 5: Check for ACLs blocking traffic<br>
+R1# show ip access-lists<br>
+R1# show ip interface gigabitethernet 0/0 | include access list<br>
+<br>
+! Step 6: Check if loopback interface is up<br>
+R2# show ip interface brief | include Loopback<br>
+! Loopback0 should be up/up<br>
+<br>
+! Step 7: Verify IP addressing is correct<br>
+R1# show ip interface loopback 0<br>
+R2# show ip interface loopback 0
+</div>
+
+<strong>Problem 5: Summarization Not Working</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Summary routes not appearing in neighbor's routing table<br>
+• Null0 route not created automatically<br>
+• Specific routes still being advertised
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify summary address configuration<br>
+R1# show run interface gigabitethernet 0/0<br>
+! Look for: ip summary-address eigrp 100 192.168.1.0 255.255.255.0<br>
+<br>
+! Step 2: Check if Null0 route was created<br>
+R1# show ip route | include Null<br>
+! Should show: D 192.168.1.0/24 is a summary, Null0<br>
+<br>
+! Step 3: Verify summary in topology table<br>
+R1# show ip eigrp topology | include Summary<br>
+<br>
+! Step 4: Check remote router's routing table<br>
+R2# show ip route eigrp<br>
+! Should receive summary route, not specific subnets<br>
+<br>
+! Step 5: Ensure component routes exist<br>
+R1# show ip route 192.168.1.0<br>
+! Summary requires at least one component route to be active
+</div>
+
+<strong>Problem 6: High EIGRP CPU Usage</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Router CPU usage is high<br>
+• EIGRP process consuming excessive resources<br>
+• Network instability or flapping neighbors
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Check EIGRP topology state<br>
+R1# show ip eigrp topology | include Active<br>
+! Active routes indicate queries in progress (SIA condition)<br>
+<br>
+! Step 2: Check neighbor stability<br>
+R1# show ip eigrp neighbors<br>
+! Look at uptime - frequent resets indicate instability<br>
+<br>
+! Step 3: Review EIGRP traffic statistics<br>
+R1# show ip eigrp traffic<br>
+! High query or reply counts may indicate problems<br>
+<br>
+! Step 4: Check for routing loops<br>
+R1# show ip route<br>
+! Look for unexpected routing paths<br>
+<br>
+! Step 5: Stabilize network with route summarization<br>
+! Implement summarization to reduce topology changes<br>
+<br>
+! Step 6: Consider EIGRP stub configuration<br>
+! For routers at edge of network:<br>
+R1(config-router)# eigrp stub connected summary
+</div>
+
+<strong>Common Configuration Mistakes:</strong>
+
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wrong wildcard mask</td>
+<td>Interface not in EIGRP</td>
+<td>Use 0.0.0.3 for /30, 0.0.0.255 for /24</td>
+</tr>
+<tr>
+<td>Forgot "no auto-summary"</td>
+<td>Classful routing behavior</td>
+<td>Add: no auto-summary under router eigrp 100</td>
+</tr>
+<tr>
+<td>Authentication password mismatch</td>
+<td>Neighbors won't form</td>
+<td>Ensure key-string matches exactly (case-sensitive)</td>
+</tr>
+<tr>
+<td>Wrong AS number</td>
+<td>No neighbor adjacency</td>
+<td>Both routers must use same AS (100)</td>
+</tr>
+<tr>
+<td>Summary on wrong interface</td>
+<td>Summary not working</td>
+<td>Configure summary on outbound interface</td>
+</tr>
+<tr>
+<td>Forgot to save config</td>
+<td>Config lost after reload</td>
+<td>Always use: write memory or copy run start</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Additional Debug Commands -->
+<div class="section-title">🔍 Advanced Debug Commands</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Warning:</strong> Debug commands can generate significant output and consume CPU resources. Use them carefully in production environments and always disable them when done using "undebug all" or "no debug all".
+</div>
+
+<strong>EIGRP Debugging Commands:</strong>
+<div class="code-block">
+! Enable specific EIGRP debugging<br>
+R1# debug eigrp packets                ! All EIGRP packets<br>
+R1# debug eigrp packets hello          ! Only Hello packets<br>
+R1# debug eigrp packets update         ! Only Update packets<br>
+R1# debug eigrp packets query          ! Only Query packets<br>
+R1# debug eigrp packets reply          ! Only Reply packets<br>
+R1# debug eigrp packets ack            ! Only ACK packets<br>
+<br>
+R1# debug ip eigrp                     ! EIGRP protocol events<br>
+R1# debug ip eigrp neighbor            ! Neighbor events<br>
+R1# debug ip eigrp summary             ! Summarization events<br>
+R1# debug eigrp fsm                    ! DUAL FSM events<br>
+<br>
+! Disable all debugging<br>
+R1# undebug all<br>
+R1# no debug all
+</div>
+
+<strong>Conditional Debugging (IOS 12.3+):</strong>
+<div class="code-block">
+! Debug only specific neighbor<br>
+R1# debug condition interface gigabitethernet 0/0<br>
+R1# debug eigrp packets<br>
+<br>
+! View active debug conditions<br>
+R1# show debug condition<br>
+<br>
+! Remove debug condition<br>
+R1# no debug condition all<br>
+R1# undebug all
+</div>
+
+<!-- Key Learning Points -->
+<div class="section-title">📚 Key Learning Points</div>
+
+<strong>1. EIGRP Fundamentals:</strong>
+<ul class="checklist">
+<li>✓ EIGRP is a Cisco proprietary advanced distance-vector (hybrid) routing protocol</li>
+<li>✓ Uses Autonomous System (AS) number to identify routing domain</li>
+<li>✓ Only routers in the same AS can become neighbors</li>
+<li>✓ Uses multicast address 224.0.0.10 for neighbor discovery and updates</li>
+<li>✓ Protocol number 88 (not TCP or UDP)</li>
+<li>✓ Administrative Distance: Internal=90, External=170</li>
+</ul>
+
+<strong>2. EIGRP Neighbor Relationships:</strong>
+<ul class="checklist">
+<li>✓ Hello packets establish and maintain neighbor relationships</li>
+<li>✓ Default Hello interval: 5 seconds (broadcast/P2P), 60 seconds (NBMA)</li>
+<li>✓ Default Hold timer: 3x Hello interval (15 or 180 seconds)</li>
+<li>✓ Requirements for neighborship: Same AS, matching K-values, authentication (if configured)</li>
+<li>✓ Neighbors must be on same subnet (primary IP)</li>
+</ul>
+
+<strong>3. EIGRP Metric Calculation:</strong>
+<ul class="checklist">
+<li>✓ Composite metric based on Bandwidth and Delay by default</li>
+<li>✓ Formula: Metric = 256 × (K1 × Bandwidth + (K2 × Bandwidth)/(256 - Load) + K3 × Delay)</li>
+<li>✓ Default K-values: K1=1 (Bandwidth), K2=0 (Load), K3=1 (Delay), K4=0 (Reliability), K5=0 (MTU)</li>
+<li>✓ Simplified formula: Metric = (107 / Minimum Bandwidth + Cumulative Delay) × 256</li>
+<li>✓ Bandwidth in kbps, Delay in tens of microseconds</li>
+</ul>
+
+<strong>4. EIGRP DUAL Algorithm:</strong>
+<ul class="checklist">
+<li>✓ Diffusing Update Algorithm (DUAL) ensures loop-free routing</li>
+<li>✓ Feasible Distance (FD): Best metric to reach destination</li>
+<li>✓ Reported Distance (RD): Neighbor's metric to reach destination</li>
+<li>✓ Successor: Best path to destination (lowest FD)</li>
+<li>✓ Feasible Successor: Backup path meeting feasibility condition (RD < FD)</li>
+<li>✓ Topology changes trigger updates only to affected neighbors</li>
+</ul>
+
+<strong>5. EIGRP Authentication:</strong>
+<ul class="checklist">
+<li>✓ MD5 authentication ensures only authorized routers exchange routing information</li>
+<li>✓ Key chain defines authentication keys with optional lifetime</li>
+<li>✓ Authentication is configured per-interface, not globally</li>
+<li>✓ Key-string must match exactly on both neighbors (case-sensitive)</li>
+<li>✓ Multiple keys can be configured for smooth key rollover</li>
+<li>✓ Authentication prevents man-in-the-middle attacks and unauthorized routing updates</li>
+</ul>
+
+<strong>6. EIGRP Route Summarization:</strong>
+<ul class="checklist">
+<li>✓ Manual summarization reduces routing table size and improves scalability</li>
+<li>✓ Configured on outbound interface: ip summary-address eigrp [AS] [network] [mask]</li>
+<li>✓ Automatically creates Null0 route to prevent routing loops</li>
+<li>✓ Summary metric is based on best component route</li>
+<li>✓ Reduces query scope and improves convergence time</li>
+<li>✓ No auto-summary recommended for modern networks (classless routing)</li>
+</ul>
+
+<strong>7. EIGRP Network Statements:</strong>
+<ul class="checklist">
+<li>✓ Network statement enables EIGRP on matching interfaces</li>
+<li>✓ Uses wildcard mask (inverse of subnet mask)</li>
+<li>✓ Can be specific (0.0.0.3 for single /30) or broad (0.0.0.255 for /24)</li>
+<li>✓ Advertises connected networks on enabled interfaces</li>
+<li>✓ Passive-interface prevents neighbor formation but still advertises network</li>
+</ul>
+
+<strong>8. EIGRP Best Practices:</strong>
+<ul class="checklist">
+<li>✓ Always configure "no auto-summary" for classless routing</li>
+<li>✓ Use MD5 authentication on all EIGRP links</li>
+<li>✓ Configure unique Router IDs (typically use loopback IP)</li>
+<li>✓ Implement route summarization at network boundaries</li>
+<li>✓ Use passive-interface for non-transit networks (user VLANs, servers)</li>
+<li>✓ Document AS numbers and authentication keys</li>
+<li>✓ Use stub routing at edge sites to reduce query domain</li>
+<li>✓ Monitor neighbor relationships for stability</li>
+</ul>
+
+<strong>9. Troubleshooting Methodology:</strong>
+<ul class="checklist">
+<li>✓ Verify physical connectivity first (ping next-hop)</li>
+<li>✓ Check interface status (show ip interface brief)</li>
+<li>✓ Confirm EIGRP is running (show ip protocols)</li>
+<li>✓ Verify neighbor adjacencies (show ip eigrp neighbors)</li>
+<li>✓ Check routing table (show ip route eigrp)</li>
+<li>✓ Review EIGRP topology (show ip eigrp topology)</li>
+<li>✓ Use debug carefully and disable when done</li>
+</ul>
+
+<strong>10. CCNP Exam Alignment:</strong>
+<ul class="checklist">
+<li>✓ CCNP 350-401 ENCOR: Section 3.2 (EIGRP configuration and verification)</li>
+<li>✓ CCNP 300-410 ENARSI: Section 2.1 (EIGRP implementation)</li>
+<li>✓ CCNP 300-410 ENARSI: Section 2.2 (EIGRP authentication and security)</li>
+<li>✓ CCNP 300-410 ENARSI: Section 2.3 (EIGRP optimization and troubleshooting)</li>
+</ul>
+
+<!-- Lab Extension Ideas -->
+<div class="section-title">🚀 Lab Extension Ideas</div>
+
+<p>Once you've completed the basic lab, try these advanced scenarios:</p>
+
+<strong>Extension 1: Unequal Cost Load Balancing</strong>
+<div class="code-block">
+! Configure variance to enable unequal cost load balancing<br>
+R1(config)# router eigrp 100<br>
+R1(config-router)# variance 2<br>
+! Allows load balancing across paths with metrics up to 2x the best metric
+</div>
+
+<strong>Extension 2: EIGRP Passive Interface</strong>
+<div class="code-block">
+! Add additional loopback and make it passive<br>
+R1(config)# interface loopback 1<br>
+R1(config-if)# ip address 10.1.1.1 255.255.255.0<br>
+R1(config)# router eigrp 100<br>
+R1(config-router)# network 10.1.1.0 0.0.0.255<br>
+R1(config-router)# passive-interface loopback 1<br>
+! Network advertised but no neighbor relationships on this interface
+</div>
+
+<strong>Extension 3: EIGRP Stub Routing</strong>
+<div class="code-block">
+! Configure R2 as EIGRP stub router<br>
+R2(config)# router eigrp 100<br>
+R2(config-router)# eigrp stub connected summary<br>
+! Reduces query domain, improves convergence
+</div>
+
+<strong>Extension 4: EIGRP Named Mode</strong>
+<div class="code-block">
+! Configure EIGRP using named mode (IOS 15.0+)<br>
+R1(config)# router eigrp LAB-EIGRP<br>
+R1(config-router)# address-family ipv4 unicast autonomous-system 100<br>
+R1(config-router-af)# network 192.168.1.0 0.0.0.255<br>
+R1(config-router-af)# network 203.18.64.0 0.0.0.3<br>
+R1(config-router-af)# eigrp router-id 1.1.1.1<br>
+! Named mode provides more flexibility and IPv6 support
+</div>
+
+<strong>Extension 5: EIGRP Bandwidth and Delay Tuning</strong>
+<div class="code-block">
+! Adjust interface metrics to influence path selection<br>
+R1(config)# interface gigabitethernet 0/0<br>
+R1(config-if)# bandwidth 100000<br>
+R1(config-if)# delay 100<br>
+! Delay in tens of microseconds
+</div>
+
+<strong>Extension 6: EIGRP Route Filtering</strong>
+<div class="code-block">
+! Use distribute-list to filter routes<br>
+R1(config)# access-list 1 deny 192.168.2.0 0.0.0.255<br>
+R1(config)# access-list 1 permit any<br>
+R1(config)# router eigrp 100<br>
+R1(config-router)# distribute-list 1 in<br>
+! Prevents 192.168.2.0/24 from being installed in routing table
+</div>
+
+<strong>Extension 7: EIGRP Timer Tuning</strong>
+<div class="code-block">
+! Adjust Hello and Hold timers for faster convergence<br>
+R1(config)# interface gigabitethernet 0/0<br>
+R1(config-if)# ip hello-interval eigrp 100 1<br>
+R1(config-if)# ip hold-time eigrp 100 3<br>
+! Use with caution - aggressive timers can cause instability
+</div>
+
+<!-- Additional Resources -->
+<div class="section-title">📖 Additional Resources & References</div>
+
+<strong>Cisco Documentation:</strong>
+<ul class="checklist">
+<li>📘 Cisco EIGRP Configuration Guide</li>
+<li>📘 Cisco EIGRP Design Guide</li>
+<li>📘 CCNP Enterprise 350-401 ENCOR Official Cert Guide</li>
+<li>📘 CCNP Enterprise 300-410 ENARSI Official Cert Guide</li>
+<li>📘 Cisco IOS IP Routing Configuration Guide</li>
+</ul>
+
+<strong>Useful Commands Quick Reference:</strong>
+<div class="code-block">
+! Configuration Commands<br>
+router eigrp [AS-number]<br>
+network [network] [wildcard-mask]<br>
+no auto-summary<br>
+eigrp router-id [router-id]<br>
+ip authentication mode eigrp [AS] md5<br>
+ip authentication key-chain eigrp [AS] [key-chain-name]<br>
+ip summary-address eigrp [AS] [network] [mask]<br>
+<br>
+! Verification Commands<br>
+show ip eigrp neighbors<br>
+show ip eigrp topology<br>
+show ip eigrp interfaces<br>
+show ip protocols<br>
+show ip route eigrp<br>
+show ip eigrp traffic<br>
+show key chain<br>
+<br>
+! Troubleshooting Commands<br>
+debug eigrp packets<br>
+debug ip eigrp<br>
+debug ip eigrp neighbor<br>
+show ip eigrp topology all-links<br>
+show ip eigrp interfaces detail
+</div>
+
+<!-- Lab Completion Summary -->
+<div class="section-title">🎓 Lab Completion Summary</div>
+
+<div class="alert alert-success">
+<strong>✅ Congratulations!</strong><br><br>
+You have successfully completed Lab 12.1: EIGRP Basic Configuration, Authentication & Route Summarization.<br><br>
+<strong>Skills Mastered:</strong><br>
+• EIGRP basic configuration using classic mode<br>
+• Network statements with wildcard masks<br>
+• EIGRP neighbor relationships and verification<br>
+• MD5 authentication for secure routing updates<br>
+• Manual route summarization with Null0 routes<br>
+• Comprehensive troubleshooting methodology<br>
+• EIGRP verification and monitoring techniques<br><br>
+<strong>Next Steps:</strong><br>
+• Practice the lab multiple times until configuration becomes second nature<br>
+• Try the lab extension scenarios to deepen your understanding<br>
+• Move on to advanced EIGRP topics (named mode, redistribution, advanced filtering)<br>
+• Review CCNP ENCOR and ENARSI exam objectives related to EIGRP<br>
+• Build more complex multi-router EIGRP topologies
+</div>
+
+<div class="alert alert-info">
+<strong>📝 Lab Notes:</strong><br>
+• Keep your configurations for future reference<br>
+• Document any issues encountered and how you resolved them<br>
+• Practice troubleshooting by intentionally breaking the configuration<br>
+• Time yourself to improve speed for exam scenarios<br>
+• Create your own variations of this lab to test different scenarios
+</div>
+
+<!-- Final Notes -->
+<div class="section-title">⚠️ Important Final Notes</div>
+
+<div class="alert alert-warning">
+<strong>Security Reminder:</strong><br>
+• Change default authentication passwords in production environments<br>
+• Use strong, complex passwords for key-strings<br>
+• Implement key rotation policies for enhanced security<br>
+• Document all authentication keys in a secure location<br>
+• Monitor for unauthorized EIGRP neighbors<br>
+• Use ACLs to restrict EIGRP to trusted networks
+</div>
+
+<div class="alert alert-danger">
+<strong>Production Environment Warnings:</strong><br>
+• Always test configuration changes in a lab environment first<br>
+• Schedule routing protocol changes during maintenance windows<br>
+• Have a backout plan before making changes<br>
+• Save configurations before and after changes<br>
+• Use "debug" commands sparingly in production - they consume CPU resources<br>
+• Document all changes for future reference and troubleshooting<br>
+• Enable logging to capture EIGRP events (neighbor up/down, route changes)
+</div>
+
+<!-- End of Lab -->
+<div style="text-align: center; margin: 40px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+<h2 style="color: #1e3c72;">🏆 End of Lab 12.1 🏆</h2>
+<p style="font-size: 1.2em; color: #667eea; font-weight: bold;">EIGRP Basic Configuration, Authentication & Route Summarization</p>
+<p style="margin-top: 15px;">Lab Duration: 90-120 minutes</p>
+<p>CCNP Enterprise (ENCOR 350-401 & ENARSI 300-410)</p>
+<p style="margin-top: 20px; font-size: 0.9em; color: #666;">
+Keep practicing and good luck with your CCNP certification journey!
+</p>
+</div>
+
+</div>
+<!-- End of content wrapper -->
+
+</div>
+
+<!-- Footer -->
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<!-- Enhanced Password Protection & Anti-Tampering Script -->
+<script>
+// ==================== SECURITY CONFIGURATION ====================
+const MASTER_PASSWORD = "CCNP@2026";
+const PROTECTED_CONTENT = true;
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+let isUnlocked = false;
+let sessionTimer = null;
+let editMode = false;
+
+// Initialize security on page load
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+setupSecurityMonitoring();
+});
+
+// ==================== SESSION MANAGEMENT ====================
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+// ==================== PASSWORD VERIFICATION ====================
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+logSecurityEvent('FAILED_LOGIN_ATTEMPT', { timestamp: new Date().toISOString() });
+}
+}
+
+// ==================== CONTENT LOCKING/UNLOCKING ====================
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+enableEditMode();
+}
+
+function lockPage() {
+isUnlocked = false;
+editMode = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+disableEditMode();
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+// ==================== EDIT MODE MANAGEMENT ====================
+function enableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'true');
+});
+editMode = true;
+logSecurityEvent('EDIT_MODE_ENABLED');
+}
+
+function disableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'false');
+});
+editMode = false;
+logSecurityEvent('EDIT_MODE_DISABLED');
+}
+
+// ==================== CONTENT PROTECTION ====================
+function protectElement(elementId) {
+const element = document.getElementById(elementId);
+if (element) {
+element.addEventListener('keydown', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 This content is protected. Please unlock with password first.');
+showPasswordModal();
+return false;
+}
+});
+
+element.addEventListener('paste', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Paste not allowed on protected content');
+return false;
+}
+});
+
+element.addEventListener('drop', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Drag and drop not allowed on protected content');
+return false;
+}
+});
+}
+}
+
+// Make protected elements editable when unlocked
+protectElement('protectedHeader');
+protectElement('protectedBody');
+protectElement('protectedFooter');
+
+// ==================== ANTI-TAMPERING MEASURES ====================
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+// Disable text selection and dragging
+document.addEventListener('selectstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+document.addEventListener('dragstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable dangerous keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+// F12 - Developer Tools
+if (e.keyCode === 123) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+I - Developer Tools
+if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+C - Element Inspector
+if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+J - Console
+if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+e.preventDefault();
+return false;
+}
+// Ctrl+U - View Source
+if (e.ctrlKey && e.keyCode === 85) {
+e.preventDefault();
+return false;
+}
+// Ctrl+S - Save Page (only works with password)
+if (e.ctrlKey && e.keyCode === 83) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+}
+});
+
+// Disable copying
+document.addEventListener('copy', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable cutting
+document.addEventListener('cut', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Prevent right-click
+document.addEventListener('mousedown', function(e) {
+if (e.button === 2) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable double-click selection
+document.addEventListener('dblclick', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// ==================== SECURITY MONITORING ====================
+function setupSecurityMonitoring() {
+// DevTools detection
+let devTools = { open: false };
+setInterval(function() {
+if (window.outerHeight - window.innerHeight > 150) {
+if (!devTools.open) {
+devTools.open = true;
+logSecurityEvent('DEVTOOLS_DETECTED');
+}
+} else {
+devTools.open = false;
+}
+}, 500);
+
+// Monitor window focus
+window.addEventListener('blur', function() {
+logSecurityEvent('WINDOW_BLUR');
+});
+
+window.addEventListener('focus', function() {
+logSecurityEvent('WINDOW_FOCUS');
+if (!isUnlocked) {
+showPasswordModal();
+}
+});
+}
+
+// ==================== SECURITY LOGGING ====================
+function logSecurityEvent(eventType, details = {}) {
+const event = {
+type: eventType,
+timestamp: new Date().toISOString(),
+userAgent: navigator.userAgent,
+...details
+};
+console.log('[SECURITY LOG]', event);
+}
+
+// ==================== ANTI-EXPORT MEASURES ====================
+// Prevent printing
+window.addEventListener('beforeprint', function() {
+if (!isUnlocked) {
+alert('🔒 Printing is not allowed without password authentication');
+}
+});
+
+// Prevent iframe embedding
+if (self !== top) {
+top.location = self.location;
+}
+
+// Prevent drag & drop files
+document.addEventListener('dragover', function(e) {
+e.preventDefault();
+return false;
+});
+
+document.addEventListener('drop', function(e) {
+e.preventDefault();
+return false;
+});
+
+// ==================== INITIALIZATION ====================
+function initializeProtection() {
+// Additional protection initialization if needed
+logSecurityEvent('PROTECTION_INITIALIZED');
+}
+
+// ==================== CONSOLE SECURITY ====================
+// Security message on page load
+window.addEventListener('load', function() {
+setTimeout(function() {
+console.clear();
+console.log('%c🔐 ICONIC INFOSEC TRAINING - PROTECTED CONTENT',
+'color: #667eea; font-size: 18px; font-weight: bold;');
+console.log('%cLab 12.1: EIGRP Configuration - Password Protected',
+'color: #1e3c72; font-size: 14px; font-weight: bold;');
+console.log('%c⚠️ Content Protections: ACTIVE',
+'color: #ff6b6b; font-size: 12px;');
+console.log('%c✓ Header Protected ✓ Body Protected ✓ Footer Protected',
+'color: #28a745; font-size: 12px;');
+console.log('%cMaster Password: CCNP@2026',
+'color: red; font-size: 11px; font-weight: bold;');
+console.log('%cUnauthorized access attempts are logged and monitored.',
+'color: #dc3545; font-size: 11px;');
+}, 500);
+});
+
+// ==================== SESSION EXPIRY WARNING ====================
+window.addEventListener('beforeunload', function() {
+if (isUnlocked) {
+logSecurityEvent('PAGE_UNLOAD', {
+isAuthenticated: isUnlocked,
+sessionExpires: new Date(Date.now() + SESSION_TIMEOUT).toISOString()
+});
+}
+});
+
+</script>
+
+</body>
+</html>

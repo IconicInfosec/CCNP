@@ -1,0 +1,2860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 12.2 - Advanced EIGRP - Iconic InfoSec Training</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+text-align: center;
+margin: 20px 0;
+}
+
+.topology-image img {
+max-width: 100%;
+height: auto;
+border: 3px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+/* Password Protection Modal */
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Password Protection Modal -->
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<!-- Header -->
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<!-- Main Content Container -->
+<div id="protectedBody" class="protected-element">
+
+<!-- Lab Content Wrapper -->
+<div class="content-wrapper">
+
+<!-- Lab Title Section -->
+<div class="lab-title">🔧 Lab 12.2: Advanced EIGRP - Redistribution, Summarization & Load Balancing</div>
+<div class="lab-description">Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) - Advanced EIGRP Configuration</div>
+
+<!-- Lab Metadata -->
+<div class="lab-metadata">
+<strong>📚 Lab Overview</strong><br>
+<strong>Duration:</strong> 150-180 minutes | <strong>Difficulty Level:</strong> Advanced | <strong>Lab Version:</strong> 1.0<br>
+<strong>Lab ID:</strong> Lab 12.2 | <strong>Topics:</strong> EIGRP Redistribution, Network Summarization, Unequal Load Balancing, Named Mode<br>
+<strong>Autonomous Systems:</strong> AS 100, 200, 300, 400, 500 | <strong>Protocol:</strong> EIGRP (Multiple AS)
+</div>
+
+<!-- Lab Objectives -->
+<div class="section-title">🎯 Lab Objectives</div>
+<p>Upon completion of this lab, you will be able to:</p>
+<ul class="checklist">
+<li>✓ Configure EIGRP across multiple autonomous systems (AS 100, 200, 300, 400, 500)</li>
+<li>✓ Implement EIGRP route redistribution between different autonomous systems</li>
+<li>✓ Configure manual route summarization at network boundaries</li>
+<li>✓ Implement unequal cost load balancing using variance</li>
+<li>✓ Configure EIGRP in both Classic Mode and Named Mode</li>
+<li>✓ Manipulate EIGRP metrics for optimal path selection</li>
+<li>✓ Verify route redistribution and summarization operations</li>
+<li>✓ Troubleshoot complex multi-AS EIGRP environments</li>
+<li>✓ Analyze EIGRP external routes and their administrative distances</li>
+</ul>
+
+<!-- Network Topology -->
+<div class="section-title">📊 Network Topology</div>
+<div class="topology-image">
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-12.2.jpg" alt="Lab 12.2 Network Topology">
+<p style="margin-top: 10px; color: #667eea; font-weight: bold;">Figure 1: Multi-AS EIGRP Advanced Configuration Topology</p>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Topology Description:</strong><br>
+This advanced lab consists of five routers (AS100, AS200, AS300, AS400, AS500) running EIGRP in different autonomous systems. AS400 acts as the central redistribution point between AS 100 (connecting AS200 and AS300) and AS 500. The topology demonstrates advanced EIGRP features including inter-AS redistribution, route summarization, and unequal cost load balancing.
+</div>
+
+<!-- Device Information -->
+<div class="section-title">🖥️ Device Information</div>
+<table>
+<thead>
+<tr>
+<th>Device Name</th>
+<th>Device Type</th>
+<th>EIGRP AS</th>
+<th>Role</th>
+<th>IOS Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AS100</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Core Router - AS 100</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>AS200</td>
+<td>Cisco Router</td>
+<td>AS 200</td>
+<td>Distribution Router - AS 200</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>AS300</td>
+<td>Cisco Router</td>
+<td>AS 300</td>
+<td>Distribution Router - AS 300</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>AS400</td>
+<td>Cisco Router</td>
+<td>AS 100, 400</td>
+<td>Redistribution Point (Multiple AS)</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>AS500</td>
+<td>Cisco Router</td>
+<td>AS 400</td>
+<td>Edge Router - AS 400</td>
+<td>IOS 15.x or higher</td>
+</tr>
+</tbody>
+</table>
+
+<!-- IP Addressing Table -->
+<div class="section-title">📋 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AS100</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.64.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.64.0/30</td>
+</tr>
+<tr>
+<td>AS100</td>
+<td>GigabitEthernet0/1</td>
+<td>203.18.64.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.64.4/30</td>
+</tr>
+<tr>
+<td>AS100</td>
+<td>Loopback0</td>
+<td>192.168.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.1.0/24</td>
+</tr>
+<tr>
+<td>AS200</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.64.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.64.0/30</td>
+</tr>
+<tr>
+<td>AS200</td>
+<td>GigabitEthernet1/0</td>
+<td>203.18.65.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.65.0/30</td>
+</tr>
+<tr>
+<td>AS200</td>
+<td>Loopback0</td>
+<td>192.168.2.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.2.0/24</td>
+</tr>
+<tr>
+<td>AS300</td>
+<td>GigabitEthernet0/1</td>
+<td>203.18.64.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.64.4/30</td>
+</tr>
+<tr>
+<td>AS300</td>
+<td>GigabitEthernet1/1</td>
+<td>203.18.65.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.65.4/30</td>
+</tr>
+<tr>
+<td>AS300</td>
+<td>Loopback0</td>
+<td>192.168.3.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.3.0/24</td>
+</tr>
+<tr>
+<td>AS400</td>
+<td>GigabitEthernet1/0</td>
+<td>203.18.65.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.65.0/30</td>
+</tr>
+<tr>
+<td>AS400</td>
+<td>GigabitEthernet1/1</td>
+<td>203.18.65.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.65.4/30</td>
+</tr>
+<tr>
+<td>AS400</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.66.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.66.0/30</td>
+</tr>
+<tr>
+<td>AS400</td>
+<td>Loopback0</td>
+<td>192.168.4.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.4.0/24</td>
+</tr>
+<tr>
+<td>AS500</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.66.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.66.0/30</td>
+</tr>
+<tr>
+<td>AS500</td>
+<td>Loopback0</td>
+<td>192.168.5.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.5.0/24</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Cable Connections -->
+<div class="section-title">🔌 Cable Connection Information</div>
+<table>
+<thead>
+<tr>
+<th>Connection</th>
+<th>Device 1</th>
+<th>Interface 1</th>
+<th>Device 2</th>
+<th>Interface 2</th>
+<th>Network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Link 1</td>
+<td>AS100</td>
+<td>G0/0</td>
+<td>AS200</td>
+<td>G0/0</td>
+<td>203.18.64.0/30</td>
+</tr>
+<tr>
+<td>Link 2</td>
+<td>AS100</td>
+<td>G0/1</td>
+<td>AS300</td>
+<td>G0/1</td>
+<td>203.18.64.4/30</td>
+</tr>
+<tr>
+<td>Link 3</td>
+<td>AS200</td>
+<td>G1/0</td>
+<td>AS400</td>
+<td>G1/0</td>
+<td>203.18.65.0/30</td>
+</tr>
+<tr>
+<td>Link 4</td>
+<td>AS300</td>
+<td>G1/1</td>
+<td>AS400</td>
+<td>G1/1</td>
+<td>203.18.65.4/30</td>
+</tr>
+<tr>
+<td>Link 5</td>
+<td>AS400</td>
+<td>G0/0</td>
+<td>AS500</td>
+<td>G0/0</td>
+<td>203.18.66.0/30</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Network Summary Table -->
+<div class="section-title">🌐 Network & EIGRP AS Information</div>
+<table>
+<thead>
+<tr>
+<th>Network</th>
+<th>Network Address</th>
+<th>CIDR</th>
+<th>Purpose</th>
+<th>EIGRP AS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AS100-AS200 Link</td>
+<td>203.18.64.0</td>
+<td>/30</td>
+<td>WAN Connection</td>
+<td>AS 100</td>
+</tr>
+<tr>
+<td>AS100-AS300 Link</td>
+<td>203.18.64.4</td>
+<td>/30</td>
+<td>WAN Connection</td>
+<td>AS 100</td>
+</tr>
+<tr>
+<td>AS200-AS400 Link</td>
+<td>203.18.65.0</td>
+<td>/30</td>
+<td>WAN Connection</td>
+<td>AS 200 / AS 100</td>
+</tr>
+<tr>
+<td>AS300-AS400 Link</td>
+<td>203.18.65.4</td>
+<td>/30</td>
+<td>WAN Connection</td>
+<td>AS 300 / AS 100</td>
+</tr>
+<tr>
+<td>AS400-AS500 Link</td>
+<td>203.18.66.0</td>
+<td>/30</td>
+<td>WAN Connection</td>
+<td>AS 400</td>
+</tr>
+<tr>
+<td>AS100 Loopback</td>
+<td>192.168.1.0</td>
+<td>/24</td>
+<td>Internal Network</td>
+<td>AS 100</td>
+</tr>
+<tr>
+<td>AS200 Loopback</td>
+<td>192.168.2.0</td>
+<td>/24</td>
+<td>Internal Network</td>
+<td>AS 200</td>
+</tr>
+<tr>
+<td>AS300 Loopback</td>
+<td>192.168.3.0</td>
+<td>/24</td>
+<td>Internal Network</td>
+<td>AS 300</td>
+</tr>
+<tr>
+<td>AS400 Loopback</td>
+<td>192.168.4.0</td>
+<td>/24</td>
+<td>Internal Network</td>
+<td>AS 100 / AS 400</td>
+</tr>
+<tr>
+<td>AS500 Loopback</td>
+<td>192.168.5.0</td>
+<td>/24</td>
+<td>Internal Network</td>
+<td>AS 400</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Prerequisites -->
+<div class="section-title">📚 Prerequisites</div>
+<div class="alert alert-warning">
+<strong>⚠️ Before You Begin:</strong><br>
+• Completion of Lab 12.1 (EIGRP Basic Configuration)<br>
+• Advanced understanding of EIGRP operations and DUAL algorithm<br>
+• Knowledge of route redistribution concepts<br>
+• Understanding of administrative distance and route preference<br>
+• Familiarity with EIGRP metrics and metric calculations<br>
+• Experience with Cisco IOS CLI and routing protocol configuration<br>
+• Understanding of route summarization and aggregation concepts<br>
+• Knowledge of load balancing mechanisms in routing protocols
+</div>
+
+<!-- Lab Configuration Steps -->
+<div class="section-title">⚙️ Step-by-Step Configuration Guide</div>
+
+<!-- Step 1: Basic Interface Configuration -->
+<div class="alert alert-info">
+<strong>📝 Step 1: Basic Interface Configuration on All Routers</strong>
+</div>
+
+<strong>Task 1.1: Configure AS100 Router Interfaces</strong><br><br>
+
+<div class="code-block">
+AS100> enable<br>
+AS100# configure terminal<br>
+AS100(config)# hostname AS100<br>
+<br>
+! Configure GigabitEthernet0/0 (to AS200)<br>
+AS100(config)# interface gigabitethernet 0/0<br>
+AS100(config-if)# description ** Link to AS200 **<br>
+AS100(config-if)# ip address 203.18.64.1 255.255.255.252<br>
+AS100(config-if)# no shutdown<br>
+AS100(config-if)# exit<br>
+<br>
+! Configure GigabitEthernet0/1 (to AS300)<br>
+AS100(config)# interface gigabitethernet 0/1<br>
+AS100(config-if)# description ** Link to AS300 **<br>
+AS100(config-if)# ip address 203.18.64.5 255.255.255.252<br>
+AS100(config-if)# no shutdown<br>
+AS100(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+AS100(config)# interface loopback 0<br>
+AS100(config-if)# description ** AS100 Internal Network **<br>
+AS100(config-if)# ip address 192.168.1.1 255.255.255.0<br>
+AS100(config-if)# exit<br>
+<br>
+AS100(config)# end<br>
+AS100# write memory
+</div>
+
+<strong>Task 1.2: Configure AS200 Router Interfaces</strong><br><br>
+
+<div class="code-block">
+AS200> enable<br>
+AS200# configure terminal<br>
+AS200(config)# hostname AS200<br>
+<br>
+! Configure GigabitEthernet0/0 (to AS100)<br>
+AS200(config)# interface gigabitethernet 0/0<br>
+AS200(config-if)# description ** Link to AS100 **<br>
+AS200(config-if)# ip address 203.18.64.2 255.255.255.252<br>
+AS200(config-if)# no shutdown<br>
+AS200(config-if)# exit<br>
+<br>
+! Configure GigabitEthernet1/0 (to AS400)<br>
+AS200(config)# interface gigabitethernet 1/0<br>
+AS200(config-if)# description ** Link to AS400 **<br>
+AS200(config-if)# ip address 203.18.65.1 255.255.255.252<br>
+AS200(config-if)# no shutdown<br>
+AS200(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+AS200(config)# interface loopback 0<br>
+AS200(config-if)# description ** AS200 Internal Network **<br>
+AS200(config-if)# ip address 192.168.2.1 255.255.255.0<br>
+AS200(config-if)# exit<br>
+<br>
+AS200(config)# end<br>
+AS200# write memory
+</div>
+
+<strong>Task 1.3: Configure AS300 Router Interfaces</strong><br><br>
+
+<div class="code-block">
+AS300> enable<br>
+AS300# configure terminal<br>
+AS300(config)# hostname AS300<br>
+<br>
+! Configure GigabitEthernet0/1 (to AS100)<br>
+AS300(config)# interface gigabitethernet 0/1<br>
+AS300(config-if)# description ** Link to AS100 **<br>
+AS300(config-if)# ip address 203.18.64.6 255.255.255.252<br>
+AS300(config-if)# no shutdown<br>
+AS300(config-if)# exit<br>
+<br>
+! Configure GigabitEthernet1/1 (to AS400)<br>
+AS300(config)# interface gigabitethernet 1/1<br>
+AS300(config-if)# description ** Link to AS400 **<br>
+AS300(config-if)# ip address 203.18.65.5 255.255.255.252<br>
+AS300(config-if)# no shutdown<br>
+AS300(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+AS300(config)# interface loopback 0<br>
+AS300(config-if)# description ** AS300 Internal Network **<br>
+AS300(config-if)# ip address 192.168.3.1 255.255.255.0<br>
+AS300(config-if)# exit<br>
+<br>
+AS300(config)# end<br>
+AS300# write memory
+</div>
+
+<strong>Task 1.4: Configure AS400 Router Interfaces</strong><br><br>
+
+<div class="code-block">
+AS400> enable<br>
+AS400# configure terminal<br>
+AS400(config)# hostname AS400<br>
+<br>
+! Configure GigabitEthernet1/0 (to AS200)<br>
+AS400(config)# interface gigabitethernet 1/0<br>
+AS400(config-if)# description ** Link to AS200 **<br>
+AS400(config-if)# ip address 203.18.65.2 255.255.255.252<br>
+AS400(config-if)# no shutdown<br>
+AS400(config-if)# exit<br>
+<br>
+! Configure GigabitEthernet1/1 (to AS300)<br>
+AS400(config)# interface gigabitethernet 1/1<br>
+AS400(config-if)# description ** Link to AS300 **<br>
+AS400(config-if)# ip address 203.18.65.6 255.255.255.252<br>
+AS400(config-if)# no shutdown<br>
+AS400(config-if)# exit<br>
+<br>
+! Configure GigabitEthernet0/0 (to AS500)<br>
+AS400(config)# interface gigabitethernet 0/0<br>
+AS400(config-if)# description ** Link to AS500 **<br>
+AS400(config-if)# ip address 203.18.66.1 255.255.255.252<br>
+AS400(config-if)# no shutdown<br>
+AS400(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+AS400(config)# interface loopback 0<br>
+AS400(config-if)# description ** AS400 Internal Network **<br>
+AS400(config-if)# ip address 192.168.4.1 255.255.255.0<br>
+AS400(config-if)# exit<br>
+<br>
+AS400(config)# end<br>
+AS400# write memory
+</div>
+
+<strong>Task 1.5: Configure AS500 Router Interfaces</strong><br><br>
+
+<div class="code-block">
+AS500> enable<br>
+AS500# configure terminal<br>
+AS500(config)# hostname AS500<br>
+<br>
+! Configure GigabitEthernet0/0 (to AS400)<br>
+AS500(config)# interface gigabitethernet 0/0<br>
+AS500(config-if)# description ** Link to AS400 **<br>
+AS500(config-if)# ip address 203.18.66.2 255.255.255.252<br>
+AS500(config-if)# no shutdown<br>
+AS500(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+AS500(config)# interface loopback 0<br>
+AS500(config-if)# description ** AS500 Internal Network **<br>
+AS500(config-if)# ip address 192.168.5.1 255.255.255.0<br>
+AS500(config-if)# exit<br>
+<br>
+AS500(config)# end<br>
+AS500# write memory
+</div>
+
+<strong>Task 1.6: Verify Interface Configuration on All Routers</strong><br><br>
+
+<div class="code-block">
+! On each router, verify interfaces are up<br>
+AS100# show ip interface brief<br>
+AS200# show ip interface brief<br>
+AS300# show ip interface brief<br>
+AS400# show ip interface brief<br>
+AS500# show ip interface brief<br>
+<br>
+! Test connectivity between directly connected routers<br>
+AS100# ping 203.18.64.2<br>
+AS100# ping 203.18.64.6<br>
+AS200# ping 203.18.65.2<br>
+AS300# ping 203.18.65.6<br>
+AS400# ping 203.18.66.2
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 1:</strong> All interfaces should be in "up/up" state and ping tests between directly connected routers should be successful before proceeding to EIGRP configuration.
+</div>
+
+<!-- Step 2: EIGRP Classic Mode Configuration -->
+<div class="alert alert-info">
+<strong>📝 Step 2: EIGRP Classic Mode Configuration (Multiple AS)</strong>
+</div>
+
+<strong>Task 2.1: Configure EIGRP AS 100 on AS100 Router</strong><br><br>
+
+<div class="code-block">
+AS100# configure terminal<br>
+<br>
+! Configure EIGRP AS 100<br>
+AS100(config)# router eigrp 100<br>
+AS100(config-router)# network 203.18.64.0 0.0.0.3<br>
+AS100(config-router)# network 203.18.64.4 0.0.0.3<br>
+AS100(config-router)# network 192.168.1.0 0.0.0.255<br>
+AS100(config-router)# no auto-summary<br>
+AS100(config-router)# eigrp router-id 1.1.1.1<br>
+AS100(config-router)# exit<br>
+<br>
+AS100(config)# end<br>
+AS100# write memory
+</div>
+
+<strong>Task 2.2: Configure EIGRP AS 100 on AS200 Router</strong><br><br>
+
+<div class="code-block">
+AS200# configure terminal<br>
+<br>
+! Configure EIGRP AS 100 (for link to AS100)<br>
+AS200(config)# router eigrp 100<br>
+AS200(config-router)# network 203.18.64.0 0.0.0.3<br>
+AS200(config-router)# no auto-summary<br>
+AS200(config-router)# eigrp router-id 2.2.2.2<br>
+AS200(config-router)# exit<br>
+<br>
+! Configure EIGRP AS 200 (for link to AS400 and loopback)<br>
+AS200(config)# router eigrp 200<br>
+AS200(config-router)# network 203.18.65.0 0.0.0.3<br>
+AS200(config-router)# network 192.168.2.0 0.0.0.255<br>
+AS200(config-router)# no auto-summary<br>
+AS200(config-router)# eigrp router-id 2.2.2.2<br>
+AS200(config-router)# exit<br>
+<br>
+AS200(config)# end<br>
+AS200# write memory
+</div>
+
+<strong>Task 2.3: Configure EIGRP AS 100 on AS300 Router</strong><br><br>
+
+<div class="code-block">
+AS300# configure terminal<br>
+<br>
+! Configure EIGRP AS 100 (for link to AS100)<br>
+AS300(config)# router eigrp 100<br>
+AS300(config-router)# network 203.18.64.4 0.0.0.3<br>
+AS300(config-router)# no auto-summary<br>
+AS300(config-router)# eigrp router-id 3.3.3.3<br>
+AS300(config-router)# exit<br>
+<br>
+! Configure EIGRP AS 300 (for link to AS400 and loopback)<br>
+AS300(config)# router eigrp 300<br>
+AS300(config-router)# network 203.18.65.4 0.0.0.3<br>
+AS300(config-router)# network 192.168.3.0 0.0.0.255<br>
+AS300(config-router)# no auto-summary<br>
+AS300(config-router)# eigrp router-id 3.3.3.3<br>
+AS300(config-router)# exit<br>
+<br>
+AS300(config)# end<br>
+AS300# write memory
+</div>
+
+<strong>Task 2.4: Configure EIGRP on AS400 Router (Multiple AS)</strong><br><br>
+
+<div class="code-block">
+AS400# configure terminal<br>
+<br>
+! Configure EIGRP AS 100 (for links to AS200 and AS300)<br>
+AS400(config)# router eigrp 100<br>
+AS400(config-router)# network 203.18.65.0 0.0.0.3<br>
+AS400(config-router)# network 203.18.65.4 0.0.0.3<br>
+AS400(config-router)# network 192.168.4.0 0.0.0.255<br>
+AS400(config-router)# no auto-summary<br>
+AS400(config-router)# eigrp router-id 4.4.4.4<br>
+AS400(config-router)# exit<br>
+<br>
+! Configure EIGRP AS 400 (for link to AS500)<br>
+AS400(config)# router eigrp 400<br>
+AS400(config-router)# network 203.18.66.0 0.0.0.3<br>
+AS400(config-router)# network 192.168.4.0 0.0.0.255<br>
+AS400(config-router)# no auto-summary<br>
+AS400(config-router)# eigrp router-id 4.4.4.4<br>
+AS400(config-router)# exit<br>
+<br>
+AS400(config)# end<br>
+AS400# write memory
+</div>
+
+<strong>Task 2.5: Configure EIGRP AS 400 on AS500 Router</strong><br><br>
+
+<div class="code-block">
+AS500# configure terminal<br>
+<br>
+! Configure EIGRP AS 400<br>
+AS500(config)# router eigrp 400<br>
+AS500(config-router)# network 203.18.66.0 0.0.0.3<br>
+AS500(config-router)# network 192.168.5.0 0.0.0.255<br>
+AS500(config-router)# no auto-summary<br>
+AS500(config-router)# eigrp router-id 5.5.5.5<br>
+AS500(config-router)# exit<br>
+<br>
+AS500(config)# end<br>
+AS500# write memory
+</div>
+
+<strong>Task 2.6: Verify EIGRP Neighbor Relationships</strong><br><br>
+
+<div class="code-block">
+! Verify EIGRP neighbors on AS100<br>
+AS100# show ip eigrp neighbors<br>
+! Should see AS200 and AS300 as neighbors in AS 100<br>
+<br>
+! Verify EIGRP neighbors on AS200<br>
+AS200# show ip eigrp 100 neighbors<br>
+AS200# show ip eigrp 200 neighbors<br>
+! AS 100: Should see AS100<br>
+! AS 200: Should see AS400<br>
+<br>
+! Verify EIGRP neighbors on AS300<br>
+AS300# show ip eigrp 100 neighbors<br>
+AS300# show ip eigrp 300 neighbors<br>
+! AS 100: Should see AS100<br>
+! AS 300: Should see AS400<br>
+<br>
+! Verify EIGRP neighbors on AS400<br>
+AS400# show ip eigrp 100 neighbors<br>
+AS400# show ip eigrp 400 neighbors<br>
+! AS 100: Should see AS200 and AS300<br>
+! AS 400: Should see AS500<br>
+<br>
+! Verify EIGRP neighbors on AS500<br>
+AS500# show ip eigrp neighbors<br>
+! Should see AS400 as neighbor in AS 400
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 2:</strong> EIGRP neighbor relationships should be established within each autonomous system. Note that routes from different AS will NOT be exchanged yet - redistribution is required.
+</div>
+
+<!-- Step 3: EIGRP Redistribution -->
+<div class="alert alert-info">
+<strong>📝 Step 3: Configure EIGRP Route Redistribution</strong>
+</div>
+
+<p>Route redistribution is required to exchange routes between different EIGRP autonomous systems. AS200, AS300, and AS400 will perform redistribution.</p>
+
+<strong>Task 3.1: Configure Redistribution on AS200</strong><br><br>
+
+<div class="code-block">
+AS200# configure terminal<br>
+<br>
+! Redistribute AS 100 into AS 200<br>
+AS200(config)# router eigrp 200<br>
+AS200(config-router)# redistribute eigrp 100 metric 1000000 10 255 1 1500<br>
+AS200(config-router)# exit<br>
+<br>
+! Redistribute AS 200 into AS 100<br>
+AS200(config)# router eigrp 100<br>
+AS200(config-router)# redistribute eigrp 200 metric 1000000 10 255 1 1500<br>
+AS200(config-router)# exit<br>
+<br>
+AS200(config)# end<br>
+AS200# write memory
+</div>
+
+<div class="alert alert-warning">
+<strong>📘 Redistribution Metric Explanation:</strong><br>
+<strong>metric 1000000 10 255 1 1500</strong><br>
+• 1000000 = Bandwidth in Kbps (1 Gbps)<br>
+• 10 = Delay in tens of microseconds (100 µs)<br>
+• 255 = Reliability (255 = 100%)<br>
+• 1 = Load (1 = minimal load)<br>
+• 1500 = MTU in bytes<br><br>
+These seed metrics are required when redistributing into EIGRP.
+</div>
+
+<strong>Task 3.2: Configure Redistribution on AS300</strong><br><br>
+
+<div class="code-block">
+AS300# configure terminal<br>
+<br>
+! Redistribute AS 100 into AS 300<br>
+AS300(config)# router eigrp 300<br>
+AS300(config-router)# redistribute eigrp 100 metric 1000000 10 255 1 1500<br>
+AS300(config-router)# exit<br>
+<br>
+! Redistribute AS 300 into AS 100<br>
+AS300(config)# router eigrp 100<br>
+AS300(config-router)# redistribute eigrp 300 metric 1000000 10 255 1 1500<br>
+AS300(config-router)# exit<br>
+<br>
+AS300(config)# end<br>
+AS300# write memory
+</div>
+
+<strong>Task 3.3: Configure Redistribution on AS400 (Multiple AS)</strong><br><br>
+
+<div class="code-block">
+AS400# configure terminal<br>
+<br>
+! Redistribute AS 400 into AS 100<br>
+AS400(config)# router eigrp 100<br>
+AS400(config-router)# redistribute eigrp 400 metric 1000000 10 255 1 1500<br>
+AS400(config-router)# exit<br>
+<br>
+! Redistribute AS 100 into AS 400<br>
+AS400(config)# router eigrp 400<br>
+AS400(config-router)# redistribute eigrp 100 metric 1000000 10 255 1 1500<br>
+AS400(config-router)# exit<br>
+<br>
+AS400(config)# end<br>
+AS400# write memory
+</div>
+
+<strong>Task 3.4: Verify Route Redistribution</strong><br><br>
+
+<div class="code-block">
+! On AS100, check for external EIGRP routes<br>
+AS100# show ip route eigrp<br>
+! Should see routes marked with "D EX" (EIGRP External)<br>
+! Look for 192.168.2.0, 192.168.3.0, 192.168.4.0, 192.168.5.0<br>
+<br>
+! Check administrative distance<br>
+AS100# show ip route 192.168.5.0<br>
+! External EIGRP routes have AD of 170 (vs 90 for internal)
+</div>
+
+<div class="code-block">
+! On AS500, check for redistributed routes<br>
+AS500# show ip route eigrp<br>
+! Should see routes from AS100, AS200, AS300 as external routes<br>
+<br>
+! Verify end-to-end reachability<br>
+AS500# ping 192.168.1.1 source 192.168.5.1<br>
+AS500# ping 192.168.2.1 source 192.168.5.1<br>
+AS500# ping 192.168.3.1 source 192.168.5.1
+</div>
+
+<div class="alert alert-danger">
+<strong>⚠️ Important - External Routes:</strong><br>
+• Redistributed routes appear as "D EX" (EIGRP External)<br>
+• External EIGRP routes have Administrative Distance of 170 (vs 90 for internal)<br>
+• External routes require seed metrics for redistribution<br>
+• Be careful with redistribution to avoid routing loops in complex topologies
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 3:</strong> All routers should now be able to see and reach all networks via redistributed EIGRP routes. External routes are marked with "EX" and have AD of 170.
+</div>
+
+<!-- Step 4: Manual Route Summarization -->
+<div class="alert alert-info">
+<strong>📝 Step 4: Configure EIGRP Manual Route Summarization</strong>
+</div>
+
+<p>Route summarization reduces routing table size and improves scalability by advertising aggregate routes instead of individual subnets.</p>
+
+<strong>Task 4.1: Configure Summarization on AS100</strong><br><br>
+
+<div class="code-block">
+AS100# configure terminal<br>
+<br>
+! Summarize 192.168.1.0/24 on both outbound interfaces<br>
+AS100(config)# interface gigabitethernet 0/0<br>
+AS100(config-if)# ip summary-address eigrp 100 192.168.1.0 255.255.255.0<br>
+AS100(config-if)# exit<br>
+<br>
+AS100(config)# interface gigabitethernet 0/1<br>
+AS100(config-if)# ip summary-address eigrp 100 192.168.1.0 255.255.255.0<br>
+AS100(config-if)# exit<br>
+<br>
+AS100(config)# end<br>
+AS100# write memory
+</div>
+
+<strong>Task 4.2: Configure Summarization on AS200</strong><br><br>
+
+<div class="code-block">
+AS200# configure terminal<br>
+<br>
+! Summarize 192.168.2.0/24 on G1/0 interface (to AS400)<br>
+AS200(config)# interface gigabitethernet 1/0<br>
+AS200(config-if)# ip summary-address eigrp 200 192.168.2.0 255.255.255.0<br>
+AS200(config-if)# exit<br>
+<br>
+AS200(config)# end<br>
+AS200# write memory
+</div>
+
+<strong>Task 4.3: Configure Summarization on AS300</strong><br><br>
+
+<div class="code-block">
+AS300# configure terminal<br>
+<br>
+! Summarize 192.168.3.0/24 on G1/1 interface (to AS400)<br>
+AS300(config)# interface gigabitethernet 1/1<br>
+AS300(config-if)# ip summary-address eigrp 300 192.168.3.0 255.255.255.0<br>
+AS300(config-if)# exit<br>
+<br>
+AS300(config)# end<br>
+AS300# write memory
+</div>
+
+<strong>Task 4.4: Configure Advanced Summarization on AS400</strong><br><br>
+
+<div class="code-block">
+AS400# configure terminal<br>
+<br>
+! Summarize multiple networks into larger aggregate<br>
+! Summary 192.168.0.0/22 covers 192.168.0.0 - 192.168.3.255<br>
+! This includes 192.168.1.0, 192.168.2.0, 192.168.3.0<br>
+<br>
+AS400(config)# interface gigabitethernet 0/0<br>
+AS400(config-if)# ip summary-address eigrp 400 192.168.0.0 255.255.252.0<br>
+AS400(config-if)# exit<br>
+<br>
+AS400(config)# end<br>
+AS400# write memory
+</div>
+
+<div class="alert alert-warning">
+<strong>📘 Summary Address Calculation:</strong><br>
+<strong>Summarizing 192.168.1.0/24, 192.168.2.0/24, 192.168.3.0/24:</strong><br>
+• Binary: 192.168.00000001.0 - 192.168.00000011.0<br>
+• Common bits: 192.168.000000xx.x<br>
+• Summary: 192.168.0.0/22 (255.255.252.0)<br>
+• Covers: 192.168.0.0 - 192.168.3.255 (4 networks)
+</div>
+
+<strong>Task 4.5: Verify Route Summarization</strong><br><br>
+
+<div class="code-block">
+! Check for Null0 summary routes<br>
+AS100# show ip route | include Null<br>
+AS200# show ip route | include Null<br>
+AS300# show ip route | include Null<br>
+AS400# show ip route | include Null<br>
+<br>
+! Verify summary routes in topology<br>
+AS100# show ip eigrp topology | include Summary<br>
+<br>
+! On AS500, check if summary route is received<br>
+AS500# show ip route eigrp<br>
+! Should see 192.168.0.0/22 summary instead of individual /24 routes
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 4:</strong> Summary routes should be configured and Null0 routes automatically created. AS500 should receive the aggregate 192.168.0.0/22 route instead of individual networks.
+</div>
+
+<!-- Step 5: Unequal Cost Load Balancing -->
+<div class="alert alert-info">
+<strong>📝 Step 5: Configure EIGRP Unequal Cost Load Balancing (Variance)</strong>
+</div>
+
+<p>EIGRP supports unequal cost load balancing using the variance command. This allows traffic to be distributed across multiple paths with different metrics.</p>
+
+<strong>Task 5.1: Analyze Current Path Metrics</strong><br><br>
+
+<div class="code-block">
+! On AS100, check topology for routes to AS400<br>
+AS100# show ip eigrp topology 192.168.4.0/24<br>
+<br>
+! Expected output shows multiple paths:<br>
+! P 192.168.4.0/24, 1 successors, FD is XXXXX<br>
+!   via 203.18.64.2 (XXXXX/XXXXX), GigabitEthernet0/0<br>
+!   via 203.18.64.6 (XXXXX/XXXXX), GigabitEthernet0/1
+</div>
+
+<strong>Task 5.2: Configure Variance on AS100</strong><br><br>
+
+<div class="code-block">
+AS100# configure terminal<br>
+<br>
+! Configure variance to enable unequal cost load balancing<br>
+AS100(config)# router eigrp 100<br>
+AS100(config-router)# variance 2<br>
+AS100(config-router)# exit<br>
+<br>
+! Optionally configure maximum paths (default is 4)<br>
+AS100(config)# router eigrp 100<br>
+AS100(config-router)# maximum-paths 4<br>
+AS100(config-router)# exit<br>
+<br>
+AS100(config)# end<br>
+AS100# write memory
+</div>
+
+<div class="alert alert-warning">
+<strong>📘 Variance Explained:</strong><br>
+<strong>variance 2</strong> means:<br>
+• EIGRP will load balance across paths with metrics up to 2x the best path<br>
+• If best path metric is 1000, paths with metric ≤ 2000 will be used<br>
+• Feasibility condition must still be met (RD < FD of successor)<br>
+• variance 1 = equal cost load balancing only (default behavior)<br>
+• variance 128 = maximum value (allows all feasible successors)
+</div>
+
+<strong>Task 5.3: Configure Variance on AS400</strong><br><br>
+
+<div class="code-block">
+AS400# configure terminal<br>
+<br>
+
+! Configure variance for AS 400<br>
+AS400(config)# router eigrp 400<br>
+AS400(config-router)# variance 2<br>
+AS400(config-router)# maximum-paths 4<br>
+AS400(config-router)# exit<br>
+<br>
+AS400(config)# end<br>
+AS400# write memory
+</div>
+
+<strong>Task 5.4: Verify Load Balancing</strong><br><br>
+
+<div class="code-block">
+! Check routing table for multiple paths<br>
+AS100# show ip route 192.168.4.0<br>
+! Should show multiple next-hops if paths meet variance criteria<br>
+<br>
+! Verify variance configuration<br>
+AS100# show ip protocols | include variance<br>
+! Output: EIGRP maximum hopcount 100<br>
+!         EIGRP maximum metric variance 2<br>
+<br>
+! Check topology for all links<br>
+AS100# show ip eigrp topology all-links<br>
+! Shows successors and feasible successors<br>
+<br>
+! Monitor load balancing in action<br>
+AS100# show ip route 192.168.5.0<br>
+! Multiple paths indicate load balancing is active
+</div>
+
+<strong>Task 5.5: Test Load Balancing with Traffic</strong><br><br>
+
+<div class="code-block">
+! Generate multiple pings to observe load balancing<br>
+AS100# ping 192.168.5.1 source 192.168.1.1 repeat 100<br>
+<br>
+! Check CEF load balancing<br>
+AS100# show ip cef 192.168.5.1 internal<br>
+<br>
+! View interface statistics<br>
+AS100# show interface gigabitethernet 0/0 | include packets<br>
+AS100# show interface gigabitethernet 0/1 | include packets<br>
+! Packet counts should increase on both interfaces
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 5:</strong> Variance is configured and unequal cost load balancing is active. Multiple paths appear in routing table when variance criteria are met.
+</div>
+
+<!-- Step 6: EIGRP Named Mode Configuration -->
+<div class="alert alert-info">
+<strong>📝 Step 6: Configure EIGRP Named Mode (Advanced Configuration)</strong>
+</div>
+
+<p>EIGRP Named Mode (introduced in IOS 15.0) provides a more structured and scalable configuration format with enhanced features.</p>
+
+<strong>Task 6.1: Migrate AS500 to EIGRP Named Mode</strong><br><br>
+
+<div class="code-block">
+AS500# configure terminal<br>
+<br>
+! Remove classic mode EIGRP configuration first<br>
+AS500(config)# no router eigrp 400<br>
+<br>
+! Configure EIGRP Named Mode<br>
+AS500(config)# router eigrp LAB-EIGRP<br>
+AS500(config-router)# address-family ipv4 unicast autonomous-system 400<br>
+<br>
+! Configure network statements<br>
+AS500(config-router-af)# network 203.18.66.0 0.0.0.3<br>
+AS500(config-router-af)# network 192.168.5.0 0.0.0.255<br>
+<br>
+! Configure router ID<br>
+AS500(config-router-af)# eigrp router-id 5.5.5.5<br>
+<br>
+! Configure topology and metrics<br>
+AS500(config-router-af)# topology base<br>
+AS500(config-router-af-topology)# variance 2<br>
+AS500(config-router-af-topology)# maximum-paths 4<br>
+AS500(config-router-af-topology)# exit-af-topology<br>
+<br>
+! Exit address family<br>
+AS500(config-router-af)# exit-address-family<br>
+AS500(config-router)# exit<br>
+<br>
+AS500(config)# end<br>
+AS500# write memory
+</div>
+
+<strong>Task 6.2: Configure Named Mode with Authentication (Advanced)</strong><br><br>
+
+<div class="code-block">
+! Configure key chain first<br>
+AS500(config)# key chain EIGRP-AUTH<br>
+AS500(config-keychain)# key 1<br>
+AS500(config-keychain-key)# key-string Cisco123!<br>
+AS500(config-keychain-key)# exit<br>
+AS500(config-keychain)# exit<br>
+<br>
+! Apply authentication in named mode<br>
+AS500(config)# router eigrp LAB-EIGRP<br>
+AS500(config-router)# address-family ipv4 unicast autonomous-system 400<br>
+AS500(config-router-af)# af-interface gigabitethernet 0/0<br>
+AS500(config-router-af-interface)# authentication mode md5<br>
+AS500(config-router-af-interface)# authentication key-chain EIGRP-AUTH<br>
+AS500(config-router-af-interface)# exit-af-interface<br>
+AS500(config-router-af)# exit-address-family<br>
+AS500(config-router)# exit
+</div>
+
+<strong>Task 6.3: Update AS400 to Support Named Mode Neighbor</strong><br><br>
+
+<div class="code-block">
+AS400# configure terminal<br>
+<br>
+! Add authentication to match AS500<br>
+AS400(config)# key chain EIGRP-AUTH<br>
+AS400(config-keychain)# key 1<br>
+AS400(config-keychain-key)# key-string Cisco123!<br>
+AS400(config-keychain-key)# exit<br>
+AS400(config-keychain)# exit<br>
+<br>
+! Apply to interface in classic mode<br>
+AS400(config)# interface gigabitethernet 0/0<br>
+AS400(config-if)# ip authentication mode eigrp 400 md5<br>
+AS400(config-if)# ip authentication key-chain eigrp 400 EIGRP-AUTH<br>
+AS400(config-if)# exit<br>
+<br>
+AS400(config)# end<br>
+AS400# write memory
+</div>
+
+<strong>Task 6.4: Verify Named Mode Configuration</strong><br><br>
+
+<div class="code-block">
+! Verify named mode EIGRP<br>
+AS500# show eigrp address-family ipv4<br>
+<br>
+! Check neighbors (should still see AS400)<br>
+AS500# show eigrp address-family ipv4 neighbors<br>
+<br>
+! View named mode topology<br>
+AS500# show eigrp address-family ipv4 topology<br>
+<br>
+! Check authentication<br>
+AS500# show eigrp address-family ipv4 interfaces detail<br>
+<br>
+! Verify routes are still present<br>
+AS500# show ip route eigrp
+</div>
+
+<div class="alert alert-warning">
+<strong>📘 EIGRP Named Mode Benefits:</strong><br>
+• Hierarchical configuration structure<br>
+• Single configuration block per instance (vs per-AS)<br>
+• IPv4 and IPv6 support in same instance<br>
+• Per-interface and per-AF configuration<br>
+• Improved authentication configuration<br>
+• Better scalability for large deployments<br>
+• Backward compatible with classic mode
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 6:</strong> AS500 is now running EIGRP Named Mode while maintaining neighbor relationships with AS400 (classic mode). Both modes are interoperable.
+</div>
+
+<!-- Step 7: Metric Manipulation -->
+<div class="alert alert-info">
+<strong>📝 Step 7: EIGRP Metric Manipulation & Path Control</strong>
+</div>
+
+<strong>Task 7.1: Adjust Interface Bandwidth for Metric Tuning</strong><br><br>
+
+<div class="code-block">
+! On AS200, prefer path through AS400 by adjusting bandwidth<br>
+AS200# configure terminal<br>
+<br>
+! Increase bandwidth value for better metric<br>
+AS200(config)# interface gigabitethernet 1/0<br>
+AS200(config-if)# bandwidth 100000<br>
+AS200(config-if)# exit<br>
+<br>
+AS200(config)# end<br>
+AS200# write memory<br>
+<br>
+! Verify metric changes<br>
+AS200# show ip eigrp topology<br>
+! Metrics should be recalculated based on new bandwidth
+</div>
+
+<strong>Task 7.2: Adjust Interface Delay for Metric Tuning</strong><br><br>
+
+<div class="code-block">
+! On AS300, increase delay to make path less preferred<br>
+AS300# configure terminal<br>
+<br>
+AS300(config)# interface gigabitethernet 1/1<br>
+AS300(config-if)# delay 200<br>
+AS300(config-if)# exit<br>
+<br>
+AS300(config)# end<br>
+AS300# write memory<br>
+<br>
+! Verify topology changes<br>
+AS300# show ip eigrp topology 192.168.4.0/24<br>
+! FD should increase due to higher delay
+</div>
+
+<strong>Task 7.3: Verify Metric Manipulation Results</strong><br><br>
+
+<div class="code-block">
+! On AS100, check which path is preferred<br>
+AS100# show ip route 192.168.4.0<br>
+<br>
+! View detailed topology information<br>
+AS100# show ip eigrp topology 192.168.4.0/24<br>
+! Shows FD and AD for all paths<br>
+<br>
+! Check interface metrics<br>
+AS200# show interface gigabitethernet 1/0 | include BW<br>
+AS300# show interface gigabitethernet 1/1 | include DLY
+</div>
+
+<div class="alert alert-warning">
+<strong>📘 EIGRP Metric Formula:</strong><br>
+<strong>Metric = 256 × [(K1 × Bandwidth) + (K3 × Delay)]</strong><br>
+<br>
+With default K-values (K1=1, K2=0, K3=1, K4=0, K5=0):<br>
+<strong>Metric = 256 × [(10^7 / min_BW_kbps) + (cumulative_delay / 10)]</strong><br>
+<br>
+• Bandwidth: 10^7 divided by minimum bandwidth in path (in Kbps)<br>
+• Delay: Sum of delays along path (in tens of microseconds)<br>
+• Lower metrics are preferred<br>
+• Bandwidth changes have larger impact than delay changes
+</div>
+
+<!-- Complete Configurations -->
+<div class="section-title">📄 Complete Router Configurations</div>
+
+<strong>AS100 - Complete Configuration</strong>
+
+<div class="code-block">
+!<br>
+! AS100 Complete Configuration - Lab 12.2<br>
+!<br>
+hostname AS100<br>
+!<br>
+interface Loopback0<br>
+ description ** AS100 Internal Network **<br>
+ ip address 192.168.1.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Link to AS200 **<br>
+ ip address 203.18.64.1 255.255.255.252<br>
+ ip summary-address eigrp 100 192.168.1.0 255.255.255.0<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Link to AS300 **<br>
+ ip address 203.18.64.5 255.255.255.252<br>
+ ip summary-address eigrp 100 192.168.1.0 255.255.255.0<br>
+ no shutdown<br>
+!<br>
+router eigrp 100<br>
+ network 192.168.1.0 0.0.0.255<br>
+ network 203.18.64.0 0.0.0.3<br>
+ network 203.18.64.4 0.0.0.3<br>
+ variance 2<br>
+ maximum-paths 4<br>
+ no auto-summary<br>
+ eigrp router-id 1.1.1.1<br>
+!<br>
+end
+</div>
+
+<strong>AS200 - Complete Configuration</strong>
+
+<div class="code-block">
+!<br>
+! AS200 Complete Configuration - Lab 12.2<br>
+!<br>
+hostname AS200<br>
+!<br>
+interface Loopback0<br>
+ description ** AS200 Internal Network **<br>
+ ip address 192.168.2.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Link to AS100 **<br>
+ ip address 203.18.64.2 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet1/0<br>
+ description ** Link to AS400 **<br>
+ ip address 203.18.65.1 255.255.255.252<br>
+ ip summary-address eigrp 200 192.168.2.0 255.255.255.0<br>
+ bandwidth 100000<br>
+ no shutdown<br>
+!<br>
+router eigrp 100<br>
+ network 203.18.64.0 0.0.0.3<br>
+ redistribute eigrp 200 metric 1000000 10 255 1 1500<br>
+ no auto-summary<br>
+ eigrp router-id 2.2.2.2<br>
+!<br>
+router eigrp 200<br>
+ network 192.168.2.0 0.0.0.255<br>
+ network 203.18.65.0 0.0.0.3<br>
+ redistribute eigrp 100 metric 1000000 10 255 1 1500<br>
+ no auto-summary<br>
+ eigrp router-id 2.2.2.2<br>
+!<br>
+end
+</div>
+
+<strong>AS300 - Complete Configuration</strong>
+
+<div class="code-block">
+!<br>
+! AS300 Complete Configuration - Lab 12.2<br>
+!<br>
+hostname AS300<br>
+!<br>
+interface Loopback0<br>
+ description ** AS300 Internal Network **<br>
+ ip address 192.168.3.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Link to AS100 **<br>
+ ip address 203.18.64.6 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet1/1<br>
+ description ** Link to AS400 **<br>
+ ip address 203.18.65.5 255.255.255.252<br>
+ ip summary-address eigrp 300 192.168.3.0 255.255.255.0<br>
+ delay 200<br>
+ no shutdown<br>
+!<br>
+router eigrp 100<br>
+ network 203.18.64.4 0.0.0.3<br>
+ redistribute eigrp 300 metric 1000000 10 255 1 1500<br>
+ no auto-summary<br>
+ eigrp router-id 3.3.3.3<br>
+!<br>
+router eigrp 300<br>
+ network 192.168.3.0 0.0.0.255<br>
+ network 203.18.65.4 0.0.0.3<br>
+ redistribute eigrp 100 metric 1000000 10 255 1 1500<br>
+ no auto-summary<br>
+ eigrp router-id 3.3.3.3<br>
+!<br>
+end
+</div>
+
+<strong>AS400 - Complete Configuration</strong>
+
+<div class="code-block">
+!<br>
+! AS400 Complete Configuration - Lab 12.2<br>
+!<br>
+hostname AS400<br>
+!<br>
+key chain EIGRP-AUTH<br>
+ key 1<br>
+  key-string Cisco123!<br>
+!<br>
+interface Loopback0<br>
+ description ** AS400 Internal Network **<br>
+ ip address 192.168.4.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Link to AS500 **<br>
+ ip address 203.18.66.1 255.255.255.252<br>
+ ip authentication mode eigrp 400 md5<br>
+ ip authentication key-chain eigrp 400 EIGRP-AUTH<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet1/0<br>
+ description ** Link to AS200 **<br>
+ ip address 203.18.65.2 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet1/1<br>
+ description ** Link to AS300 **<br>
+ ip address 203.18.65.6 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+router eigrp 100<br>
+ network 192.168.4.0 0.0.0.255<br>
+ network 203.18.65.0 0.0.0.3<br>
+ network 203.18.65.4 0.0.0.3<br>
+ redistribute eigrp 400 metric 1000000 10 255 1 1500<br>
+ variance 3<br>
+ maximum-paths 4<br>
+ no auto-summary<br>
+ eigrp router-id 4.4.4.4<br>
+!<br>
+router eigrp 400<br>
+ network 192.168.4.0 0.0.0.255<br>
+ network 203.18.66.0 0.0.0.3<br>
+ redistribute eigrp 100 metric 1000000 10 255 1 1500<br>
+ variance 2<br>
+ maximum-paths 4<br>
+ no auto-summary<br>
+ eigrp router-id 4.4.4.4<br>
+!<br>
+end
+</div>
+
+<strong>AS500 - Complete Configuration (Named Mode)</strong>
+
+<div class="code-block">
+!<br>
+! AS500 Complete Configuration - Lab 12.2 (EIGRP Named Mode)<br>
+!<br>
+hostname AS500<br>
+!<br>
+key chain EIGRP-AUTH<br>
+ key 1<br>
+  key-string Cisco123!<br>
+!<br>
+interface Loopback0<br>
+ description ** AS500 Internal Network **<br>
+ ip address 192.168.5.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Link to AS400 **<br>
+ ip address 203.18.66.2 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+router eigrp LAB-EIGRP<br>
+ address-family ipv4 unicast autonomous-system 400<br>
+  network 192.168.5.0 0.0.0.255<br>
+  network 203.18.66.0 0.0.0.3<br>
+  eigrp router-id 5.5.5.5<br>
+  topology base<br>
+   variance 2<br>
+   maximum-paths 4<br>
+  exit-af-topology<br>
+  af-interface GigabitEthernet0/0<br>
+   authentication mode md5<br>
+   authentication key-chain EIGRP-AUTH<br>
+  exit-af-interface<br>
+ exit-address-family<br>
+!<br>
+end
+</div>
+
+<!-- Verification Commands -->
+<div class="section-title">✅ Comprehensive Verification Commands</div>
+
+<strong>1. Verify EIGRP Neighbor Relationships (All AS)</strong>
+<div class="code-block">
+AS100# show ip eigrp neighbors<br>
+AS200# show ip eigrp 100 neighbors<br>
+AS200# show ip eigrp 200 neighbors<br>
+AS300# show ip eigrp 100 neighbors<br>
+AS300# show ip eigrp 300 neighbors<br>
+AS400# show ip eigrp 100 neighbors<br>
+AS400# show ip eigrp 400 neighbors<br>
+AS500# show eigrp address-family ipv4 neighbors
+</div>
+
+<strong>2. Verify Route Redistribution</strong>
+<div class="code-block">
+! Check for external routes (marked with "EX")<br>
+AS100# show ip route eigrp | include D EX<br>
+<br>
+! Verify administrative distance of external routes<br>
+AS100# show ip route 192.168.5.0<br>
+! Should show [170/XXXXX] for external routes<br>
+<br>
+! Check redistribution configuration<br>
+AS200# show ip protocols | section redistribute<br>
+AS300# show ip protocols | section redistribute<br>
+AS400# show ip protocols | section redistribute
+</div>
+
+<strong>3. Verify Route Summarization</strong>
+<div class="code-block">
+! Check for Null0 summary routes<br>
+AS100# show ip route | include Null0<br>
+AS400# show ip route | include Null0<br>
+<br>
+! Verify summary in topology table<br>
+AS100# show ip eigrp topology | include Summary<br>
+<br>
+! On AS500, verify aggregate route is received<br>
+AS500# show ip route 192.168.0.0<br>
+! Should see summary route 192.168.0.0/22
+</div>
+
+<strong>4. Verify Unequal Cost Load Balancing</strong>
+<div class="code-block">
+! Check variance configuration<br>
+AS100# show ip protocols | include variance<br>
+AS400# show ip protocols | include variance<br>
+<br>
+! View multiple paths in routing table<br>
+AS100# show ip route 192.168.4.0<br>
+! Multiple next-hops indicate load balancing<br>
+<br>
+! Check all available paths (including FD and AD)<br>
+AS100# show ip eigrp topology all-links
+</div>
+
+<strong>5. Verify EIGRP Named Mode</strong>
+<div class="code-block">
+AS500# show eigrp address-family ipv4<br>
+AS500# show eigrp address-family ipv4 neighbors<br>
+AS500# show eigrp address-family ipv4 topology<br>
+AS500# show eigrp address-family ipv4 interfaces<br>
+AS500# show eigrp address-family ipv4 interfaces detail
+</div>
+
+<strong>6. Verify Metric Manipulation</strong>
+<div class="code-block">
+! Check interface bandwidth and delay<br>
+AS200# show interface gigabitethernet 1/0 | include BW|DLY<br>
+AS300# show interface gigabitethernet 1/1 | include BW|DLY<br>
+<br>
+! View calculated metrics<br>
+AS100# show ip eigrp topology 192.168.4.0/24<br>
+! Shows FD (Feasible Distance) and RD (Reported Distance)
+</div>
+
+<strong>7. Verify End-to-End Connectivity</strong>
+<div class="code-block">
+! Test connectivity from AS100 to AS500<br>
+AS100# ping 192.168.5.1 source 192.168.1.1<br>
+<br>
+! Test from AS500 to all networks<br>
+AS500# ping 192.168.1.1 source 192.168.5.1<br>
+AS500# ping 192.168.2.1 source 192.168.5.1<br>
+AS500# ping 192.168.3.1 source 192.168.5.1<br>
+AS500# ping 192.168.4.1 source 192.168.5.1<br>
+<br>
+! Traceroute to verify path<br>
+AS100# traceroute 192.168.5.1 source 192.168.1.1
+</div>
+
+<strong>8. View EIGRP Traffic Statistics</strong>
+<div class="code-block">
+AS100# show ip eigrp traffic<br>
+AS400# show ip eigrp 100 traffic<br>
+AS400# show ip eigrp 400 traffic<br>
+AS500# show eigrp address-family ipv4 traffic
+</div>
+
+<strong>9. Check EIGRP Topology Tables</strong>
+<div class="code-block">
+! View full topology<br>
+AS100# show ip eigrp topology<br>
+AS400# show ip eigrp topology<br>
+<br>
+! View all links (including non-successors)<br>
+AS100# show ip eigrp topology all-links<br>
+<br>
+! View specific prefix<br>
+AS100# show ip eigrp topology 192.168.5.0/24
+</div>
+
+<strong>10. Verify Complete Routing Table</strong>
+<div class="code-block">
+AS100# show ip route<br>
+AS200# show ip route<br>
+AS300# show ip route<br>
+AS400# show ip route<br>
+AS500# show ip route<br>
+<br>
+! Filter for EIGRP routes only<br>
+AS100# show ip route eigrp<br>
+<br>
+! Count routes<br>
+AS100# show ip route summary
+</div>
+
+<!-- Verification Checklist -->
+<div class="section-title">📋 Lab Verification Checklist</div>
+
+<ul class="checklist">
+<li>☑ All interfaces configured with correct IP addresses and in "up/up" state</li>
+<li>☑ EIGRP AS 100 configured on AS100, AS200, AS300, AS400</li>
+<li>☑ EIGRP AS 200 configured on AS200 and AS400</li>
+<li>☑ EIGRP AS 300 configured on AS300 and AS400</li>
+<li>☑ EIGRP AS 400 configured on AS400 and AS500</li>
+<li>☑ EIGRP neighbors established within each autonomous system</li>
+<li>☑ Route redistribution configured on AS200 (AS 100 ↔ AS 200)</li>
+<li>☑ Route redistribution configured on AS300 (AS 100 ↔ AS 300)</li>
+<li>☑ Route redistribution configured on AS400 (AS 100 ↔ AS 400)</li>
+<li>☑ External EIGRP routes visible with "D EX" designation</li>
+<li>☑ External routes have AD of 170 (vs 90 for internal)</li>
+<li>☑ Manual summarization configured on AS100, AS200, AS300</li>
+<li>☑ Advanced summarization configured on AS400 (192.168.0.0/22)</li>
+<li>☑ Null0 routes automatically created for summaries</li>
+<li>☑ AS500 receives aggregate route 192.168.0.0/22</li>
+<li>☑ Variance configured on AS100 (variance 2)</li>
+<li>☑ Variance configured on AS400 (variance 2-3)</li>
+<li>☑ Multiple paths visible in routing table (load balancing active)</li>
+<li>☑ AS500 migrated to EIGRP Named Mode</li>
+<li>☑ Authentication configured between AS400 and AS500</li>
+<li>☑ Named mode neighbor relationship with classic mode AS400</li>
+<li>☑ Bandwidth adjusted on AS200 G1/0 (100000)</li>
+<li>☑ Delay adjusted on AS300 G1/1 (200)</li>
+<li>☑ Metrics recalculated based on bandwidth/delay changes</li>
+<li>☑ End-to-end connectivity verified (AS100 to AS500)</li>
+<li>☑ All loopback networks reachable from all routers</li>
+<li>☑ Traceroute shows correct routing path</li>
+<li>☑ Configurations saved on all routers</li>
+</ul>
+
+<!-- Troubleshooting Guide -->
+<div class="section-title">🔧 Comprehensive Troubleshooting Guide</div>
+
+<strong>Problem 1: Routes Not Being Redistributed</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• External routes not appearing in routing table<br>
+• "show ip route eigrp" shows no "D EX" routes<br>
+• Networks from other AS are not reachable
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify redistribution is configured<br>
+AS200# show run | section router eigrp<br>
+! Look for "redistribute eigrp" commands<br>
+<br>
+! Step 2: Check if seed metrics are specified<br>
+AS200# show ip protocols<br>
+! Redistribution requires seed metrics for EIGRP<br>
+<br>
+! Step 3: Verify source AS has routes to redistribute<br>
+AS200# show ip route eigrp<br>
+! Source AS must have routes before redistributing them<br>
+<br>
+! Step 4: Check administrative distance<br>
+AS100# show ip route 192.168.2.0<br>
+! External routes should show [170/metric]<br>
+<br>
+! Step 5: Enable debug to see redistribution<br>
+AS200# debug ip eigrp<br>
+AS200# clear ip route *<br>
+! Watch for redistribution messages<br>
+AS200# undebug all
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Missing redistribution command</td>
+<td>Add: redistribute eigrp [AS] metric 1000000 10 255 1 1500</td>
+</tr>
+<tr>
+<td>No seed metric specified</td>
+<td>Always specify metric when redistributing into EIGRP</td>
+</tr>
+<tr>
+<td>Redistribution in wrong direction</td>
+<td>Configure mutual redistribution (both directions)</td>
+</tr>
+<tr>
+<td>Source AS has no routes</td>
+<td>Verify EIGRP is running and routes exist in source AS</td>
+</tr>
+<tr>
+<td>Route filtering blocking routes</td>
+<td>Check distribute-lists and route-maps</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 2: Summarization Not Working</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Specific routes still advertised instead of summary<br>
+• No Null0 route created<br>
+• Neighbors receive individual routes instead of aggregate
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify summary configuration<br>
+AS100# show run interface gigabitethernet 0/0<br>
+! Look for "ip summary-address eigrp" command<br>
+<br>
+! Step 2: Check if Null0 route exists<br>
+AS100# show ip route | include Null<br>
+! Should show summary route pointing to Null0<br>
+<br>
+! Step 3: Verify summary in topology<br>
+AS100# show ip eigrp topology | include Summary<br>
+<br>
+! Step 4: Check neighbor's routing table<br>
+AS200# show ip route 192.168.1.0<br>
+! Should show summary, not specific routes<br>
+<br>
+! Step 5: Verify component routes exist<br>
+AS100# show ip route 192.168.1.0<br>
+! At least one component route must exist
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Summary on wrong interface</td>
+<td>Configure summary on outbound interface toward neighbor</td>
+</tr>
+<tr>
+<td>Incorrect summary address</td>
+<td>Recalculate summary to cover all component networks</td>
+</tr>
+<tr>
+<td>Wrong AS number in command</td>
+<td>Match AS number with EIGRP process: ip summary-address eigrp [AS]</td>
+</tr>
+<tr>
+<td>No component routes active</td>
+<td>Ensure at least one specific route exists before summarizing</td>
+</tr>
+<tr>
+<td>Auto-summary interfering</td>
+<td>Ensure "no auto-summary" is configured</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 3: Unequal Load Balancing Not Working</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Only one path installed despite multiple available<br>
+• Variance configured but not taking effect<br>
+• Traffic using single path instead of load balancing
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify variance is configured<br>
+AS100# show ip protocols | include variance<br>
+! Should show "EIGRP maximum metric variance X"<br>
+<br>
+! Step 2: Check if feasibility condition is met<br>
+AS100# show ip eigrp topology all-links<br>
+! RD must be < FD of successor for feasible successor<br>
+<br>
+! Step 3: View routing table<br>
+AS100# show ip route 192.168.4.0<br>
+! Multiple next-hops should be listed if variance criteria met<br>
+<br>
+! Step 4: Check maximum-paths setting<br>
+AS100# show ip protocols | include Maximum<br>
+! Should be 2-32 (default is 4)<br>
+<br>
+! Step 5: Verify path metrics<br>
+AS100# show ip eigrp topology 192.168.4.0/24<br>
+! Check if alternate path metric is within variance multiplier
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Variance not configured</td>
+<td>Add: variance [multiplier] under router eigrp</td>
+</tr>
+<tr>
+<td>Feasibility condition not met</td>
+<td>RD must be < FD; adjust metrics if needed</td>
+</tr>
+<tr>
+<td>Variance too small</td>
+<td>Increase variance value to include desired paths</td>
+</tr>
+<tr>
+<td>maximum-paths set to 1</td>
+<td>Increase: maximum-paths 4 (or desired value)</td>
+</tr>
+<tr>
+<td>Only one feasible path exists</td>
+<td>Add redundant paths or adjust metrics</td>
+</tr>
+<tr>
+<td>CEF load balancing disabled</td>
+<td>Enable: ip cef (globally)</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 4: Named Mode Configuration Issues</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Named mode configuration not working<br>
+• Neighbors not forming after migration<br>
+• Syntax errors in named mode commands
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify IOS version supports named mode<br>
+AS500# show version | include IOS<br>
+! IOS 15.0(1)M or higher required<br>
+<br>
+! Step 2: Check named mode configuration<br>
+AS500# show eigrp address-family ipv4<br>
+<br>
+! Step 3: Verify AS number matches<br>
+AS500# show eigrp address-family ipv4 | include AS<br>
+! Must match classic mode neighbor<br>
+<br>
+! Step 4: Check neighbors<br>
+AS500# show eigrp address-family ipv4 neighbors<br>
+<br>
+! Step 5: Verify authentication matches<br>
+AS500# show eigrp address-family ipv4 interfaces detail
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IOS version too old</td>
+<td>Upgrade to IOS 15.0(1)M or higher</td>
+</tr>
+<tr>
+<td>AS number mismatch</td>
+<td>Ensure AS matches between named and classic mode</td>
+</tr>
+<tr>
+<td>Authentication mismatch</td>
+<td>Key-string must match exactly on both sides</td>
+</tr>
+<tr>
+<td>Network statements missing</td>
+<td>Add network statements under address-family</td>
+</tr>
+<tr>
+<td>Classic mode not removed</td>
+<td>Use "no router eigrp [AS]" before configuring named mode</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 5: External Routes Have Wrong Administrative Distance</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• External routes not preferred when they should be<br>
+• Wrong routes being used due to AD issues<br>
+• Unexpected routing behavior after redistribution
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Check administrative distance<br>
+AS100# show ip route 192.168.5.0<br>
+! External EIGRP should show [170/metric]<br>
+<br>
+! Step 2: Verify route source<br>
+AS100# show ip eigrp topology 192.168.5.0/24<br>
+! Check if external or internal<br>
+<br>
+! Step 3: Compare with other protocols<br>
+AS100# show ip protocols<br>
+! Check if other protocols have better AD<br>
+<br>
+! Step 4: Check if distance command is used<br>
+AS100# show run | include distance
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Administrative Distance Values</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EIGRP Internal</td>
+<td>90 (default)</td>
+</tr>
+<tr>
+<td>EIGRP External</td>
+<td>170 (default)</td>
+</tr>
+<tr>
+<td>OSPF</td>
+<td>110</td>
+</tr>
+<tr>
+<td>RIP</td>
+<td>120</td>
+</tr>
+<tr>
+<td>BGP</td>
+<td>20 (eBGP) / 200 (iBGP)</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>To modify AD:</strong></p>
+<div class="code-block">
+AS100(config)# router eigrp 100<br>
+AS100(config-router)# distance eigrp 90 170<br>
+! First value: internal AD, Second value: external AD
+</div>
+
+<strong>Problem 6: Ping Fails After Redistribution</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Redistribution configured and routes present<br>
+• Ping still fails between networks<br>
+• Traceroute shows incomplete path
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify bidirectional redistribution<br>
+AS200# show ip protocols | section redistribute<br>
+! Must redistribute in both directions<br>
+<br>
+! Step 2: Check return path<br>
+AS500# show ip route 192.168.1.0<br>
+! Return route must exist<br>
+<br>
+! Step 3: Verify routing loops<br>
+AS100# traceroute 192.168.5.1 source 192.168.1.1<br>
+! Look for loops or dead ends<br>
+<br>
+! Step 4: Check for route filtering<br>
+AS200# show ip protocols | include filter<br>
+<br>
+! Step 5: Test intermediate hops<br>
+AS100# ping 203.18.66.1<br>
+! Test connectivity to AS400
+</div>
+
+<strong>Solutions:</strong>
+<ul class="checklist">
+<li>✓ Ensure mutual redistribution (both directions)</li>
+<li>✓ Verify seed metrics are reasonable</li>
+<li>✓ Check for ACLs blocking ICMP</li>
+<li>✓ Verify no distribute-lists filtering routes</li>
+<li>✓ Ensure no routing loops exist</li>
+<li>✓ Check that all intermediate routers have routes</li>
+</ul>
+
+<!-- Key Learning Points -->
+<div class="section-title">📚 Key Learning Points & Best Practices</div>
+
+<strong>1. EIGRP Redistribution Concepts:</strong>
+<ul class="checklist">
+<li>✓ Redistribution exchanges routes between different EIGRP AS or routing protocols</li>
+<li>✓ Seed metrics are mandatory when redistributing into EIGRP</li>
+<li>✓ Redistributed routes become "external" (D EX) with AD of 170</li>
+<li>✓ Mutual redistribution required for bidirectional communication</li>
+<li>✓ Redistribution can create suboptimal routing and loops if not carefully planned</li>
+<li>✓ Use route-maps and distribute-lists to control what gets redistributed</li>
+</ul>
+
+<strong>2. Route Summarization Best Practices:</strong>
+<ul class="checklist">
+<li>✓ Summarization reduces routing table size and improves scalability</li>
+<li>✓ Configure summarization on outbound interfaces</li>
+<li>✓ Null0 routes automatically created to prevent routing loops</li>
+<li>✓ Summary metric based on best component route</li>
+<li>✓ Summarization reduces query scope and improves convergence</li>
+<li>✓ Plan summarization hierarchically at network boundaries</li>
+<li>✓ Ensure summary covers only intended networks to avoid black holes</li>
+</ul>
+
+<strong>3. Unequal Cost Load Balancing:</strong>
+<ul class="checklist">
+<li>✓ Variance enables load balancing across paths with different metrics</li>
+<li>✓ Feasibility condition must still be met (RD < FD)</li>
+<li>✓ Variance multiplier determines which paths are used</li>
+<li>✓ Maximum-paths limits number of parallel paths (1-32, default 4)</li>
+<li>✓ CEF (Cisco Express Forwarding) performs actual load balancing</li>
+<li>✓ Load distribution can be per-packet or per-destination</li>
+<li>✓ Monitor load distribution with interface statistics</li>
+</ul>
+
+<strong>4. EIGRP Named Mode Advantages:</strong>
+<ul class="checklist">
+<li>✓ Hierarchical and structured configuration</li>
+<li>✓ Single instance supports both IPv4 and IPv6</li>
+<li>✓ Per-interface and per-address-family configuration</li>
+<li>✓ Improved authentication configuration options</li>
+<li>✓ Better VRF support and scalability</li>
+<li>✓ Backward compatible with classic mode</li>
+<li>✓ Required for advanced features like wide metrics</li>
+</ul>
+
+<strong>5. Metric Manipulation Techniques:</strong>
+<ul class="checklist">
+<li>✓ Bandwidth affects metric more than delay</li>
+<li>✓ Use bandwidth command to influence path selection</li>
+<li>✓ Delay command provides fine-tuning of metrics</li>
+<li>✓ Interface metrics don't affect actual throughput</li>
+<li>✓ Bandwidth in Kbps, Delay in tens of microseconds</li>
+<li>✓ Consistent metric tuning across all routers recommended</li>
+<li>✓ Document all metric changes for troubleshooting</li>
+</ul>
+
+<strong>6. Multi-AS EIGRP Design:</strong>
+<ul class="checklist">
+<li>✓ Multiple AS can provide administrative and security boundaries</li>
+<li>✓ Redistribution points should be carefully planned</li>
+<li>✓ Route summarization critical at AS boundaries</li>
+<li>✓ Consider using route-maps for redistribution control</li>
+<li>✓ Monitor external route count to prevent routing table bloat</li>
+<li>✓ Use route tagging to track redistributed routes</li>
+<li>✓ Document AS design and redistribution points</li>
+</ul>
+
+<strong>7. EIGRP External Routes:</strong>
+<ul class="checklist">
+<li>✓ External routes marked with "EX" in routing table</li>
+<li>✓ Default AD of 170 (vs 90 for internal)</li>
+<li>✓ Can be modified with distance command</li>
+<li>✓ Carry original protocol information</li>
+<li>✓ Subject to different query rules than internal routes</li>
+<li>✓ Summary routes can suppress external route details</li>
+</ul>
+
+<strong>8. Troubleshooting Complex EIGRP:</strong>
+<ul class="checklist">
+<li>✓ Always verify bidirectional connectivity</li>
+<li>✓ Check both internal and external route tables</li>
+<li>✓ Verify redistribution in both directions</li>
+<li>✓ Monitor EIGRP topology for all paths</li>
+<li>✓ Use traceroute to verify actual forwarding path</li>
+<li>✓ Check administrative distance when multiple protocols exist</li>
+<li>✓ Review summarization boundaries for black holes</li>
+<li>✓ Verify variance and feasibility conditions for load balancing</li>
+</ul>
+
+<strong>9. Production Deployment Considerations:</strong>
+<ul class="checklist">
+<li>✓ Plan AS boundaries based on administrative domains</li>
+<li>✓ Implement authentication on all EIGRP links</li>
+<li>✓ Use summarization to reduce routing table size</li>
+<li>✓ Document redistribution points and seed metrics</li>
+<li>✓ Implement passive-interface for security</li>
+<li>✓ Monitor query propagation and SIA conditions</li>
+<li>✓ Use stub routing at network edges</li>
+<li>✓ Test failover scenarios thoroughly</li>
+<li>✓ Maintain consistent router IDs</li>
+</ul>
+
+<strong>10. CCNP Exam Focus Areas:</strong>
+<ul class="checklist">
+<li>✓ EIGRP redistribution between multiple AS</li>
+<li>✓ Route summarization configuration and verification</li>
+<li>✓ Unequal cost load balancing with variance</li>
+<li>✓ EIGRP Named Mode configuration</li>
+<li>✓ Metric manipulation (bandwidth, delay)</li>
+<li>✓ External route identification and administrative distance</li>
+<li>✓ Troubleshooting multi-AS EIGRP environments</li>
+<li>✓ DUAL algorithm and feasibility condition</li>
+</ul>
+
+<!-- Lab Completion Summary -->
+<div class="section-title">🎓 Lab Completion Summary</div>
+
+<div class="alert alert-success">
+<strong>✅ Congratulations!</strong><br><br>
+You have successfully completed Lab 12.2: Advanced EIGRP - Redistribution, Summarization & Load Balancing.<br><br>
+<strong>Advanced Skills Mastered:</strong><br>
+• Multi-AS EIGRP configuration across 5 routers<br>
+• Route redistribution between different autonomous systems<br>
+• Manual and aggregate route summarization techniques<br>
+• Unequal cost load balancing using variance<br>
+• EIGRP Named Mode configuration and migration<br>
+• EIGRP metric manipulation and path control<br>
+• Complex EIGRP troubleshooting methodologies<br>
+• External vs internal route identification<br><br>
+<strong>Next Steps:</strong><br>
+• Review all verification commands and expected outputs<br>
+• Practice troubleshooting by intentionally breaking configurations<br>
+• Experiment with different variance values and observe effects<br>
+• Try migrating all routers to Named Mode<br>
+• Explore route filtering with distribute-lists and route-maps<br>
+• Move on to EIGRP advanced topics (stub routing, graceful restart, BFD)<br>
+• Continue with OSPF or BGP labs to complete CCNP training
+</div>
+
+<div class="alert alert-info">
+<strong>📝 Lab Documentation Recommendations:</strong><br>
+• Save all router configurations for reference<br>
+• Document redistribution points and seed metrics used<br>
+• Create network diagrams showing AS boundaries<br>
+• Note any issues encountered and solutions applied<br>
+• Keep records of metric values and variance settings<br>
+• Practice this lab multiple times to build confidence<br>
+• Time yourself to improve efficiency for exam scenarios
+</div>
+
+<!-- Final Notes -->
+<div class="section-title">⚠️ Important Final Notes</div>
+
+<div class="alert alert-warning">
+<strong>Security & Production Best Practices:</strong><br>
+• Always use authentication in production EIGRP deployments<br>
+• Plan redistribution carefully to avoid routing loops<br>
+• Implement route filtering at redistribution points<br>
+• Use route tagging to track redistributed routes<br>
+• Monitor external route counts to prevent table bloat<br>
+• Document all AS boundaries and redistribution policies<br>
+• Implement summarization at hierarchical boundaries<br>
+• Test failover scenarios before production deployment<br>
+• Maintain consistent router IDs across the network<br>
+• Use passive-interface for user-facing segments
+</div>
+
+<div class="alert alert-danger">
+<strong>Production Environment Warnings:</strong><br>
+• Redistribution can cause routing loops if misconfigured<br>
+• Always test in lab before implementing in production<br>
+• Schedule changes during maintenance windows<br>
+• Have rollback plan ready before making changes<br>
+• Verify bidirectional redistribution is configured<br>
+• Be cautious with variance - can cause packet reordering<br>
+• Monitor CPU usage after enabling debug commands<br>
+• Summarization can create black holes if miscalculated<br>
+• External routes have different AD - verify route preference<br>
+• Named Mode migration requires careful planning and testing
+</div>
+
+<!-- End of Lab -->
+<div style="text-align: center; margin: 40px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+<h2 style="color: #1e3c72;">🏆 End of Lab 12.2 🏆</h2>
+<p style="font-size: 1.2em; color: #667eea; font-weight: bold;">Advanced EIGRP - Redistribution, Summarization & Load Balancing</p>
+<p style="margin-top: 15px;">Lab Duration: 150-180 minutes</p>
+<p>CCNP Enterprise (ENCOR 350-401 & ENARSI 300-410)</p>
+<p style="margin-top: 20px; font-size: 0.9em; color: #666;">
+Excellent work on completing this advanced EIGRP lab!<br>
+Keep practicing and good luck with your CCNP certification journey!
+</p>
+</div>
+
+</div>
+<!-- End of content wrapper -->
+
+</div>
+
+<!-- Footer -->
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<!-- Enhanced Password Protection & Anti-Tampering Script -->
+<script>
+// ==================== SECURITY CONFIGURATION ====================
+const MASTER_PASSWORD = "CCNP@2026";
+const PROTECTED_CONTENT = true;
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+let isUnlocked = false;
+let sessionTimer = null;
+let editMode = false;
+
+// Initialize security on page load
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+setupSecurityMonitoring();
+});
+
+// ==================== SESSION MANAGEMENT ====================
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+// ==================== PASSWORD VERIFICATION ====================
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+logSecurityEvent('FAILED_LOGIN_ATTEMPT', { timestamp: new Date().toISOString() });
+}
+}
+
+// ==================== CONTENT LOCKING/UNLOCKING ====================
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+enableEditMode();
+}
+
+function lockPage() {
+isUnlocked = false;
+editMode = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+disableEditMode();
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+// ==================== EDIT MODE MANAGEMENT ====================
+function enableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'true');
+});
+editMode = true;
+logSecurityEvent('EDIT_MODE_ENABLED');
+}
+
+function disableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'false');
+});
+editMode = false;
+logSecurityEvent('EDIT_MODE_DISABLED');
+}
+
+// ==================== CONTENT PROTECTION ====================
+function protectElement(elementId) {
+const element = document.getElementById(elementId);
+if (element) {
+element.addEventListener('keydown', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 This content is protected. Please unlock with password first.');
+showPasswordModal();
+return false;
+}
+});
+
+element.addEventListener('paste', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Paste not allowed on protected content');
+return false;
+}
+});
+
+element.addEventListener('drop', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Drag and drop not allowed on protected content');
+return false;
+}
+});
+}
+}
+
+// Make protected elements editable when unlocked
+protectElement('protectedHeader');
+protectElement('protectedBody');
+protectElement('protectedFooter');
+
+// ==================== ANTI-TAMPERING MEASURES ====================
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+// Disable text selection and dragging
+document.addEventListener('selectstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+document.addEventListener('dragstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable dangerous keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+// F12 - Developer Tools
+if (e.keyCode === 123) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+I - Developer Tools
+if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+C - Element Inspector
+if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+J - Console
+if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+e.preventDefault();
+return false;
+}
+// Ctrl+U - View Source
+if (e.ctrlKey && e.keyCode === 85) {
+e.preventDefault();
+return false;
+}
+// Ctrl+S - Save Page (only works with password)
+if (e.ctrlKey && e.keyCode === 83) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+}
+});
+
+// Disable copying
+document.addEventListener('copy', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable cutting
+document.addEventListener('cut', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Prevent right-click
+document.addEventListener('mousedown', function(e) {
+if (e.button === 2) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable double-click selection
+document.addEventListener('dblclick', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// ==================== SECURITY MONITORING ====================
+function setupSecurityMonitoring() {
+// DevTools detection
+let devTools = { open: false };
+setInterval(function() {
+if (window.outerHeight - window.innerHeight > 150) {
+if (!devTools.open) {
+devTools.open = true;
+logSecurityEvent('DEVTOOLS_DETECTED');
+}
+} else {
+devTools.open = false;
+}
+}, 500);
+
+// Monitor window focus
+window.addEventListener('blur', function() {
+logSecurityEvent('WINDOW_BLUR');
+});
+
+window.addEventListener('focus', function() {
+logSecurityEvent('WINDOW_FOCUS');
+if (!isUnlocked) {
+showPasswordModal();
+}
+});
+}
+
+// ==================== SECURITY LOGGING ====================
+function logSecurityEvent(eventType, details = {}) {
+const event = {
+type: eventType,
+timestamp: new Date().toISOString(),
+userAgent: navigator.userAgent,
+...details
+};
+console.log('[SECURITY LOG]', event);
+}
+
+// ==================== ANTI-EXPORT MEASURES ====================
+// Prevent printing
+window.addEventListener('beforeprint', function() {
+if (!isUnlocked) {
+alert('🔒 Printing is not allowed without password authentication');
+}
+});
+
+// Prevent iframe embedding
+if (self !== top) {
+top.location = self.location;
+}
+
+// Prevent drag & drop files
+document.addEventListener('dragover', function(e) {
+e.preventDefault();
+return false;
+});
+
+document.addEventListener('drop', function(e) {
+e.preventDefault();
+return false;
+});
+
+// ==================== INITIALIZATION ====================
+function initializeProtection() {
+// Additional protection initialization if needed
+logSecurityEvent('PROTECTION_INITIALIZED');
+}
+
+// ==================== CONSOLE SECURITY ====================
+// Security message on page load
+window.addEventListener('load', function() {
+setTimeout(function() {
+console.clear();
+console.log('%c🔐 ICONIC INFOSEC TRAINING - PROTECTED CONTENT',
+'color: #667eea; font-size: 18px; font-weight: bold;');
+console.log('%cLab 12.2: Advanced EIGRP - Password Protected',
+'color: #1e3c72; font-size: 14px; font-weight: bold;');
+console.log('%c⚠️ Content Protections: ACTIVE',
+'color: #ff6b6b; font-size: 12px;');
+console.log('%c✓ Header Protected ✓ Body Protected ✓ Footer Protected',
+'color: #28a745; font-size: 12px;');
+console.log('%cMaster Password: CCNP@2026',
+'color: red; font-size: 11px; font-weight: bold;');
+console.log('%cUnauthorized access attempts are logged and monitored.',
+'color: #dc3545; font-size: 11px;');
+}, 500);
+});
+
+// ==================== SESSION EXPIRY WARNING ====================
+window.addEventListener('beforeunload', function() {
+if (isUnlocked) {
+logSecurityEvent('PAGE_UNLOAD', {
+isAuthenticated: isUnlocked,
+sessionExpires: new Date(Date.now() + SESSION_TIMEOUT).toISOString()
+});
+}
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 12.3 - EIGRP Stuck in Active - Iconic InfoSec Training</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+text-align: center;
+margin: 20px 0;
+}
+
+.topology-image img {
+max-width: 100%;
+height: auto;
+border: 3px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+/* Password Protection Modal */
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Password Protection Modal -->
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<!-- Header -->
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<!-- Main Content Container -->
+<div id="protectedBody" class="protected-element">
+
+<!-- Lab Content Wrapper -->
+<div class="content-wrapper">
+
+<!-- Lab Title Section -->
+<div class="lab-title">🔧 Lab 12.3: EIGRP Stuck in Active (SIA) - Troubleshooting & Prevention</div>
+<div class="lab-description">Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) - Advanced EIGRP Troubleshooting</div>
+
+<!-- Lab Metadata -->
+<div class="lab-metadata">
+<strong>📚 Lab Overview</strong><br>
+<strong>Duration:</strong> 120-150 minutes | <strong>Difficulty Level:</strong> Advanced | <strong>Lab Version:</strong> 1.0<br>
+<strong>Lab ID:</strong> Lab 12.3 | <strong>Topics:</strong> EIGRP Stuck in Active, Query Propagation, SIA Prevention<br>
+<strong>Autonomous System:</strong> AS 100 | <strong>Focus:</strong> DUAL Algorithm, Query Scoping, Stub Routing
+</div>
+
+<!-- Lab Objectives -->
+<div class="section-title">🎯 Lab Objectives</div>
+<p>Upon completion of this lab, you will be able to:</p>
+<ul class="checklist">
+<li>✓ Understand EIGRP Stuck in Active (SIA) condition and its causes</li>
+<li>✓ Configure EIGRP on a complex 6-router topology</li>
+<li>✓ Simulate and observe SIA conditions in EIGRP networks</li>
+<li>✓ Implement EIGRP stub routing to prevent query propagation</li>
+<li>✓ Configure route summarization to limit query scope</li>
+<li>✓ Monitor and troubleshoot SIA-related issues</li>
+<li>✓ Implement Active Timer adjustments for SIA prevention</li>
+<li>✓ Use EIGRP event logging to track SIA occurrences</li>
+<li>✓ Apply best practices for preventing SIA in production networks</li>
+<li>✓ Analyze EIGRP topology states (Passive, Active, SIA-Query, SIA-Reply)</li>
+</ul>
+
+<!-- Network Topology -->
+<div class="section-title">📊 Network Topology</div>
+<div class="topology-image">
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-12.3.jpg" alt="Lab 12.3 Network Topology">
+<p style="margin-top: 10px; color: #667eea; font-weight: bold;">Figure 1: EIGRP SIA Troubleshooting Topology (6 Routers)</p>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Topology Description:</strong><br>
+This lab features a complex 6-router EIGRP topology designed to demonstrate and troubleshoot Stuck in Active (SIA) conditions. R1 acts as the core router with connections to R2, R3, and R4. R6 serves as a convergence point receiving routes from multiple paths through R2, R3, and R5. This topology is ideal for observing query propagation and implementing SIA prevention techniques.
+</div>
+
+<!-- Device Information -->
+<div class="section-title">🖥️ Device Information</div>
+<table>
+<thead>
+<tr>
+<th>Device Name</th>
+<th>Device Type</th>
+<th>EIGRP AS</th>
+<th>Role</th>
+<th>IOS Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Core Router / Query Source</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Distribution Router</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Distribution Router</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Distribution Router</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Edge Router / Stub Candidate</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Convergence Point / Edge Router</td>
+<td>IOS 15.x or higher</td>
+</tr>
+</tbody>
+</table>
+
+<!-- IP Addressing Table -->
+<div class="section-title">📋 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.61.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.0/30</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet0/1</td>
+<td>203.18.61.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.4/30</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>GigabitEthernet1/0</td>
+<td>203.18.61.9</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.8/30</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>Loopback0</td>
+<td>192.168.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.1.0/24</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.61.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.0/30</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>GigabitEthernet1/0</td>
+<td>203.18.62.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.62.0/30</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Loopback0</td>
+<td>192.168.2.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.2.0/24</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>GigabitEthernet0/1</td>
+<td>203.18.61.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.4/30</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>GigabitEthernet1/1</td>
+<td>203.18.63.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.63.0/30</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>Loopback0</td>
+<td>192.168.3.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.3.0/24</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>GigabitEthernet1/0</td>
+<td>203.18.61.10</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.8/30</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.64.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.64.0/30</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>Loopback0</td>
+<td>192.168.4.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.4.0/24</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.64.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.64.0/30</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>GigabitEthernet0/1</td>
+<td>203.18.65.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.65.0/30</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>Loopback0</td>
+<td>192.168.5.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.5.0/24</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>GigabitEthernet1/0</td>
+<td>203.18.62.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.62.0/30</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>GigabitEthernet1/1</td>
+<td>203.18.63.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.63.0/30</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>GigabitEthernet0/1</td>
+<td>203.18.65.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.65.0/30</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>Loopback0</td>
+<td>192.168.6.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.6.0/24</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Cable Connections -->
+<div class="section-title">🔌 Cable Connection Information</div>
+<table>
+<thead>
+<tr>
+<th>Connection</th>
+<th>Device 1</th>
+<th>Interface 1</th>
+<th>Device 2</th>
+<th>Interface 2</th>
+<th>Network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Link 1</td>
+<td>R1</td>
+<td>G0/0</td>
+<td>R2</td>
+<td>G0/0</td>
+<td>203.18.61.0/30</td>
+</tr>
+<tr>
+<td>Link 2</td>
+<td>R1</td>
+<td>G0/1</td>
+<td>R3</td>
+<td>G0/1</td>
+<td>203.18.61.4/30</td>
+</tr>
+<tr>
+<td>Link 3</td>
+<td>R1</td>
+<td>G1/0</td>
+<td>R4</td>
+<td>G1/0</td>
+<td>203.18.61.8/30</td>
+</tr>
+<tr>
+<td>Link 4</td>
+<td>R2</td>
+<td>G1/0</td>
+<td>R6</td>
+<td>G1/0</td>
+<td>203.18.62.0/30</td>
+</tr>
+<tr>
+<td>Link 5</td>
+<td>R3</td>
+<td>G1/1</td>
+<td>R6</td>
+<td>G1/1</td>
+<td>203.18.63.0/30</td>
+</tr>
+<tr>
+<td>Link 6</td>
+<td>R4</td>
+<td>G0/0</td>
+<td>R5</td>
+<td>G0/0</td>
+<td>203.18.64.0/30</td>
+</tr>
+<tr>
+<td>Link 7</td>
+<td>R5</td>
+<td>G0/1</td>
+<td>R6</td>
+<td>G0/1</td>
+<td>203.18.65.0/30</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Prerequisites -->
+<div class="section-title">📚 Prerequisites</div>
+<div class="alert alert-warning">
+<strong>⚠️ Before You Begin:</strong><br>
+• Completion of Lab 12.1 and Lab 12.2 strongly recommended<br>
+• Deep understanding of EIGRP DUAL algorithm and FSM<br>
+• Knowledge of EIGRP query and reply mechanisms<br>
+• Understanding of Feasible Distance (FD) and Reported Distance (RD)<br>
+• Familiarity with EIGRP topology states (Passive, Active)<br>
+• Experience with EIGRP route summarization and stub routing<br>
+• Advanced Cisco IOS CLI troubleshooting skills<br>
+• Understanding of network convergence concepts
+</div>
+
+<!-- Understanding SIA -->
+<div class="section-title">📖 Understanding EIGRP Stuck in Active (SIA)</div>
+
+<div class="alert alert-danger">
+<strong>🚨 What is Stuck in Active (SIA)?</strong><br><br>
+<strong>Definition:</strong> SIA occurs when a router sends EIGRP queries about a route but does not receive replies from all neighbors within the Active Timer period (default 3 minutes / 180 seconds).<br><br>
+<strong>Consequences:</strong><br>
+• Neighbor relationships are reset with routers that didn't reply<br>
+• Routing instability and convergence issues<br>
+• Potential network outages<br>
+• CPU and memory resource consumption<br><br>
+<strong>Root Causes:</strong><br>
+• Slow WAN links delaying query/reply propagation<br>
+• Routing loops causing queries to circulate<br>
+• Large network diameter with many hops<br>
+• Congested links dropping EIGRP packets<br>
+• Misconfigured or missing route summarization<br>
+• Router resource exhaustion (CPU/memory)<br>
+• Lack of stub routing implementation
+</div>
+
+<div class="alert alert-info">
+<strong>📘 EIGRP Query Mechanism:</strong><br><br>
+<strong>Normal Operation:</strong><br>
+1. Route goes down (successor lost)<br>
+2. Router checks for Feasible Successor (FS)<br>
+3. If FS exists: Immediate convergence (route in Passive state)<br>
+4. If NO FS: Router enters Active state and sends Queries<br>
+5. Queries propagate to all neighbors (except route source)<br>
+6. Each neighbor must Reply to the Query<br>
+7. Once all Replies received: Route returns to Passive state<br><br>
+<strong>SIA Condition:</strong><br>
+• If any neighbor fails to Reply within 180 seconds → SIA<br>
+• Router resets neighbor relationship with non-responding router<br>
+• Can trigger cascading SIA across network
+</div>
+
+<!-- Lab Configuration Steps -->
+<div class="section-title">⚙️ Step-by-Step Configuration Guide</div>
+
+<!-- Step 1: Basic Interface Configuration -->
+<div class="alert alert-info">
+<strong>📝 Step 1: Basic Interface Configuration on All Routers</strong>
+</div>
+
+<strong>Task 1.1: Configure R1 Interfaces (Core Router)</strong><br><br>
+
+<div class="code-block">
+R1> enable<br>
+R1# configure terminal<br>
+R1(config)# hostname R1<br>
+<br>
+! Configure G0/0 (to R2)<br>
+R1(config)# interface gigabitethernet 0/0<br>
+R1(config-if)# description ** Link to R2 **<br>
+R1(config-if)# ip address 203.18.61.1 255.255.255.252<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Configure G0/1 (to R3)<br>
+R1(config)# interface gigabitethernet 0/1<br>
+R1(config-if)# description ** Link to R3 **<br>
+R1(config-if)# ip address 203.18.61.5 255.255.255.252<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Configure G1/0 (to R4)<br>
+R1(config)# interface gigabitethernet 1/0<br>
+R1(config-if)# description ** Link to R4 **<br>
+R1(config-if)# ip address 203.18.61.9 255.255.255.252<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+R1(config)# interface loopback 0<br>
+R1(config-if)# description ** R1 Internal Network **<br>
+R1(config-if)# ip address 192.168.1.1 255.255.255.0<br>
+R1(config-if)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory
+</div>
+
+<strong>Task 1.2: Configure R2 Interfaces</strong><br><br>
+
+<div class="code-block">
+R2# configure terminal<br>
+R2(config)# hostname R2<br>
+<br>
+! Configure G0/0 (to R1)<br>
+R2(config)# interface gigabitethernet 0/0<br>
+R2(config-if)# description ** Link to R1 **<br>
+R2(config-if)# ip address 203.18.61.2 255.255.255.252<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+! Configure G1/0 (to R6)<br>
+R2(config)# interface gigabitethernet 1/0<br>
+R2(config-if)# description ** Link to R6 **<br>
+R2(config-if)# ip address 203.18.62.1 255.255.255.252<br>
+R2(config-if)# no shutdown<br>
+R2(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+R2(config)# interface loopback 0<br>
+R2(config-if)# description ** R2 Internal Network **<br>
+R2(config-if)# ip address 192.168.2.1 255.255.255.0<br>
+R2(config-if)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory
+</div>
+
+<strong>Task 1.3: Configure R3 Interfaces</strong><br><br>
+
+<div class="code-block">
+R3# configure terminal<br>
+R3(config)# hostname R3<br>
+<br>
+! Configure G0/1 (to R1)<br>
+R3(config)# interface gigabitethernet 0/1<br>
+R3(config-if)# description ** Link to R1 **<br>
+R3(config-if)# ip address 203.18.61.6 255.255.255.252<br>
+R3(config-if)# no shutdown<br>
+R3(config-if)# exit<br>
+<br>
+! Configure G1/1 (to R6)<br>
+R3(config)# interface gigabitethernet 1/1<br>
+R3(config-if)# description ** Link to R6 **<br>
+R3(config-if)# ip address 203.18.63.1 255.255.255.252<br>
+R3(config-if)# no shutdown<br>
+R3(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+R3(config)# interface loopback 0<br>
+R3(config-if)# description ** R3 Internal Network **<br>
+R3(config-if)# ip address 192.168.3.1 255.255.255.0<br>
+R3(config-if)# exit<br>
+<br>
+R3(config)# end<br>
+R3# write memory
+</div>
+
+<strong>Task 1.4: Configure R4 Interfaces</strong><br><br>
+
+<div class="code-block">
+R4# configure terminal<br>
+R4(config)# hostname R4<br>
+<br>
+! Configure G1/0 (to R1)<br>
+R4(config)# interface gigabitethernet 1/0<br>
+R4(config-if)# description ** Link to R1 **<br>
+R4(config-if)# ip address 203.18.61.10 255.255.255.252<br>
+R4(config-if)# no shutdown<br>
+R4(config-if)# exit<br>
+<br>
+! Configure G0/0 (to R5)<br>
+R4(config)# interface gigabitethernet 0/0<br>
+R4(config-if)# description ** Link to R5 **<br>
+R4(config-if)# ip address 203.18.64.1 255.255.255.252<br>
+R4(config-if)# no shutdown<br>
+R4(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+R4(config)# interface loopback 0<br>
+R4(config-if)# description ** R4 Internal Network **<br>
+R4(config-if)# ip address 192.168.4.1 255.255.255.0<br>
+R4(config-if)# exit<br>
+<br>
+R4(config)# end<br>
+R4# write memory
+</div>
+
+<strong>Task 1.5: Configure R5 Interfaces</strong><br><br>
+
+<div class="code-block">
+R5# configure terminal<br>
+R5(config)# hostname R5<br>
+<br>
+! Configure G0/0 (to R4)<br>
+R5(config)# interface gigabitethernet 0/0<br>
+R5(config-if)# description ** Link to R4 **<br>
+R5(config-if)# ip address 203.18.64.2 255.255.255.252<br>
+R5(config-if)# no shutdown<br>
+R5(config-if)# exit<br>
+<br>
+! Configure G0/1 (to R6)<br>
+R5(config)# interface gigabitethernet 0/1<br>
+R5(config-if)# description ** Link to R6 **<br>
+R5(config-if)# ip address 203.18.65.1 255.255.255.252<br>
+R5(config-if)# no shutdown<br>
+R5(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+R5(config)# interface loopback 0<br>
+R5(config-if)# description ** R5 Internal Network **<br>
+R5(config-if)# ip address 192.168.5.1 255.255.255.0<br>
+R5(config-if)# exit<br>
+<br>
+R5(config)# end<br>
+R5# write memory
+</div>
+
+<strong>Task 1.6: Configure R6 Interfaces (Convergence Point)</strong><br><br>
+
+<div class="code-block">
+R6# configure terminal<br>
+R6(config)# hostname R6<br>
+<br>
+! Configure G1/0 (to R2)<br>
+R6(config)# interface gigabitethernet 1/0<br>
+R6(config-if)# description ** Link to R2 **<br>
+R6(config-if)# ip address 203.18.62.2 255.255.255.252<br>
+R6(config-if)# no shutdown<br>
+R6(config-if)# exit<br>
+<br>
+! Configure G1/1 (to R3)<br>
+R6(config)# interface gigabitethernet 1/1<br>
+R6(config-if)# description ** Link to R3 **<br>
+R6(config-if)# ip address 203.18.63.2 255.255.255.252<br>
+R6(config-if)# no shutdown<br>
+R6(config-if)# exit<br>
+<br>
+! Configure G0/1 (to R5)<br>
+R6(config)# interface gigabitethernet 0/1<br>
+R6(config-if)# description ** Link to R5 **<br>
+R6(config-if)# ip address 203.18.65.2 255.255.255.252<br>
+R6(config-if)# no shutdown<br>
+R6(config-if)# exit<br>
+<br>
+! Configure Loopback0<br>
+R6(config)# interface loopback 0<br>
+R6(config-if)# description ** R6 Internal Network **<br>
+R6(config-if)# ip address 192.168.6.1 255.255.255.0<br>
+R6(config-if)# exit<br>
+<br>
+R6(config)# end<br>
+R6# write memory
+</div>
+
+<strong>Task 1.7: Verify Interface Configuration</strong><br><br>
+
+<div class="code-block">
+! Verify on each router<br>
+R1# show ip interface brief<br>
+R2# show ip interface brief<br>
+R3# show ip interface brief<br>
+R4# show ip interface brief<br>
+R5# show ip interface brief<br>
+R6# show ip interface brief<br>
+<br>
+! Test connectivity between directly connected routers<br>
+R1# ping 203.18.61.2<br>
+R1# ping 203.18.61.6<br>
+R1# ping 203.18.61.10
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 1:</strong> All interfaces configured and in "up/up" state. Basic IP connectivity verified between directly connected routers.
+</div>
+
+<!-- Step 2: EIGRP Configuration -->
+<div class="alert alert-info">
+<strong>📝 Step 2: Basic EIGRP Configuration (AS 100)</strong>
+</div>
+
+<strong>Task 2.1: Configure EIGRP on R1</strong><br><br>
+
+<div class="code-block">
+R1# configure terminal<br>
+<br>
+R1(config)# router eigrp 100<br>
+R1(config-router)# network 203.18.61.0 0.0.0.3<br>
+R1(config-router)# network 203.18.61.4 0.0.0.3<br>
+R1(config-router)# network 203.18.61.8 0.0.0.3<br>
+R1(config-router)# network 192.168.1.0 0.0.0.255<br>
+R1(config-router)# no auto-summary<br>
+R1(config-router)# eigrp router-id 1.1.1.1<br>
+R1(config-router)# exit<br>
+<br>
+R1(config)# end<br>
+R1# write memory
+</div>
+
+<strong>Task 2.2: Configure EIGRP on R2</strong><br><br>
+
+<div class="code-block">
+R2# configure terminal<br>
+<br>
+R2(config)# router eigrp 100<br>
+R2(config-router)# network 203.18.61.0 0.0.0.3<br>
+R2(config-router)# network 203.18.62.0 0.0.0.3<br>
+R2(config-router)# network 192.168.2.0 0.0.0.255<br>
+R2(config-router)# no auto-summary<br>
+R2(config-router)# eigrp router-id 2.2.2.2<br>
+R2(config-router)# exit<br>
+<br>
+R2(config)# end<br>
+R2# write memory
+</div>
+
+<strong>Task 2.3: Configure EIGRP on R3</strong><br><br>
+
+<div class="code-block">
+R3# configure terminal<br>
+<br>
+R3(config)# router eigrp 100<br>
+R3(config-router)# network 203.18.61.4 0.0.0.3<br>
+R3(config-router)# network 203.18.63.0 0.0.0.3<br>
+R3(config-router)# network 192.168.3.0 0.0.0.255<br>
+R3(config-router)# no auto-summary<br>
+R3(config-router)# eigrp router-id 3.3.3.3<br>
+R3(config-router)# exit<br>
+<br>
+R3(config)# end<br>
+R3# write memory
+</div>
+
+<strong>Task 2.4: Configure EIGRP on R4</strong><br><br>
+
+<div class="code-block">
+R4# configure terminal<br>
+<br>
+R4(config)# router eigrp 100<br>
+R4(config-router)# network 203.18.61.8 0.0.0.3<br>
+R4(config-router)# network 203.18.64.0 0.0.0.3<br>
+R4(config-router)# network 192.168.4.0 0.0.0.255<br>
+R4(config-router)# no auto-summary<br>
+R4(config-router)# eigrp router-id 4.4.4.4<br>
+R4(config-router)# exit<br>
+<br>
+R4(config)# end<br>
+R4# write memory
+</div>
+
+<strong>Task 2.5: Configure EIGRP on R5</strong><br><br>
+
+<div class="code-block">
+R5# configure terminal<br>
+<br>
+R5(config)# router eigrp 100<br>
+R5(config-router)# network 203.18.64.0 0.0.0.3<br>
+R5(config-router)# network 203.18.65.0 0.0.0.3<br>
+R5(config-router)# network 192.168.5.0 0.0.0.255<br>
+R5(config-router)# no auto-summary<br>
+R5(config-router)# eigrp router-id 5.5.5.5<br>
+R5(config-router)# exit<br>
+<br>
+R5(config)# end<br>
+R5# write memory
+</div>
+
+<strong>Task 2.6: Configure EIGRP on R6</strong><br><br>
+
+<div class="code-block">
+R6# configure terminal<br>
+<br>
+R6(config)# router eigrp 100<br>
+R6(config-router)# network 203.18.62.0 0.0.0.3<br>
+R6(config-router)# network 203.18.63.0 0.0.0.3<br>
+R6(config-router)# network 203.18.65.0 0.0.0.3<br>
+R6(config-router)# network 192.168.6.0 0.0.0.255<br>
+R6(config-router)# no auto-summary<br>
+R6(config-router)# eigrp router-id 6.6.6.6<br>
+R6(config-router)# exit<br>
+<br>
+R6(config)# end<br>
+R6# write memory
+</div>
+
+<strong>Task 2.7: Verify EIGRP Neighbor Relationships</strong><br><br>
+
+<div class="code-block">
+! Check neighbors on all routers<br>
+R1# show ip eigrp neighbors<br>
+! Should see R2, R3, R4<br>
+<br>
+R2# show ip eigrp neighbors<br>
+! Should see R1, R6<br>
+<br>
+R3# show ip eigrp neighbors<br>
+! Should see R1, R6<br>
+<br>
+R4# show ip eigrp neighbors<br>
+! Should see R1, R5<br>
+<br>
+R5# show ip eigrp neighbors<br>
+! Should see R4, R6<br>
+<br>
+R6# show ip eigrp neighbors<br>
+! Should see R2, R3, R5
+</div>
+
+<strong>Task 2.8: Verify EIGRP Routing Tables</strong><br><br>
+
+<div class="code-block">
+! Check routing tables<br>
+R1# show ip route eigrp<br>
+! Should see routes to all loopbacks<br>
+<br>
+R6# show ip route eigrp<br>
+! Should see routes to all loopbacks including R1's<br>
+<br>
+! Test end-to-end connectivity<br>
+R1# ping 192.168.6.1 source 192.168.1.1<br>
+R6# ping 192.168.1.1 source 192.168.6.1
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 2:</strong> EIGRP neighbors established on all routers. Full routing table convergence achieved. End-to-end connectivity verified.
+</div>
+
+<!-- Step 3: Enable EIGRP Event Logging -->
+<div class="alert alert-info">
+<strong>📝 Step 3: Enable EIGRP Event Logging for SIA Monitoring</strong>
+</div>
+
+<strong>Task 3.1: Enable EIGRP Event Logging on All Routers</strong><br><br>
+
+<div class="code-block">
+! On R1<br>
+R1# configure terminal<br>
+R1(config)# router eigrp 100<br>
+R1(config-router)# eigrp event-log-size 100000<br>
+R1(config-router)# eigrp log-neighbor-changes<br>
+R1(config-router)# eigrp log-neighbor-warnings<br>
+R1(config-router)# exit<br>
+R1(config)# end<br>
+<br>
+! Repeat on R2, R3, R4, R5, R6<br>
+! (Use same commands on each router)
+</div>
+
+<div class="alert alert-warning">
+<strong>📘 Event Logging Commands Explained:</strong><br>
+• <strong>eigrp event-log-size 100000:</strong> Stores up to 100,000 EIGRP events<br>
+• <strong>eigrp log-neighbor-changes:</strong> Logs neighbor up/down events<br>
+• <strong>eigrp log-neighbor-warnings:</strong> Logs SIA and other warnings<br><br>
+These logs are critical for identifying SIA occurrences and troubleshooting!
+</div>
+
+<strong>Task 3.2: Verify Event Logging Configuration</strong><br><br>
+
+<div class="code-block">
+R1# show ip protocols | include Event<br>
+! Output: Event-log enabled, Maximum size: 100000<br>
+<br>
+R1# show eigrp address-family ipv4 events<br>
+! Shows EIGRP event log (currently should be mostly neighbor events)
+</div>
+
+<!-- Step 4: Simulate SIA Condition -->
+<div class="alert alert-info">
+<strong>📝 Step 4: Simulate and Observe SIA Condition</strong>
+</div>
+
+<div class="alert alert-danger">
+<strong>⚠️ WARNING - CONTROLLED SIA SIMULATION:</strong><br>
+The following steps will intentionally create a Stuck in Active condition for educational purposes. This will cause temporary routing instability. In production networks, NEVER intentionally create SIA conditions.
+</div>
+
+<strong>Task 4.1: Prepare for SIA Simulation</strong><br><br>
+
+<div class="code-block">
+! On R1, enable debugging (use with caution)<br>
+R1# debug eigrp fsm<br>
+R1# debug eigrp packets query<br>
+R1# debug eigrp packets reply<br>
+<br>
+! Monitor EIGRP topology<br>
+R1# show ip eigrp topology 192.168.6.0/24<br>
+! Note the current state (should be Passive)
+</div>
+
+<strong>Task 4.2: Create SIA Condition by Delaying Replies</strong><br><br>
+
+<p>Method 1: Temporarily Block EIGRP Communication on R6</p>
+
+<div class="code-block">
+! On R6, create an access-list to block EIGRP (Protocol 88)<br>
+R6# configure terminal<br>
+R6(config)# access-list 100 deny eigrp any any<br>
+R6(config)# access-list 100 permit ip any any<br>
+<br>
+! Apply to interfaces (temporarily)<br>
+R6(config)# interface gigabitethernet 1/0<br>
+R6(config-if)# ip access-group 100 in<br>
+R6(config-if)# exit<br>
+<br>
+R6(config)# interface gigabitethernet 1/1<br>
+R6(config-if)# ip access-group 100 in<br>
+R6(config-if)# exit<br>
+<br>
+R6(config)# end
+</div>
+
+<strong>Task 4.3: Trigger Active State on R1</strong><br><br>
+
+<div class="code-block">
+! On R5, shut down loopback to trigger query from R1<br>
+R5# configure terminal<br>
+R5(config)# interface loopback 0<br>
+R5(config-if)# shutdown<br>
+R5(config-if)# end<br>
+<br>
+! R1 will send queries for 192.168.5.0/24<br>
+! Watch debug output on R1
+</div>
+
+<strong>Task 4.4: Observe SIA Behavior</strong><br><br>
+
+<div class="code-block">
+! On R1, monitor topology state<br>
+R1# show ip eigrp topology active<br>
+! Will show routes in Active state<br>
+<br>
+! Check EIGRP events<br>
+R1# show eigrp address-family ipv4 events | include SIA<br>
+<br>
+! After 90 seconds, EIGRP sends SIA-Query<br>
+! After 180 seconds total, SIA condition declared<br>
+<br>
+! Watch for neighbor reset messages:<br>
+! %DUAL-5-NBRCHANGE: EIGRP-IPv4 100: Neighbor X.X.X.X (interface) <br>
+! is down: stuck in active
+</div>
+
+<strong>Task 4.5: Restore Normal Operation</strong><br><br>
+
+<div class="code-block">
+! Remove ACL on R6<br>
+R6# configure terminal<br>
+R6(config)# interface gigabitethernet 1/0<br>
+R6(config-if)# no ip access-group 100 in<br>
+R6(config-if)# exit<br>
+<br>
+R6(config)# interface gigabitethernet 1/1<br>
+R6(config-if)# no ip access-group 100 in<br>
+R6(config-if)# exit<br>
+<br>
+R6(config)# no access-list 100<br>
+R6(config)# end<br>
+<br>
+! Bring R5 loopback back up<br>
+R5# configure terminal<br>
+R5(config)# interface loopback 0<br>
+R5(config-if)# no shutdown<br>
+R5(config-if)# end<br>
+<br>
+! Disable debugs on R1<br>
+R1# undebug all<br>
+<br>
+! Allow EIGRP to reconverge (may take 1-2 minutes)
+</div>
+
+<strong>Task 4.6: Analyze SIA Event Log</strong><br><br>
+
+<div class="code-block">
+! View complete event log<br>
+R1# show eigrp address-family ipv4 events | include SIA<br>
+<br>
+! Example output:<br>
+! 00:15:23.456 SIA-QUERY sent for 192.168.5.0/24<br>
+! 00:18:23.789 SIA declared for 192.168.5.0/24<br>
+! 00:18:23.790 Neighbor 203.18.61.2 reset: stuck in active<br>
+<br>
+! Check EIGRP traffic statistics<br>
+R1# show ip eigrp traffic<br>
+! Look for SIA-Queries and SIA-Replies counts
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 3:</strong> SIA condition successfully simulated and observed. Event logs captured SIA occurrence. Normal operation restored.
+</div>
+
+<!-- Step 5: Implement SIA Prevention - Stub Routing -->
+<div class="alert alert-info">
+<strong>📝 Step 5: Implement SIA Prevention - EIGRP Stub Routing</strong>
+</div>
+
+<p>EIGRP stub routing prevents query propagation to stub routers, significantly reducing the query domain and preventing SIA.</p>
+
+<strong>Task 5.1: Configure R5 as EIGRP Stub Router</strong><br><br>
+
+<div class="code-block">
+R5# configure terminal<br>
+<br>
+R5(config)# router eigrp 100<br>
+R5(config-router)# eigrp stub connected<br>
+R5(config-router)# exit<br>
+<br>
+R5(config)# end<br>
+R5# write memory
+</div>
+
+<div class="alert alert-warning">
+<strong>📘 EIGRP Stub Options:</strong><br>
+• <strong>eigrp stub connected:</strong> Advertise only connected routes<br>
+• <strong>eigrp stub summary:</strong> Advertise only summary routes<br>
+• <strong>eigrp stub static:</strong> Advertise only static routes<br>
+• <strong>eigrp stub redistributed:</strong> Advertise only redistributed routes<br>
+• <strong>eigrp stub receive-only:</strong> Don't advertise any routes<br>
+• <strong>eigrp stub:</strong> Default = connected + summary<br><br>
+Stub routers do NOT receive queries, preventing SIA propagation!
+</div>
+
+<strong>Task 5.2: Verify Stub Configuration</strong><br><br>
+
+<div class="code-block">
+! On R5, verify stub configuration<br>
+R5# show ip protocols | include Stub<br>
+! Output: Routing Protocol is "eigrp 100"<br>
+!         Stub, connected<br>
+<br>
+! On R4 (neighbor of R5), verify stub status<br>
+R4# show ip eigrp neighbors detail<br>
+! Look for "Stub Peer Advertising ( CONNECTED )" in output<br>
+<br>
+! Example output:<br>
+! H   Address         Interface     Hold Uptime   SRTT   RTO  Q  Seq<br>
+!                                   (sec)         (ms)       Cnt Num<br>
+! 1   203.18.64.2     Gi0/0          14 00:05:23    5   100  0  15<br>
+!    Version 15.0/1.0, Retrans: 0, Retries: 0, Prefixes: 2<br>
+!    Topology-ids from peer - 0<br>
+!    <strong>Stub Peer Advertising ( CONNECTED ) Routes</strong>
+</div>
+
+<strong>Task 5.3: Test Query Behavior with Stub Router</strong><br><br>
+
+<div class="code-block">
+! Shut down a route to trigger queries<br>
+R6# configure terminal<br>
+R6(config)# interface loopback 0<br>
+R6(config-if)# shutdown<br>
+R6(config-if)# end<br>
+<br>
+! On R1, check if queries were sent to all neighbors<br>
+R1# show ip eigrp topology active<br>
+<br>
+! Enable query debugging on R5<br>
+R5# debug eigrp packets query<br>
+! Notice: R5 does NOT receive queries (stub router)<br>
+<br>
+! Bring R6 loopback back up<br>
+R6(config)# interface loopback 0<br>
+R6(config-if)# no shutdown<br>
+R6(config-if)# end<br>
+<br>
+R5# undebug all
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 4:</strong> R5 configured as stub router. Queries no longer propagate to R5, reducing query domain and SIA risk.
+</div>
+
+<!-- Step 6: Implement Route Summarization -->
+<div class="alert alert-info">
+<strong>📝 Step 6: Implement Route Summarization to Limit Query Scope</strong>
+</div>
+
+<p>Route summarization creates query boundaries, preventing queries from propagating beyond the summary point.</p>
+
+<strong>Task 6.1: Configure Summarization on R2, R3, R4</strong><br><br>
+
+<div class="code-block">
+! On R2, summarize routes toward R6<br>
+R2# configure terminal<br>
+R2(config)# interface gigabitethernet 1/0<br>
+R2(config-if)# ip summary-address eigrp 100 192.168.0.0 255.255.252.0<br>
+R2(config-if)# exit<br>
+R2(config)# end<br>
+R2# write memory<br>
+<br>
+! On R3, summarize routes toward R6<br>
+R3# configure terminal<br>
+R3(config)# interface gigabitethernet 1/1<br>
+R3(config-if)# ip summary-address eigrp 100 192.168.0.0 255.255.252.0<br>
+R3(config-if)# exit<br>
+R3(config)# end<br>
+R3# write memory<br>
+<br>
+! On R4, summarize routes toward R5<br>
+R4# configure terminal<br>
+R4(config)# interface gigabitethernet 0/0<br>
+R4(config-if)# ip summary-address eigrp 100 192.168.0.0 255.255.252.0<br>
+R4(config-if)# exit<br>
+R4(config)# end<br>
+R4# write memory
+</div>
+
+<div class="alert alert-warning">
+<strong>📘 Summary Route 192.168.0.0/22:</strong><br>
+• Covers 192.168.0.0 through 192.168.3.255<br>
+• Includes 192.168.1.0/24, 192.168.2.0/24, 192.168.3.0/24<br>
+• Creates Null0 route for loop prevention<br>
+• Queries stop at summary boundary
+</div>
+
+<strong>Task 6.2: Verify Route Summarization</strong><br><br>
+
+<div class="code-block">
+! Check for Null0 summary routes<br>
+R2# show ip route | include Null0<br>
+R3# show ip route | include Null0<br>
+R4# show ip route | include Null0<br>
+<br>
+! On R6, verify summary route is received<br>
+R6# show ip route 192.168.0.0<br>
+! Should show aggregate route 192.168.0.0/22<br>
+<br>
+! Test that specific routes are hidden<br>
+R6# show ip route 192.168.1.0 longer-prefixes<br>
+! Should show summary, not specific /24 routes
+</div>
+
+<strong>Task 6.3: Test Query Boundary</strong><br><br>
+
+<div class="code-block">
+! On R1, shut down loopback<br>
+R1# configure terminal<br>
+R1(config)# interface loopback 0<br>
+R1(config-if)# shutdown<br>
+R1(config-if)# end<br>
+<br>
+! Enable query debugging on R6<br>
+R6# debug eigrp packets query<br>
+<br>
+! R6 should NOT receive queries for 192.168.1.0/24<br>
+! because R2 and R3 advertised summary<br>
+<br>
+! Restore R1 loopback<br>
+R1# configure terminal<br>
+R1(config)# interface loopback 0<br>
+R1(config-if)# no shutdown<br>
+R1(config-if)# end<br>
+<br>
+R6# undebug all
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 5:</strong> Route summarization configured. Query boundaries established. Queries no longer propagate beyond summary points.
+</div>
+
+<!-- Step 7: Adjust Active Timer -->
+<div class="alert alert-info">
+<strong>📝 Step 7: Adjust EIGRP Active Timer (Advanced Tuning)</strong>
+</div>
+
+<p>The Active Timer determines how long EIGRP waits for query replies before declaring SIA. Default is 3 minutes (180 seconds).</p>
+
+<strong>Task 7.1: View Current Active Timer</strong><br><br>
+
+<div class="code-block">
+R1# show ip protocols | include active<br>
+! Default: EIGRP Active Time: 3 min
+</div>
+
+<strong>Task 7.2: Adjust Active Timer (Use with Caution)</strong><br><br>
+
+<div class="code-block">
+! On R1, adjust active timer to 2 minutes<br>
+R1# configure terminal<br>
+R1(config)# router eigrp 100<br>
+R1(config-router)# timers active-time 120<br>
+R1(config-router)# exit<br>
+R1(config)# end<br>
+R1# write memory<br>
+<br>
+! Verify change<br>
+R1# show ip protocols | include active<br>
+! Should show: EIGRP Active Time: 2 min
+</div>
+
+<div class="alert alert-danger">
+<strong>⚠️ Active Timer WARNING:</strong><br>
+• <strong>Decreasing</strong> active timer causes faster SIA detection but may lead to premature neighbor resets<br>
+• <strong>Increasing</strong> active timer allows more time for slow replies but delays SIA detection<br>
+• <strong>Default 180 seconds</strong> is appropriate for most networks<br>
+• Only adjust if you have slow WAN links or deep network hierarchy<br>
+• Changes should be consistent across all routers in AS
+</div>
+
+<strong>Task 7.3: Restore Default Active Timer</strong><br><br>
+
+<div class="code-block">
+! Restore to default (optional)<br>
+R1# configure terminal<br>
+R1(config)# router eigrp 100<br>
+R1(config-router)# no timers active-time<br>
+R1(config-router)# exit<br>
+R1(config)# end<br>
+R1# write memory
+</div>
+
+<!-- Complete Configurations -->
+<div class="section-title">📄 Complete Router Configurations with SIA Prevention</div>
+
+<strong>R1 - Complete Configuration</strong>
+
+<div class="code-block">
+!<br>
+! R1 Complete Configuration - Lab 12.3<br>
+!<br>
+hostname R1<br>
+!<br>
+interface Loopback0<br>
+ description ** R1 Internal Network **<br>
+ ip address 192.168.1.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Link to R2 **<br>
+ ip address 203.18.61.1 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Link to R3 **<br>
+ ip address 203.18.61.5 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet1/0<br>
+ description ** Link to R4 **<br>
+ ip address 203.18.61.9 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+router eigrp 100<br>
+ network 192.168.1.0 0.0.0.255<br>
+ network 203.18.61.0 0.0.0.3<br>
+ network 203.18.61.4 0.0.0.3<br>
+ network 203.18.61.8 0.0.0.3<br>
+ eigrp event-log-size 100000<br>
+ eigrp log-neighbor-changes<br>
+ eigrp log-neighbor-warnings<br>
+ no auto-summary<br>
+ eigrp router-id 1.1.1.1<br>
+!<br>
+end
+</div>
+
+<strong>R2 - Complete Configuration (With Summarization)</strong>
+
+<div class="code-block">
+!<br>
+! R2 Complete Configuration - Lab 12.3<br>
+!<br>
+hostname R2<br>
+!<br>
+interface Loopback0<br>
+ description ** R2 Internal Network **<br>
+ ip address 192.168.2.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Link to R1 **<br>
+ ip address 203.18.61.2 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet1/0<br>
+ description ** Link to R6 **<br>
+ ip address 203.18.62.1 255.255.255.252<br>
+ ip summary-address eigrp 100 192.168.0.0 255.255.252.0<br>
+ no shutdown<br>
+!<br>
+router eigrp 100<br>
+ network 192.168.2.0 0.0.0.255<br>
+ network 203.18.61.0 0.0.0.3<br>
+ network 203.18.62.0 0.0.0.3<br>
+ eigrp event-log-size 100000<br>
+ eigrp log-neighbor-changes<br>
+ eigrp log-neighbor-warnings<br>
+ no auto-summary<br>
+ eigrp router-id 2.2.2.2<br>
+!<br>
+end
+</div>
+
+<strong>R5 - Complete Configuration (Stub Router)</strong>
+
+<div class="code-block">
+!<br>
+! R5 Complete Configuration - Lab 12.3 (EIGRP Stub)<br>
+!<br>
+hostname R5<br>
+!<br>
+interface Loopback0<br>
+ description ** R5 Internal Network **<br>
+ ip address 192.168.5.1 255.255.255.0<br>
+!<br>
+interface GigabitEthernet0/0<br>
+ description ** Link to R4 **<br>
+ ip address 203.18.64.2 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+interface GigabitEthernet0/1<br>
+ description ** Link to R6 **<br>
+ ip address 203.18.65.1 255.255.255.252<br>
+ no shutdown<br>
+!<br>
+router eigrp 100<br>
+ network 192.168.5.0 0.0.0.255<br>
+ network 203.18.64.0 0.0.0.3<br>
+ network 203.18.65.0 0.0.0.3<br>
+ eigrp stub connected<br>
+ eigrp event-log-size 100000<br>
+ eigrp log-neighbor-changes<br>
+ eigrp log-neighbor-warnings<br>
+ no auto-summary<br>
+ eigrp router-id 5.5.5.5<br>
+!<br>
+end
+</div>
+
+<!-- Verification Commands -->
+<div class="section-title">✅ Comprehensive Verification Commands</div>
+
+<strong>1. Verify EIGRP Neighbor Relationships</strong>
+<div class="code-block">
+R1# show ip eigrp neighbors<br>
+R1# show ip eigrp neighbors detail<br>
+! Check for "Stub Peer" indication on neighbors
+</div>
+
+<strong>2. Verify EIGRP Event Logging</strong>
+<div class="code-block">
+R1# show eigrp address-family ipv4 events<br>
+R1# show eigrp address-family ipv4 events | include SIA<br>
+! Look for SIA-related events
+</div>
+
+<strong>3. Verify Active/Passive States</strong>
+<div class="code-block">
+R1# show ip eigrp topology<br>
+! All routes should be in "P" (Passive) state under normal conditions<br>
+<br>
+R1# show ip eigrp topology active<br>
+! Should show no active routes (empty output = good)
+</div>
+
+<strong>4. Verify Stub Router Configuration</strong>
+<div class="code-block">
+R5# show ip protocols | include Stub<br>
+! Should show stub configuration<br>
+<br>
+R4# show ip eigrp neighbors detail | include Stub<br>
+! Should show R5 as stub peer
+</div>
+
+<strong>5. Verify Route Summarization</strong>
+<div class="code-block">
+R2# show ip route | include Null0<br>
+! Should show summary route to Null0<br>
+<br>
+R6# show ip route 192.168.0.0<br>
+! Should receive summary route 192.168.0.0/22
+</div>
+
+<strong>6. Verify Active Timer Settings</strong>
+<div class="code-block">
+R1# show ip protocols | include active<br>
+! Check active timer value (default 3 min)
+</div>
+
+<strong>7. Monitor EIGRP Traffic</strong>
+<div class="code-block">
+R1# show ip eigrp traffic<br>
+! Look for Query, Reply, SIA-Query, SIA-Reply counts
+</div>
+
+<strong>8. Check EIGRP Topology for All Routes</strong>
+<div class="code-block">
+R1# show ip eigrp topology all-links<br>
+! Shows all paths including non-successors
+</div>
+
+<strong>9. Verify Query Scope</strong>
+<div class="code-block">
+! Enable debug and trigger route change<br>
+R2# debug eigrp packets query<br>
+R2# debug eigrp packets reply<br>
+<br>
+! Cause topology change and observe query propagation<br>
+! Then disable debug<br>
+R2# undebug all
+</div>
+
+<strong>10. Check for SIA History</strong>
+<div class="code-block">
+R1# show eigrp address-family ipv4 sia-statistics<br>
+! Shows SIA statistics if available in IOS version
+</div>
+
+<!-- Verification Checklist -->
+<div class="section-title">📋 Lab Verification Checklist</div>
+
+<ul class="checklist">
+<li>☑ All 6 routers have interfaces configured and in "up/up" state</li>
+<li>☑ EIGRP AS 100 configured on all routers</li>
+<li>☑ EIGRP neighbor relationships established (R1-R2-R3-R4-R5-R6)</li>
+<li>☑ All loopback networks reachable from all routers</li>
+<li>☑ EIGRP event logging enabled on all routers (size 100000)</li>
+<li>☑ Event logs capturing neighbor changes and warnings</li>
+<li>☑ SIA condition successfully simulated and observed</li>
+<li>☑ SIA events logged in EIGRP event log</li>
+<li>☑ R5 configured as EIGRP stub router (connected)</li>
+<li>☑ R4 recognizes R5 as stub peer (show neighbors detail)</li>
+<li>☑ Route summarization configured on R2, R3, R4</li>
+<li>☑ Null0 routes created for summaries (192.168.0.0/22)</li>
+<li>☑ R6 receives summary route instead of specific routes</li>
+<li>☑ Query boundaries verified at summary points</li>
+<li>☑ Stub router does not receive queries</li>
+<li>☑ Active timer settings verified (default or adjusted)</li>
+<li>☑ No routes in Active state under normal conditions</li>
+<li>☑ EIGRP traffic statistics show query/reply activity</li>
+<li>☑ End-to-end connectivity maintained after SIA prevention</li>
+<li>☑ All configurations saved on all routers</li>
+</ul>
+
+<!-- Troubleshooting Guide -->
+<div class="section-title">🔧 Comprehensive SIA Troubleshooting Guide</div>
+
+<strong>Problem 1: Frequent SIA Occurrences</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Neighbor relationships frequently resetting<br>
+• "Stuck in active" messages in logs<br>
+• Routes constantly in Active state<br>
+• Network instability and packet loss
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Check event logs for SIA patterns<br>
+R1# show eigrp address-family ipv4 events | include SIA<br>
+! Identify which routes and neighbors are affected<br>
+<br>
+! Step 2: Check current active routes<br>
+R1# show ip eigrp topology active<br>
+! If many routes are active, investigate why<br>
+<br>
+! Step 3: Check neighbor stability<br>
+R1# show ip eigrp neighbors<br>
+! Look at uptime - frequent resets indicate issues<br>
+<br>
+! Step 4: Check query/reply statistics<br>
+R1# show ip eigrp traffic<br>
+! High query counts with low reply counts = problem<br>
+<br>
+! Step 5: Verify network diameter<br>
+! Too many hops can cause query timeouts<br>
+<br>
+! Step 6: Check for routing loops<br>
+R1# traceroute 192.168.X.1<br>
+! Loops cause queries to circulate indefinitely
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Large network diameter</td>
+<td>Implement route summarization at boundaries</td>
+</tr>
+<tr>
+<td>Missing feasible successors</td>
+<td>Add redundant paths with proper metrics</td>
+</tr>
+<tr>
+<td>No stub routing</td>
+<td>Configure edge routers as EIGRP stubs</td>
+</tr>
+<tr>
+<td>Slow WAN links</td>
+<td>Increase active timer or improve bandwidth</td>
+</tr>
+<tr>
+<td>Router resource exhaustion</td>
+<td>Upgrade router CPU/memory or reduce routing table</td>
+</tr>
+<tr>
+<td>Routing loops</td>
+<td>Check for misconfigured redistribution or filters</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 2: Stub Router Not Preventing SIA</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Stub router still receiving queries<br>
+• SIA still occurring despite stub configuration<br>
+• Neighbor not recognizing stub status
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify stub configuration<br>
+R5# show ip protocols | include Stub<br>
+! Should show "Routing Protocol is eigrp 100" with Stub indication<br>
+<br>
+! Step 2: Verify neighbor sees stub status<br>
+R4# show ip eigrp neighbors detail<br>
+! Look for "Stub Peer Advertising" line<br>
+<br>
+! Step 3: Check if queries are being sent<br>
+R5# debug eigrp packets query<br>
+! Should NOT receive queries<br>
+<br>
+! Step 4: Verify EIGRP is running<br>
+R5# show ip eigrp neighbors<br>
+! Neighbors must be up for stub to work<br>
+<br>
+! Step 5: Check stub options<br>
+R5# show run | section router eigrp<br>
+! Verify "eigrp stub" command is present
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stub command not configured</td>
+<td>Add "eigrp stub connected" under router eigrp</td>
+</tr>
+<tr>
+<td>Neighbor relationship down</td>
+<td>Troubleshoot neighbor connectivity</td>
+</tr>
+<tr>
+<td>Wrong stub options</td>
+<td>Use appropriate options (connected, summary, etc.)</td>
+</tr>
+<tr>
+<td>Old IOS version</td>
+<td>Upgrade to IOS 12.0(7)T or higher</td>
+</tr>
+<tr>
+<td>Queries from non-stub neighbor</td>
+<td>This is normal - stub only affects query TO stub router</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 3: Summary Routes Not Stopping Queries</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Queries propagating beyond summary boundary<br>
+• Specific routes visible despite summary<br>
+• Null0 route not created
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Verify summary configuration<br>
+R2# show run interface gigabitethernet 1/0<br>
+! Look for "ip summary-address eigrp" command<br>
+<br>
+! Step 2: Check for Null0 route<br>
+R2# show ip route | include Null0<br>
+! Should show summary route to Null0<br>
+<br>
+! Step 3: Verify neighbor receives summary<br>
+R6# show ip route 192.168.0.0<br>
+! Should show aggregate, not specific routes<br>
+<br>
+! Step 4: Check if component routes exist<br>
+R2# show ip route 192.168.1.0<br>
+! At least one component must exist for summary<br>
+<br>
+! Step 5: Verify correct AS number<br>
+! Summary must match EIGRP AS number
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Summary on wrong interface</td>
+<td>Apply summary on outbound interface toward query source</td>
+</tr>
+<tr>
+<td>Incorrect summary mask</td>
+<td>Recalculate summary to cover component routes</td>
+</tr>
+<tr>
+<td>No component routes active</td>
+<td>Ensure at least one specific route exists</td>
+</tr>
+<tr>
+<td>Wrong AS number in command</td>
+<td>Match AS number: ip summary-address eigrp 100</td>
+</tr>
+<tr>
+<td>Auto-summary interfering</td>
+<td>Use "no auto-summary" under router eigrp</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 4: Active Timer Expiring Too Quickly</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• SIA occurring before queries can be answered<br>
+• Slow WAN links timing out<br>
+• Legitimate neighbors being reset
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Check current active timer<br>
+R1# show ip protocols | include active<br>
+! Default is 3 minutes (180 seconds)<br>
+<br>
+! Step 2: Check network delay<br>
+R1# ping 203.18.62.2<br>
+! Check round-trip times<br>
+<br>
+! Step 3: Calculate query propagation time<br>
+! Query must traverse all hops and return<br>
+! Time = (hops × 2 × delay) + processing<br>
+<br>
+! Step 4: Check for packet loss<br>
+R1# show interface gigabitethernet 0/0<br>
+! Look for output drops or errors<br>
+<br>
+! Step 5: Monitor query timing<br>
+R1# debug eigrp packets query<br>
+R1# debug eigrp packets reply<br>
+! Time between query sent and reply received
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Slow WAN links</td>
+<td>Increase active timer: timers active-time 240</td>
+</tr>
+<tr>
+<td>Deep network hierarchy</td>
+<td>Implement summarization to reduce query scope</td>
+</tr>
+<tr>
+<td>High latency paths</td>
+<td>Improve link quality or increase timer</td>
+</tr>
+<tr>
+<td>Link congestion</td>
+<td>Implement QoS for EIGRP (protocol 88)</td>
+</tr>
+<tr>
+<td>Router overload</td>
+<td>Reduce routing table size or upgrade hardware</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 5: Queries Not Being Answered</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Queries sent but no replies received<br>
+• SIA-Query sent but no SIA-Reply<br>
+• Specific neighbor causing SIA
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">
+! Step 1: Identify non-responding neighbor<br>
+R1# show eigrp address-family ipv4 events | include SIA<br>
+! Note which neighbor didn't reply<br>
+<br>
+! Step 2: Check if neighbor is reachable<br>
+R1# ping 203.18.61.2<br>
+! Basic connectivity test<br>
+<br>
+! Step 3: Check EIGRP traffic on neighbor<br>
+R2# show ip eigrp traffic<br>
+! Verify queries are being received<br>
+<br>
+! Step 4: Check for ACLs blocking EIGRP<br>
+R2# show ip interface gigabitethernet 0/0<br>
+! Look for "Outgoing access list" or "Ingoing access list"<br>
+<br>
+! Step 5: Check neighbor topology state<br>
+R2# show ip eigrp topology active<br>
+! Is neighbor also stuck waiting for replies?<br>
+<br>
+! Step 6: Check for routing loops<br>
+R2# show ip eigrp topology | include Active<br>
+! Loop can cause query to come back to originator
+</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ACL blocking EIGRP</td>
+<td>Permit EIGRP (protocol 88) in ACLs</td>
+</tr>
+<tr>
+<td>Neighbor waiting for other replies</td>
+<td>Implement stub routing to break query chain</td>
+</tr>
+<tr>
+<td>Router resource exhaustion</td>
+<td>Reduce load or upgrade router</td>
+</tr>
+<tr>
+<td>Routing loop</td>
+<td>Check split-horizon and route filtering</td>
+</tr>
+<tr>
+<td>Link congestion/packet loss</td>
+<td>Implement QoS or increase bandwidth</td>
+</tr>
+<tr>
+<td>Misconfigured route filtering</td>
+<td>Review distribute-lists and route-maps</td>
+</tr>
+</tbody>
+</table>
+
+<!-- Key Learning Points -->
+<div class="section-title">📚 Key Learning Points & Best Practices</div>
+
+<strong>1. Understanding SIA Fundamentals:</strong>
+<ul class="checklist">
+<li>✓ SIA occurs when queries don't receive replies within Active Timer (180s default)</li>
+<li>✓ DUAL algorithm requires all neighbors to reply to queries</li>
+<li>✓ Route must be in Active state waiting for query replies</li>
+<li>✓ SIA causes neighbor relationship reset with non-responding routers</li>
+<li>✓ Cascading SIA can affect entire network if not prevented</li>
+<li>✓ SIA is symptom of design/configuration issues, not EIGRP bug</li>
+</ul>
+
+<strong>2. Query Propagation Mechanism:</strong>
+<ul class="checklist">
+<li>✓ Queries sent when no Feasible Successor exists</li>
+<li>✓ Queries propagate to all EIGRP neighbors except successor</li>
+<li>✓ Each router must query its neighbors and wait for replies</li>
+<li>✓ Query scope determines convergence time</li>
+<li>✓ Large query domains increase SIA risk</li>
+<li>✓ Query boundary = point where queries stop propagating</li>
+</ul>
+
+<strong>3. EIGRP Stub Routing Benefits:</strong>
+<ul class="checklist">
+<li>✓ Prevents queries from being sent to stub routers</li>
+<li>✓ Reduces query domain significantly</li>
+<li>✓ Ideal for spoke routers in hub-and-spoke topologies</li>
+<li>✓ Improves convergence time</li>
+<li>✓ Reduces CPU and memory usage on stub routers</li>
+<li>✓ Prevents SIA propagation to edge of network</li>
+<li>✓ Various stub options for different deployment scenarios</li>
+</ul>
+
+<strong>4. Route Summarization for SIA Prevention:</strong>
+<ul class="checklist">
+<li>✓ Creates natural query boundaries</li>
+<li>✓ Queries stop at summary advertisement point</li>
+<li>✓ Reduces routing table size</li>
+<li>✓ Improves network scalability</li>
+<li>✓ Null0 route prevents routing loops</li>
+<li>✓ Should be implemented hierarchically</li>
+<li>✓ Critical for large EIGRP deployments</li>
+</ul>
+
+<strong>5. Active Timer Considerations:</strong>
+<ul class="checklist">
+<li>✓ Default 180 seconds (3 minutes) appropriate for most networks</li>
+<li>✓ Increasing timer helps on slow WAN links</li>
+<li>✓ Decreasing timer causes faster SIA detection but higher risk</li>
+<li>✓ Should be consistent across AS</li>
+<li>✓ Not a substitute for proper network design</li>
+<li>✓ SIA-Query/Reply mechanism helps with slow links</li>
+</ul>
+
+<strong>6. EIGRP Event Logging:</strong>
+<ul class="checklist">
+<li>✓ Essential for troubleshooting SIA issues</li>
+<li>✓ Captures complete EIGRP FSM transitions</li>
+<li>✓ Shows query/reply timing</li>
+<li>✓ Identifies problematic neighbors</li>
+<li>✓ Should be enabled on all routers</li>
+<li>✓ Adjust log size based on network complexity</li>
+</ul>
+
+<strong>7. SIA Prevention Best Practices:</strong>
+<ul class="checklist">
+<li>✓ Implement EIGRP stub routing at network edges</li>
+<li>✓ Configure route summarization at hierarchical boundaries</li>
+<li>✓ Design networks with Feasible Successors when possible</li>
+<li>✓ Limit network diameter (hop count)</li>
+<li>✓ Monitor EIGRP event logs regularly</li>
+<li>✓ Implement QoS for EIGRP packets on congested links</li>
+<li>✓ Ensure adequate router resources (CPU/memory)</li>
+<li>✓ Avoid routing loops through proper design</li>
+<li>✓ Use authentication to prevent unauthorized routers</li>
+</ul>
+
+<strong>8. Troubleshooting Methodology:</strong>
+<ul class="checklist">
+<li>✓ Check event logs first for SIA history</li>
+<li>✓ Identify specific routes and neighbors involved</li>
+<li>✓ Verify query/reply statistics</li>
+<li>✓ Check for routes stuck in Active state</li>
+<li>✓ Verify stub and summary configurations</li>
+<li>✓ Monitor neighbor stability and uptime</li>
+<li>✓ Test query propagation with controlled changes</li>
+<li>✓ Use debug commands carefully (high CPU usage)</li>
+</ul>
+
+<strong>9. Production Deployment Considerations:</strong>
+<ul class="checklist">
+<li>✓ Plan query boundaries before deployment</li>
+<li>✓ Document stub and summary locations</li>
+<li>✓ Test SIA prevention measures in lab first</li>
+<li>✓ Monitor for SIA events proactively</li>
+<li>✓ Maintain redundant paths with proper metrics</li>
+<li>✓ Review EIGRP topology regularly</li>
+<li>✓ Keep IOS versions current for SIA improvements</li>
+<li>✓ Implement network monitoring for EIGRP health</li>
+</ul>
+
+<strong>10. CCNP Exam Focus:</strong>
+<ul class="checklist">
+<li>✓ Understand SIA causes and symptoms</li>
+<li>✓ Know how to configure EIGRP stub routing</li>
+<li>✓ Understand query propagation mechanism</li>
+<li>✓ Know how summarization creates query boundaries</li>
+<li>✓ Understand Active Timer and SIA-Query/Reply</li>
+<li>✓ Be able to troubleshoot SIA from logs</li>
+<li>✓ Know DUAL algorithm and FSM states</li>
+<li>✓ Understand relationship between FS and SIA</li>
+</ul>
+
+<!-- Lab Completion Summary -->
+<div class="section-title">🎓 Lab Completion Summary</div>
+
+<div class="alert alert-success">
+<strong>✅ Congratulations!</strong><br><br>
+You have successfully completed Lab 12.3: EIGRP Stuck in Active (SIA) - Troubleshooting & Prevention.<br><br>
+<strong>Advanced Skills Mastered:</strong><br>
+• Deep understanding of EIGRP SIA condition and causes<br>
+• Hands-on experience simulating SIA conditions<br>
+• EIGRP event logging and analysis<br>
+• EIGRP stub routing implementation<br>
+• Route summarization for query scoping<br>
+• Active Timer adjustment and tuning<br>
+• Comprehensive SIA troubleshooting methodology<br>
+• Production-ready SIA prevention techniques<br><br>
+<strong>Next Steps:</strong><br>
+• Practice all troubleshooting scenarios multiple times<br>
+• Experiment with different stub options<br>
+• Create intentional SIA conditions for learning<br>
+• Review DUAL algorithm and FSM states in detail<br>
+• Study SIA-Query and SIA-Reply mechanisms<br>
+• Move on to other EIGRP advanced topics (BFD, graceful restart)<br>
+• Continue with other routing protocols (OSPF, BGP)
+</div>
+
+<!-- Final Notes -->
+<div class="section-title">⚠️ Important Final Notes</div>
+
+<div class="alert alert-warning">
+<strong>Production SIA Prevention Guidelines:</strong><br>
+• Always implement stub routing at network edges<br>
+• Configure route summarization at hierarchical boundaries<br>
+• Monitor EIGRP event logs for SIA occurrences<br>
+• Design networks to have Feasible Successors<br>
+• Limit network diameter to reduce query scope<br>
+• Implement QoS for EIGRP protocol packets<br>
+• Ensure routers have adequate CPU and memory<br>
+• Test failover scenarios in lab before production<br>
+• Document all stub and summary configurations<br>
+• Keep IOS versions current for SIA improvements
+</div>
+
+<div class="alert alert-danger">
+<strong>Critical Warnings:</strong><br>
+• Never intentionally create SIA in production networks<br>
+• Debug commands consume significant CPU - use carefully<br>
+• Test all SIA prevention measures in lab first<br>
+• Document baseline before making changes<br>
+• Have rollback plan before implementing stub/summary<br>
+• Schedule changes during maintenance windows<br>
+• Monitor network closely after SIA prevention implementation<br>
+• Don't rely solely on Active Timer adjustment<br>
+• Understand that SIA indicates design issues, not EIGRP bugs<br>
+• Cascading SIA can affect entire network - prevent proactively
+</div>
+
+<!-- End of Lab -->
+<div style="text-align: center; margin: 40px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+<h2 style="color: #1e3c72;">🏆 End of Lab 12.3 🏆</h2>
+<p style="font-size: 1.2em; color: #667eea; font-weight: bold;">EIGRP Stuck in Active - Troubleshooting & Prevention</p>
+<p style="margin-top: 15px;">Lab Duration: 120-150 minutes</p>
+<p>CCNP Enterprise (ENCOR 350-401 & ENARSI 300-410)</p>
+<p style="margin-top: 20px; font-size: 0.9em; color: #666;">
+Outstanding work completing this advanced EIGRP SIA lab!<br>
+You now have the skills to prevent and troubleshoot one of<br>
+the most challenging EIGRP issues in enterprise networks.<br><br>
+Keep practicing and good luck with your CCNP certification journey!
+</p>
+</div>
+
+</div>
+<!-- End of content wrapper -->
+
+</div>
+
+<!-- Footer -->
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<!-- Enhanced Password Protection & Anti-Tampering Script -->
+<script>
+// ==================== SECURITY CONFIGURATION ====================
+const MASTER_PASSWORD = "CCNP@2026";
+const PROTECTED_CONTENT = true;
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+let isUnlocked = false;
+let sessionTimer = null;
+let editMode = false;
+
+// Initialize security on page load
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+setupSecurityMonitoring();
+});
+
+// ==================== SESSION MANAGEMENT ====================
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+// ==================== PASSWORD VERIFICATION ====================
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+logSecurityEvent('FAILED_LOGIN_ATTEMPT', { timestamp: new Date().toISOString() });
+}
+}
+
+// ==================== CONTENT LOCKING/UNLOCKING ====================
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+enableEditMode();
+}
+
+function lockPage() {
+isUnlocked = false;
+editMode = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+disableEditMode();
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+// ==================== EDIT MODE MANAGEMENT ====================
+function enableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'true');
+});
+editMode = true;
+logSecurityEvent('EDIT_MODE_ENABLED');
+}
+
+function disableEditMode() {
+document.querySelectorAll('[contenteditable]').forEach(element => {
+element.setAttribute('contenteditable', 'false');
+});
+editMode = false;
+logSecurityEvent('EDIT_MODE_DISABLED');
+}
+
+// ==================== CONTENT PROTECTION ====================
+function protectElement(elementId) {
+const element = document.getElementById(elementId);
+if (element) {
+element.addEventListener('keydown', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 This content is protected. Please unlock with password first.');
+showPasswordModal();
+return false;
+}
+});
+
+element.addEventListener('paste', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Paste not allowed on protected content');
+return false;
+}
+});
+
+element.addEventListener('drop', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Drag and drop not allowed on protected content');
+return false;
+}
+});
+}
+}
+
+// Make protected elements editable when unlocked
+protectElement('protectedHeader');
+protectElement('protectedBody');
+protectElement('protectedFooter');
+
+// ==================== ANTI-TAMPERING MEASURES ====================
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+// Disable text selection and dragging
+document.addEventListener('selectstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+document.addEventListener('dragstart', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable dangerous keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+// F12 - Developer Tools
+if (e.keyCode === 123) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+I - Developer Tools
+if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+C - Element Inspector
+if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+e.preventDefault();
+return false;
+}
+// Ctrl+Shift+J - Console
+if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+e.preventDefault();
+return false;
+}
+// Ctrl+U - View Source
+if (e.ctrlKey && e.keyCode === 85) {
+e.preventDefault();
+return false;
+}
+// Ctrl+S - Save Page (only works with password)
+if (e.ctrlKey && e.keyCode === 83) {
+if (!isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+}
+});
+
+// Disable copying
+document.addEventListener('copy', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable cutting
+document.addEventListener('cut', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// Prevent right-click
+document.addEventListener('mousedown', function(e) {
+if (e.button === 2) {
+e.preventDefault();
+return false;
+}
+});
+
+// Disable double-click selection
+document.addEventListener('dblclick', function(e) {
+if (!isUnlocked) {
+e.preventDefault();
+return false;
+}
+});
+
+// ==================== SECURITY MONITORING ====================
+function setupSecurityMonitoring() {
+// DevTools detection
+let devTools = { open: false };
+setInterval(function() {
+if (window.outerHeight - window.innerHeight > 150) {
+if (!devTools.open) {
+devTools.open = true;
+logSecurityEvent('DEVTOOLS_DETECTED');
+}
+} else {
+devTools.open = false;
+}
+}, 500);
+
+// Monitor window focus
+window.addEventListener('blur', function() {
+logSecurityEvent('WINDOW_BLUR');
+});
+
+window.addEventListener('focus', function() {
+logSecurityEvent('WINDOW_FOCUS');
+if (!isUnlocked) {
+showPasswordModal();
+}
+});
+}
+
+// ==================== SECURITY LOGGING ====================
+function logSecurityEvent(eventType, details = {}) {
+const event = {
+type: eventType,
+timestamp: new Date().toISOString(),
+userAgent: navigator.userAgent,
+...details
+};
+console.log('[SECURITY LOG]', event);
+}
+
+// ==================== ANTI-EXPORT MEASURES ====================
+// Prevent printing
+window.addEventListener('beforeprint', function() {
+if (!isUnlocked) {
+alert('🔒 Printing is not allowed without password authentication');
+}
+});
+
+// Prevent iframe embedding
+if (self !== top) {
+top.location = self.location;
+}
+
+// Prevent drag & drop files
+document.addEventListener('dragover', function(e) {
+e.preventDefault();
+return false;
+});
+
+document.addEventListener('drop', function(e) {
+e.preventDefault();
+return false;
+});
+
+// ==================== INITIALIZATION ====================
+function initializeProtection() {
+// Additional protection initialization if needed
+logSecurityEvent('PROTECTION_INITIALIZED');
+}
+
+// ==================== CONSOLE SECURITY ====================
+// Security message on page load
+window.addEventListener('load', function() {
+setTimeout(function() {
+console.clear();
+console.log('%c🔐 ICONIC INFOSEC TRAINING - PROTECTED CONTENT',
+'color: #667eea; font-size: 18px; font-weight: bold;');
+console.log('%cLab 12.3: EIGRP SIA - Password Protected',
+'color: #1e3c72; font-size: 14px; font-weight: bold;');
+console.log('%c⚠️ Content Protections: ACTIVE',
+'color: #ff6b6b; font-size: 12px;');
+console.log('%c✓ Header Protected ✓ Body Protected ✓ Footer Protected',
+'color: #28a745; font-size: 12px;');
+console.log('%cMaster Password: CCNP@2026',
+'color: red; font-size: 11px; font-weight: bold;');
+console.log('%cUnauthorized access attempts are logged and monitored.',
+'color: #dc3545; font-size: 11px;');
+}, 500);
+});
+
+// ==================== SESSION EXPIRY WARNING ====================
+window.addEventListener('beforeunload', function() {
+if (isUnlocked) {
+logSecurityEvent('PAGE_UNLOAD', {
+isAuthenticated: isUnlocked,
+sessionExpires: new Date(Date.now() + SESSION_TIMEOUT).toISOString()
+});
+}
+});
+
+</script>
+
+</body>
+</html>
