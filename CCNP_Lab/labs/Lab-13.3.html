@@ -1,0 +1,3027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 13.3 - OSPF LSA Types 1-7 Understanding - CCNP Lab</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1400px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1400px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+white-space: pre-wrap;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+width: 100%;
+max-width: 1100px;
+margin: 20px auto;
+display: block;
+border: 2px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* LSA Tabs Styling */
+.lsa-tabs-container {
+margin: 30px 0;
+}
+
+.lsa-tabs {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+margin-bottom: 20px;
+border-bottom: 3px solid #667eea;
+padding-bottom: 10px;
+}
+
+.lsa-tab-button {
+flex: 1;
+min-width: 120px;
+padding: 15px 20px;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white;
+border: none;
+border-radius: 8px 8px 0 0;
+cursor: pointer;
+font-size: 0.95em;
+font-weight: bold;
+transition: all 0.3s;
+box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.lsa-tab-button:hover {
+transform: translateY(-3px);
+box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.lsa-tab-button.active {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+transform: translateY(-5px);
+box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+.lsa-tab-content {
+display: none;
+padding: 25px;
+background: #f8f9fa;
+border-radius: 8px;
+border: 2px solid #667eea;
+animation: fadeIn 0.5s;
+}
+
+.lsa-tab-content.active {
+display: block;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.lsa-type-header {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white;
+padding: 15px;
+border-radius: 8px;
+margin-bottom: 20px;
+}
+
+.lsa-type-header h3 {
+font-size: 1.5em;
+margin-bottom: 5px;
+}
+
+.lsa-type-header p {
+font-size: 0.95em;
+opacity: 0.9;
+}
+
+.lsa-characteristics {
+background: white;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 15px 0;
+border-radius: 4px;
+}
+
+.lsa-characteristics ul {
+margin-left: 20px;
+}
+
+.lsa-characteristics li {
+margin: 8px 0;
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1400px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #fff;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #fff;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<div id="protectedBody" class="protected-element">
+<div class="content-wrapper">
+
+<div class="lab-title">🔧 Lab 13.3 - OSPF LSA Types 1-7 Complete Understanding</div>
+<div class="lab-description">Cisco CCNP 300-410 (ENARSI) - OSPF Link-State Advertisements, Redistribution, Stub & NSSA Areas</div>
+
+<div class="lab-metadata">
+<strong>Lab Focus:</strong> OSPF LSA Types 1-7, EIGRP-to-OSPF Redistribution, Stub Area, NSSA Configuration | Password Protected<br>
+<strong>Duration:</strong> 180-240 minutes | <strong>Difficulty Level:</strong> Expert | <strong>Lab Version:</strong> 1.0<br>
+<strong>CCNP Exam Topics:</strong> 300-410 ENARSI (2.4-2.6) - Advanced OSPF, LSA Types, Redistribution<br>
+<strong>Prerequisites:</strong> Understanding of OSPF areas, EIGRP basics, route redistribution concepts
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Lab Objective:</strong><br>
+This expert-level lab provides comprehensive understanding of all OSPF LSA types (Type 1 through Type 7). You will configure multi-area OSPF with EIGRP redistribution, implement Stub and NSSA areas, and learn to identify each LSA type in the OSPF database. The lab includes interactive tabs for each LSA type with detailed explanations, verification commands, and real-world examples.
+</div>
+
+<div class="section-title">🎯 Lab Learning Outcomes</div>
+<p>Upon completion of this lab, you will master:</p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>LSA Type 1 (Router LSA):</strong> Intra-area router advertisements</li>
+<li><strong>LSA Type 2 (Network LSA):</strong> Multi-access network advertisements (DR)</li>
+<li><strong>LSA Type 3 (Summary LSA):</strong> Inter-area route advertisements (ABR)</li>
+<li><strong>LSA Type 4 (ASBR-Summary LSA):</strong> ASBR location advertisements</li>
+<li><strong>LSA Type 5 (External LSA):</strong> External routes (redistributed from other protocols)</li>
+<li><strong>LSA Type 7 (NSSA External LSA):</strong> External routes within NSSA</li>
+<li>EIGRP-to-OSPF redistribution with seed metrics</li>
+<li>Configuring Stub and NSSA areas to reduce LSA flooding</li>
+<li>Virtual link configuration through transit area</li>
+<li>Advanced OSPF troubleshooting and verification</li>
+</ul>
+
+<div class="section-title">🗺️ Network Topology</div>
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-13.3.jpg" alt="Lab 13.3 Network Topology" class="topology-image">
+
+<p style="margin-top: 15px;"><strong>Topology Description:</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>AS-100:</strong> EIGRP 100 autonomous system (172.16.1.0/24)</li>
+<li><strong>Core-1:</strong> ASBR + ABR (EIGRP 100 ↔ OSPF Area 0 & Area 1)</li>
+<li><strong>T-A & T-Z:</strong> Area 1 routers (Transit area for Virtual Link)</li>
+<li><strong>S-A & S-Z:</strong> Area 2 routers (will be configured as Stub, then NSSA)</li>
+<li><strong>AS-200:</strong> EIGRP 200 autonomous system (172.16.2.0/24)</li>
+<li><strong>Design:</strong> Multi-protocol network with OSPF backbone and EIGRP edges</li>
+</ul>
+
+<div class="alert alert-warning">
+<strong>⚠️ Important Design Notes:</strong><br>
+• Core-1 acts as ASBR (redistributing EIGRP 100 into OSPF)<br>
+• S-Z acts as ASBR (redistributing EIGRP 200 into OSPF)<br>
+• Area 2 NOT directly connected to Area 0 (requires Virtual Link)<br>
+• Area 2 will be configured TWICE: First as Stub, then as NSSA<br>
+• Each configuration allows observation of different LSA types
+</div>
+
+<div class="section-title">📋 Device Information</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Role</th>
+<th>Protocols</th>
+<th>Router ID</th>
+<th>OSPF Areas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AS-100</strong></td>
+<td>EIGRP Edge Router</td>
+<td>EIGRP 100</td>
+<td>100.100.100.100</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Core-1</strong></td>
+<td>ASBR + ABR</td>
+<td>EIGRP 100, OSPF</td>
+<td>1.1.1.1</td>
+<td>Area 0, Area 1</td>
+</tr>
+<tr>
+<td><strong>T-A</strong></td>
+<td>Area 1 Router</td>
+<td>OSPF</td>
+<td>2.2.2.2</td>
+<td>Area 1</td>
+</tr>
+<tr>
+<td><strong>T-Z</strong></td>
+<td>ABR + VL Endpoint</td>
+<td>OSPF</td>
+<td>3.3.3.3</td>
+<td>Area 1, Area 2, Virtual Link</td>
+</tr>
+<tr>
+<td><strong>S-A</strong></td>
+<td>Area 2 Router + VL Endpoint</td>
+<td>OSPF</td>
+<td>4.4.4.4</td>
+<td>Area 2, Virtual Link</td>
+</tr>
+<tr>
+<td><strong>S-Z</strong></td>
+<td>ASBR (Area 2)</td>
+<td>OSPF, EIGRP 200</td>
+<td>5.5.5.5</td>
+<td>Area 2</td>
+</tr>
+<tr>
+<td><strong>AS-200</strong></td>
+<td>EIGRP Edge Router</td>
+<td>EIGRP 200</td>
+<td>200.200.200.200</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🌐 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Connection</th>
+<th>Device 1</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Device 2</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Link 1</td>
+<td>AS-100</td>
+<td>G0/1</td>
+<td>203.18.60.1</td>
+<td>Core-1</td>
+<td>G0/1</td>
+<td>203.18.60.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 2</td>
+<td>Core-1</td>
+<td>G0/0</td>
+<td>203.18.61.1</td>
+<td>T-A</td>
+<td>G0/0</td>
+<td>203.18.61.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 3</td>
+<td>T-A</td>
+<td>G0/1</td>
+<td>203.18.62.1</td>
+<td>T-Z</td>
+<td>G0/1</td>
+<td>203.18.62.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 4</td>
+<td>T-Z</td>
+<td>G1/0</td>
+<td>203.18.63.1</td>
+<td>S-A</td>
+<td>G1/0</td>
+<td>203.18.63.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 5</td>
+<td>S-A</td>
+<td>G0/0</td>
+<td>203.18.64.1</td>
+<td>S-Z</td>
+<td>G0/0</td>
+<td>203.18.64.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 6</td>
+<td>S-Z</td>
+<td>G0/1</td>
+<td>203.18.65.1</td>
+<td>AS-200</td>
+<td>G0/1</td>
+<td>203.18.65.2</td>
+<td>/30</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🔌 Loopback Networks</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Loopback0</th>
+<th>Subnet Mask</th>
+<th>Protocol</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AS-100</strong></td>
+<td>172.16.1.1</td>
+<td>255.255.255.0</td>
+<td>EIGRP 100</td>
+<td>EIGRP network to be redistributed</td>
+</tr>
+<tr>
+<td><strong>Core-1</strong></td>
+<td>192.168.1.1</td>
+<td>255.255.255.0</td>
+<td>OSPF Area 0</td>
+<td>OSPF internal network</td>
+</tr>
+<tr>
+<td><strong>T-A</strong></td>
+<td>192.168.2.1</td>
+<td>255.255.255.0</td>
+<td>OSPF Area 1</td>
+<td>Transit area network</td>
+</tr>
+<tr>
+<td><strong>T-Z</strong></td>
+<td>192.168.3.1</td>
+<td>255.255.255.0</td>
+<td>OSPF Area 1</td>
+<td>Transit area network</td>
+</tr>
+<tr>
+<td><strong>S-A</strong></td>
+<td>192.168.4.1</td>
+<td>255.255.255.0</td>
+<td>OSPF Area 2</td>
+<td>Stub/NSSA network</td>
+</tr>
+<tr>
+<td><strong>S-Z</strong></td>
+<td>192.168.5.1</td>
+<td>255.255.255.0</td>
+<td>OSPF Area 2</td>
+<td>Stub/NSSA network</td>
+</tr>
+<tr>
+<td><strong>AS-200</strong></td>
+<td>172.16.2.1</td>
+<td>255.255.255.0</td>
+<td>EIGRP 200</td>
+<td>EIGRP network to be redistributed</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🏗️ OSPF Design Architecture</div>
+<table>
+<thead>
+<tr>
+<th>OSPF Area</th>
+<th>Type</th>
+<th>Routers</th>
+<th>Networks</th>
+<th>LSA Types Allowed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Area 0</strong></td>
+<td>Backbone</td>
+<td>Core-1</td>
+<td>192.168.1.0/24</td>
+<td>1, 2, 3, 4, 5</td>
+</tr>
+<tr>
+<td><strong>Area 1</strong></td>
+<td>Transit (Normal)</td>
+<td>Core-1, T-A, T-Z</td>
+<td>203.18.61.0/30<br>203.18.62.0/30<br>192.168.2.0/24<br>192.168.3.0/24</td>
+<td>1, 2, 3, 4, 5 (Transit for VL)</td>
+</tr>
+<tr>
+<td><strong>Area 2<br>(Stub)</strong></td>
+<td>Stub Area<br>(Config 1)</td>
+<td>T-Z, S-A, S-Z</td>
+<td>203.18.63.0/30<br>203.18.64.0/30<br>192.168.4.0/24<br>192.168.5.0/24</td>
+<td>1, 2, 3 (NO Type 4, 5, 7)</td>
+</tr>
+<tr>
+<td><strong>Area 2<br>(NSSA)</strong></td>
+<td>NSSA<br>(Config 2)</td>
+<td>T-Z, S-A, S-Z</td>
+<td>203.18.63.0/30<br>203.18.64.0/30<br>192.168.4.0/24<br>192.168.5.0/24</td>
+<td>1, 2, 3, 7 (Type 7→5 at ABR)</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-success">
+<strong>✅ Key Design Insights:</strong><br>
+• <strong>Area 0:</strong> Backbone area receives all LSA types including Type 5 (external)<br>
+• <strong>Area 1:</strong> Normal area allows all LSA types (transit area for virtual link)<br>
+• <strong>Area 2 (Stub):</strong> Blocks Type 5 LSAs, uses default route instead<br>
+• <strong>Area 2 (NSSA):</strong> Allows Type 7 LSAs (converted to Type 5 at ABR)<br>
+• <strong>Virtual Link:</strong> Required because Area 2 not directly connected to Area 0
+</div>
+
+<div class="section-title">⚙️ Lab Configuration Tasks Overview</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Configuration Sequence:</strong> Complete tasks in order for proper LSA observation.
+</div>
+
+<p style="margin-top: 15px;"><strong>Configuration Tasks:</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Task 1:</strong> Basic Interface Configuration (all 7 routers)</li>
+<li><strong>Task 2:</strong> Configure EIGRP 100 & 200</li>
+<li><strong>Task 3:</strong> Configure Multi-Area OSPF</li>
+<li><strong>Task 4:</strong> Configure Virtual Link (T-Z ↔ S-A through Area 1)</li>
+<li><strong>Task 5:</strong> Configure EIGRP-to-OSPF Redistribution</li>
+<li><strong>Task 6:</strong> Configure Area 2 as Stub Area (Observe LSA changes)</li>
+<li><strong>Task 7:</strong> Reconfigure Area 2 as NSSA (Observe Type 7 LSAs)</li>
+<li><strong>Task 8:</strong> Complete Verification of All LSA Types</li>
+</ul>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 1: Basic Interface Configuration</div>
+<p><strong>Objective:</strong> Configure all interfaces with correct IP addressing on all 7 routers.</p>
+
+<p style="margin-top: 15px;"><strong>Step 1.1: Configure AS-100 (EIGRP 100 Router)</strong></p>
+<div class="code-block">! ========================================
+! AS-100 Configuration
+! Role: EIGRP 100 Edge Router
+! ========================================
+
+hostname AS-100
+!
+interface GigabitEthernet0/1
+ description ** Link to Core-1 - EIGRP 100 **
+ ip address 203.18.60.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** AS-100 Internal Network - EIGRP 100 **
+ ip address 172.16.1.1 255.255.255.0
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.2: Configure Core-1 (ASBR + ABR)</strong></p>
+<div class="code-block">! ========================================
+! Core-1 Configuration
+! Role: ASBR + ABR (EIGRP 100 ↔ OSPF Area 0/1)
+! ========================================
+
+hostname Core-1
+!
+interface GigabitEthernet0/1
+ description ** Link to AS-100 - EIGRP 100 **
+ ip address 203.18.60.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/0
+ description ** Link to T-A - OSPF Area 1 **
+ ip address 203.18.61.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** Core-1 Internal Network - Area 0 **
+ ip address 192.168.1.1 255.255.255.0
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.3: Configure T-A (Area 1 Router)</strong></p>
+<div class="code-block">! ========================================
+! T-A Configuration
+! Role: Area 1 Internal Router
+! ========================================
+
+hostname T-A
+!
+interface GigabitEthernet0/0
+ description ** Link to Core-1 - OSPF Area 1 **
+ ip address 203.18.61.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ** Link to T-Z - OSPF Area 1 **
+ ip address 203.18.62.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** T-A Internal Network - Area 1 **
+ ip address 192.168.2.1 255.255.255.0
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.4: Configure T-Z (ABR Area 1 ↔ Area 2)</strong></p>
+<div class="code-block">! ========================================
+! T-Z Configuration
+! Role: ABR (Area 1 ↔ Area 2) + VL Endpoint
+! ========================================
+
+hostname T-Z
+!
+interface GigabitEthernet0/1
+ description ** Link to T-A - OSPF Area 1 **
+ ip address 203.18.62.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet1/0
+ description ** Link to S-A - OSPF Area 2 **
+ ip address 203.18.63.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** T-Z Internal Network - Area 1 **
+ ip address 192.168.3.1 255.255.255.0
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.5: Configure S-A (Area 2 Router + VL Endpoint)</strong></p>
+<div class="code-block">! ========================================
+! S-A Configuration
+! Role: Area 2 Router + Virtual Link Endpoint
+! ========================================
+
+hostname S-A
+!
+interface GigabitEthernet1/0
+ description ** Link to T-Z - OSPF Area 2 **
+ ip address 203.18.63.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/0
+ description ** Link to S-Z - OSPF Area 2 **
+ ip address 203.18.64.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** S-A Internal Network - Area 2 **
+ ip address 192.168.4.1 255.255.255.0
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.6: Configure S-Z (Area 2 ASBR)</strong></p>
+<div class="code-block">! ========================================
+! S-Z Configuration
+! Role: ASBR in Area 2 (OSPF ↔ EIGRP 200)
+! ========================================
+
+hostname S-Z
+!
+interface GigabitEthernet0/0
+ description ** Link to S-A - OSPF Area 2 **
+ ip address 203.18.64.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ** Link to AS-200 - EIGRP 200 **
+ ip address 203.18.65.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** S-Z Internal Network - Area 2 **
+ ip address 192.168.5.1 255.255.255.0
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.7: Configure AS-200 (EIGRP 200 Router)</strong></p>
+<div class="code-block">! ========================================
+! AS-200 Configuration
+! Role: EIGRP 200 Edge Router
+! ========================================
+
+hostname AS-200
+!
+interface GigabitEthernet0/1
+ description ** Link to S-Z - EIGRP 200 **
+ ip address 203.18.65.2 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** AS-200 Internal Network - EIGRP 200 **
+ ip address 172.16.2.1 255.255.255.0
+!
+end</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 1:</strong>
+<div class="code-block" style="margin-top: 10px;">! On each router - Verify interfaces
+Router# show ip interface brief
+
+! Expected output: All interfaces should be up/up
+! Test connectivity between directly connected routers
+
+AS-100# ping 203.18.60.2
+Core-1# ping 203.18.61.2
+T-A# ping 203.18.62.2
+T-Z# ping 203.18.63.2
+S-A# ping 203.18.64.2
+S-Z# ping 203.18.65.2</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 2: Configure EIGRP</div>
+<p><strong>Objective:</strong> Configure EIGRP 100 and EIGRP 200 autonomous systems.</p>
+
+<p style="margin-top: 15px;"><strong>Step 2.1: Configure EIGRP 100 on AS-100</strong></p>
+<div class="code-block">! ========================================
+! AS-100 EIGRP Configuration
+! ========================================
+
+AS-100(config)# router eigrp 100
+AS-100(config-router)# eigrp router-id 100.100.100.100
+AS-100(config-router)# network 203.18.60.0 0.0.0.3
+AS-100(config-router)# network 172.16.1.0 0.0.0.255
+AS-100(config-router)# no auto-summary
+AS-100(config-router)# passive-interface Loopback0
+AS-100(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.2: Configure EIGRP 100 on Core-1</strong></p>
+<div class="code-block">! ========================================
+! Core-1 EIGRP Configuration
+! ========================================
+
+Core-1(config)# router eigrp 100
+Core-1(config-router)# eigrp router-id 1.1.1.1
+Core-1(config-router)# network 203.18.60.0 0.0.0.3
+Core-1(config-router)# no auto-summary
+Core-1(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.3: Configure EIGRP 200 on AS-200</strong></p>
+<div class="code-block">! ========================================
+! AS-200 EIGRP Configuration
+! ========================================
+
+AS-200(config)# router eigrp 200
+AS-200(config-router)# eigrp router-id 200.200.200.200
+AS-200(config-router)# network 203.18.65.0 0.0.0.3
+AS-200(config-router)# network 172.16.2.0 0.0.0.255
+AS-200(config-router)# no auto-summary
+AS-200(config-router)# passive-interface Loopback0
+AS-200(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.4: Configure EIGRP 200 on S-Z</strong></p>
+<div class="code-block">! ========================================
+! S-Z EIGRP Configuration
+! ========================================
+
+S-Z(config)# router eigrp 200
+S-Z(config-router)# eigrp router-id 5.5.5.5
+S-Z(config-router)# network 203.18.65.0 0.0.0.3
+S-Z(config-router)# no auto-summary
+S-Z(config-router)# exit</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 2:</strong>
+<div class="code-block" style="margin-top: 10px;">! On AS-100
+AS-100# show ip eigrp neighbors
+! Should see Core-1 (203.18.60.2) as neighbor
+
+AS-100# show ip route eigrp
+! Should see EIGRP routes
+
+! On AS-200
+AS-200# show ip eigrp neighbors
+! Should see S-Z (203.18.65.1) as neighbor
+
+AS-200# show ip route eigrp
+! Should see EIGRP routes
+
+! Test EIGRP connectivity
+AS-100# ping 203.18.60.2
+AS-200# ping 203.18.65.1</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 3: Configure Multi-Area OSPF</div>
+<p><strong>Objective:</strong> Configure OSPF with proper area assignments (Area 0, Area 1, Area 2).</p>
+
+<p style="margin-top: 15px;"><strong>Step 3.1: Configure Core-1 (ABR: Area 0 ↔ Area 1)</strong></p>
+<div class="code-block">! ========================================
+! Core-1 OSPF Configuration (ABR)
+! ========================================
+
+Core-1(config)# router ospf 1
+Core-1(config-router)# router-id 1.1.1.1
+Core-1(config-router)# log-adjacency-changes
+Core-1(config-router)#
+Core-1(config-router)# ! Area 0 Networks (Backbone)
+Core-1(config-router)# network 192.168.1.0 0.0.0.255 area 0
+Core-1(config-router)#
+Core-1(config-router)# ! Area 1 Networks (Transit Area)
+Core-1(config-router)# network 203.18.61.0 0.0.0.3 area 1
+Core-1(config-router)#
+Core-1(config-router)# passive-interface Loopback0
+Core-1(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.2: Configure T-A (Area 1 Router)</strong></p>
+<div class="code-block">! ========================================
+! T-A OSPF Configuration (Area 1)
+! ========================================
+
+T-A(config)# router ospf 1
+T-A(config-router)# router-id 2.2.2.2
+T-A(config-router)# log-adjacency-changes
+T-A(config-router)#
+T-A(config-router)# ! All networks in Area 1
+T-A(config-router)# network 203.18.61.0 0.0.0.3 area 1
+T-A(config-router)# network 203.18.62.0 0.0.0.3 area 1
+T-A(config-router)# network 192.168.2.0 0.0.0.255 area 1
+T-A(config-router)#
+T-A(config-router)# passive-interface Loopback0
+T-A(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.3: Configure T-Z (ABR: Area 1 ↔ Area 2)</strong></p>
+<div class="code-block">! ========================================
+! T-Z OSPF Configuration (ABR)
+! ========================================
+
+T-Z(config)# router ospf 1
+T-Z(config-router)# router-id 3.3.3.3
+T-Z(config-router)# log-adjacency-changes
+T-Z(config-router)#
+T-Z(config-router)# ! Area 1 Networks (Transit Area)
+T-Z(config-router)# network 203.18.62.0 0.0.0.3 area 1
+T-Z(config-router)# network 192.168.3.0 0.0.0.255 area 1
+T-Z(config-router)#
+T-Z(config-router)# ! Area 2 Networks
+T-Z(config-router)# network 203.18.63.0 0.0.0.3 area 2
+T-Z(config-router)#
+T-Z(config-router)# passive-interface Loopback0
+T-Z(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.4: Configure S-A (Area 2 Router + VL Endpoint)</strong></p>
+<div class="code-block">! ========================================
+! S-A OSPF Configuration (Area 2)
+! ========================================
+
+S-A(config)# router ospf 1
+S-A(config-router)# router-id 4.4.4.4
+S-A(config-router)# log-adjacency-changes
+S-A(config-router)#
+S-A(config-router)# ! All networks in Area 2
+S-A(config-router)# network 203.18.63.0 0.0.0.3 area 2
+S-A(config-router)# network 203.18.64.0 0.0.0.3 area 2
+S-A(config-router)# network 192.168.4.0 0.0.0.255 area 2
+S-A(config-router)#
+S-A(config-router)# passive-interface Loopback0
+S-A(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.5: Configure S-Z (Area 2 ASBR)</strong></p>
+<div class="code-block">! ========================================
+! S-Z OSPF Configuration (Area 2 ASBR)
+! ========================================
+
+S-Z(config)# router ospf 1
+S-Z(config-router)# router-id 5.5.5.5
+S-Z(config-router)# log-adjacency-changes
+S-Z(config-router)#
+S-Z(config-router)# ! All networks in Area 2
+S-Z(config-router)# network 203.18.64.0 0.0.0.3 area 2
+S-Z(config-router)# network 192.168.5.0 0.0.0.255 area 2
+S-Z(config-router)#
+S-Z(config-router)# passive-interface Loopback0
+S-Z(config-router)# exit</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Expected Issue After Task 3:</strong><br>
+Area 2 (S-A, S-Z) will NOT be able to reach Area 0 (Core-1) because Area 2 is not directly connected to Area 0. This is normal and will be fixed in Task 4 with Virtual Link configuration.
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 3:</strong>
+<div class="code-block" style="margin-top: 10px;">! On all OSPF routers
+Router# show ip ospf neighbor
+! Verify OSPF neighbors are in FULL state
+
+! On Core-1 - Check routes
+Core-1# show ip route ospf
+! Should see Area 1 routes (192.168.2.0, 192.168.3.0)
+! Will NOT see Area 2 routes yet (Virtual Link needed)
+
+! On T-Z - Verify ABR status
+T-Z# show ip ospf
+! Should show: "It is an area border router"
+
+! On S-A - Observe problem
+S-A# show ip route ospf
+! Will NOT see Area 0 routes (192.168.1.0/24)
+! This confirms Area 2 is isolated from Area 0</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 4: Configure Virtual Link</div>
+<p><strong>Objective:</strong> Create virtual link to connect Area 2 to Area 0 through Area 1 (transit area).</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ Virtual Link Configuration:</strong><br>
+Since Area 2 is not directly connected to Area 0, we need a virtual link through Area 1 (transit area).<br>
+<strong>Endpoints:</strong> T-Z (3.3.3.3) ↔ S-A (4.4.4.4)<br>
+<strong>Transit Area:</strong> Area 1<br>
+<strong>Why:</strong> OSPF requires all areas to connect to Area 0 (backbone)<br>
+<strong>Solution:</strong> Virtual link creates logical Area 0 connection through Area 1
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.1: Configure Virtual Link on T-A (ABR in Area 1)</strong></p>
+<div class="code-block">! ========================================
+! T-A Virtual Link Configuration
+! ========================================
+
+T-A(config)# router ospf 1
+T-A(config-router)# ! Virtual link through Area 1 to T-Z
+T-A(config-router)# area 1 virtual-link 3.3.3.3
+T-A(config-router)# exit
+
+! Configuration Explained:
+! - "area 1" = Transit area (Area 1 is between T-A and T-Z)
+! - "virtual-link 2.2.2.2" = T-Z's Router ID (endpoint)
+! - T-Z is ABR in both Area 1 and Area 2</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.2: Configure Virtual Link on S-A (Area 2 Router)</strong></p>
+<div class="code-block">! ========================================
+! S-A Virtual Link Configuration
+! ========================================
+
+S-A(config)# router ospf 1
+S-A(config-router)# ! Virtual link through Area 2 to S-Z
+S-A(config-router)# area 2 virtual-link 5.5.5.5
+S-A(config-router)# exit
+
+! Configuration Explained:
+! - "area 2" = Transit area (must match S-Z configuration)
+! - "virtual-link 4.4.4.4" = S-Z's Router ID (endpoint)
+! - Creates logical Area 0 extension through Area 1
+! - S-A becomes ABR after virtual link is established</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 4:</strong>
+<div class="code-block" style="margin-top: 10px;">! On T-Z - Verify virtual link status
+T-Z# show ip ospf virtual-links
+! Expected output:
+! Virtual Link OSPF_VL0 to router 4.4.4.4 is up
+! Transit area 1, via interface GigabitEthernet1/0
+
+! On S-A - Verify virtual link status
+S-A# show ip ospf virtual-links
+! Expected output:
+! Virtual Link OSPF_VL0 to router 3.3.3.3 is up
+! Transit area 1, via interface GigabitEthernet1/0
+
+! On Core-1 - Now should see Area 2 routes
+Core-1# show ip route ospf
+! Should now see:
+! O IA  192.168.4.0/24 (Area 2 network via S-A)
+! O IA  192.168.5.0/24 (Area 2 network via S-Z)
+
+! On S-A - Now should see Area 0 routes
+S-A# show ip route ospf
+! Should now see:
+! O IA  192.168.1.0/24 (Area 0 network)
+
+! Test end-to-end connectivity
+Core-1# ping 192.168.4.1 source 192.168.1.1
+! Should succeed via virtual link
+
+S-A# ping 192.168.1.1 source 192.168.4.1
+! Should succeed via virtual link</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 5: Configure EIGRP-to-OSPF Redistribution</div>
+<p><strong>Objective:</strong> Redistribute EIGRP routes into OSPF to create Type 5 LSAs (External LSAs).</p>
+
+<p style="margin-top: 15px;"><strong>Step 5.1: Redistribute EIGRP 100 into OSPF on Core-1</strong></p>
+<div class="code-block">! ========================================
+! Core-1 Redistribution Configuration
+! ========================================
+
+Core-1(config)# router ospf 1
+Core-1(config-router)# ! Redistribute EIGRP 100 into OSPF
+Core-1(config-router)# redistribute eigrp 100 subnets
+Core-1(config-router)# default-metric 100
+Core-1(config-router)# exit
+
+! Configuration Explained:
+! - "redistribute eigrp 100" = Redistribute EIGRP AS 100 routes
+! - "subnets" = Include subnets (required for classless routing)
+! - "default-metric 100" = Set OSPF cost to 100 for redistributed routes
+! - This creates Type 5 LSAs (External LSAs)
+! - Core-1 becomes ASBR (Autonomous System Boundary Router)</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.2: Redistribute EIGRP 200 into OSPF on S-Z</strong></p>
+<div class="code-block">! ========================================
+! S-Z Redistribution Configuration
+! ========================================
+
+S-Z(config)# router ospf 1
+S-Z(config-router)# ! Redistribute EIGRP 200 into OSPF
+S-Z(config-router)# redistribute eigrp 200 subnets
+S-Z(config-router)# default-metric 100
+S-Z(config-router)# exit
+
+! Configuration Explained:
+! - S-Z becomes ASBR in Area 2
+! - Redistributes EIGRP 200 routes (172.16.2.0/24) into OSPF
+! - In normal area, this creates Type 5 LSAs
+! - Later, in NSSA, this will create Type 7 LSAs instead</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 5 - Observe Type 5 LSAs:</strong>
+<div class="code-block" style="margin-top: 10px;">! On Core-1 - Check OSPF database for Type 5 LSAs
+Core-1# show ip ospf database external
+
+! Expected output:
+! Type-5 AS External Link States
+!   Link State ID: 172.16.1.0 (from EIGRP 100 on Core-1)
+!   Advertising Router: 1.1.1.1
+!   Link State ID: 172.16.2.0 (from EIGRP 200 on S-Z)
+!   Advertising Router: 5.5.5.5
+
+! On T-A - Verify external routes in routing table
+T-A# show ip route ospf | include E2
+! Should see:
+! O E2  172.16.1.0/24 [110/100] via ...
+! O E2  172.16.2.0/24 [110/100] via ...
+! E2 = OSPF External Type 2 routes
+
+! On S-A - Verify external routes
+S-A# show ip route ospf | include E2
+! Should see both external routes (172.16.1.0 and 172.16.2.0)
+
+! Test connectivity to external networks
+T-A# ping 172.16.1.1 source 192.168.2.1
+! Should succeed
+
+S-A# ping 172.16.2.1 source 192.168.4.1
+! Should succeed
+
+! On T-A - Check Type 4 LSAs (ASBR location)
+T-A# show ip ospf database asbr-summary
+! Should show Type 4 LSAs pointing to:
+! - Core-1 (1.1.1.1) as ASBR
+! - S-Z (5.5.5.5) as ASBR</div>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ LSA Types Created So Far:</strong><br>
+At this point, you should observe:<br>
+• <strong>Type 1 LSAs:</strong> Router LSAs in all areas<br>
+• <strong>Type 2 LSAs:</strong> Network LSAs on multi-access segments (if any)<br>
+• <strong>Type 3 LSAs:</strong> Summary LSAs at ABR boundaries<br>
+• <strong>Type 4 LSAs:</strong> ASBR-Summary LSAs (pointing to Core-1 and S-Z)<br>
+• <strong>Type 5 LSAs:</strong> External LSAs for redistributed EIGRP routes<br>
+<br>
+Next, we'll configure Stub and NSSA areas to observe how LSA types change!
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 6: Configure Area 2 as Stub Area</div>
+<p><strong>Objective:</strong> Configure Area 2 as Stub to block Type 5 LSAs and observe LSA changes.</p>
+
+<div class="alert alert-warning">
+<strong>⚠️ Important: Stub Area Characteristics</strong><br>
+When Area 2 becomes a Stub area:<br>
+• <strong>Blocks:</strong> Type 5 LSAs (External LSAs)<br>
+• <strong>Blocks:</strong> Type 4 LSAs (ASBR-Summary LSAs)<br>
+• <strong>Allows:</strong> Type 1, 2, 3 LSAs only<br>
+• <strong>Replacement:</strong> ABR injects default route (0.0.0.0/0) into stub area<br>
+• <strong>Result:</strong> S-Z's redistributed EIGRP routes will NOT appear in Area 2 as Type 5<br>
+• <strong>Requirement:</strong> ALL routers in Area 2 must be configured as stub
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.1: Configure Stub Area on T-Z (ABR)</strong></p>
+<div class="code-block">! ========================================
+! T-Z Stub Area Configuration
+! ========================================
+
+T-Z(config)# router ospf 1
+T-Z(config-router)# ! Configure Area 2 as Stub
+T-Z(config-router)# area 2 stub
+T-Z(config-router)# exit
+
+! Configuration Explained:
+! - "area 2 stub" = Configures Area 2 as stub area
+! - T-Z is ABR, so it will inject default route into Area 2
+! - Blocks Type 5 and Type 4 LSAs from entering Area 2
+! - Must be configured on ALL Area 2 routers</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.2: Configure Stub Area on S-A</strong></p>
+<div class="code-block">! ========================================
+! S-A Stub Area Configuration
+! ========================================
+
+S-A(config)# router ospf 1
+S-A(config-router)# ! Configure Area 2 as Stub
+S-A(config-router)# area 2 stub
+S-A(config-router)# exit
+
+! Configuration Explained:
+! - ALL routers in stub area must have "area 2 stub" configured
+! - If not configured on all routers, OSPF adjacencies will fail
+! - S-A will receive default route from T-Z (ABR)</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.3: Configure Stub Area on S-Z</strong></p>
+<div class="code-block">! ========================================
+! S-Z Stub Area Configuration
+! ========================================
+
+S-Z(config)# router ospf 1
+S-Z(config-router)# ! Configure Area 2 as Stub
+S-Z(config-router)# area 2 stub
+S-Z(config-router)# exit
+
+! Configuration Explained:
+! - Even though S-Z is ASBR redistributing EIGRP 200,
+!   it still must be configured for stub area
+! - S-Z's redistributed routes will NOT appear as Type 5 in Area 2
+! - External connectivity uses default route instead</div>
+
+<div class="alert alert-danger">
+<strong>⚠️ Problem with Stub Configuration:</strong><br>
+After configuring Area 2 as Stub, you'll notice a problem:<br>
+• S-Z is ASBR (redistributing EIGRP 200) inside a Stub area<br>
+• <strong>Stub areas CANNOT contain ASBRs!</strong><br>
+• S-Z's EIGRP 200 redistribution creates a conflict<br>
+• External routes (172.16.2.0/24) still redistributed but not ideal<br>
+<br>
+<strong>Solution:</strong> Use NSSA (Not-So-Stubby Area) instead! (Task 7)
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 6 - Observe Stub Area LSAs:</strong>
+<div class="code-block" style="margin-top: 10px;">! On S-A - Check OSPF database (inside Stub area)
+S-A# show ip ospf database
+
+! Expected output:
+! Router Link States (Area 2) - Type 1 LSAs ✅
+! Net Link States (Area 2) - Type 2 LSAs (if multi-access) ✅
+! Summary Net Link States (Area 2) - Type 3 LSAs ✅
+! NO Type 4 LSAs ❌
+! NO Type 5 LSAs ❌
+
+! On S-A - Check routing table for default route
+S-A# show ip route ospf | include 0.0.0.0
+! Should see default route (0.0.0.0/0) from T-Z (ABR)
+! O*IA  0.0.0.0/0 [110/1] via 203.18.63.1
+
+! On S-A - Verify external routes use default route
+S-A# show ip route 172.16.1.0
+! Should route via default route (not specific Type 5 LSA)
+
+! On T-Z - Verify default route injection
+T-Z# show ip ospf database summary | include 0.0.0.0
+! Should show Type 3 LSA for default route into Area 2
+
+! Test external connectivity (using default route)
+S-A# ping 172.16.1.1 source 192.168.4.1
+! Should succeed via default route through T-Z
+
+! On S-Z - Verify ASBR status still active
+S-Z# show ip ospf
+! Should still show: "It is an autonomous system boundary router"
+! But Type 5 LSAs blocked from Area 2</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 7: Reconfigure Area 2 as NSSA</div>
+<p><strong>Objective:</strong> Remove Stub configuration and configure Area 2 as NSSA to allow Type 7 LSAs.</p>
+
+<div class="alert alert-success">
+<strong>✅ NSSA Benefits:</strong><br>
+NSSA (Not-So-Stubby Area) solves the problem of having ASBR in a stub area:<br>
+• <strong>Blocks:</strong> Type 5 LSAs from entering NSSA (like Stub)<br>
+• <strong>Allows:</strong> Type 7 LSAs (NSSA External) within the area<br>
+• <strong>Allows:</strong> Type 1, 2, 3 LSAs<br>
+• <strong>Conversion:</strong> ABR translates Type 7 LSAs to Type 5 LSAs when sending to other areas<br>
+• <strong>Result:</strong> S-Z can redistribute EIGRP 200 as Type 7 LSAs in Area 2<br>
+• <strong>Default Route:</strong> ABR can inject default route into NSSA
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 7.1: Remove Stub and Configure NSSA on T-Z (ABR)</strong></p>
+<div class="code-block">! ========================================
+! T-Z NSSA Configuration
+! ========================================
+
+T-Z(config)# router ospf 1
+T-Z(config-router)# ! Remove stub configuration
+T-Z(config-router)# no area 2 stub
+T-Z(config-router)#
+T-Z(config-router)# ! Configure Area 2 as NSSA
+T-Z(config-router)# area 2 nssa default-information-originate
+T-Z(config-router)# exit
+
+! Configuration Explained:
+! - "no area 2 stub" = Removes stub configuration
+! - "area 2 nssa" = Configures Area 2 as NSSA
+! - "default-information-originate" = Injects default route into NSSA
+! - T-Z (ABR) will translate Type 7 LSAs to Type 5 LSAs for other areas</div>
+
+<p style="margin-top: 15px;"><strong>Step 7.2: Remove Stub and Configure NSSA on S-A</strong></p>
+<div class="code-block">! ========================================
+! S-A NSSA Configuration
+! ========================================
+
+S-A(config)# router ospf 1
+S-A(config-router)# ! Remove stub configuration
+S-A(config-router)# no area 2 stub
+S-A(config-router)#
+S-A(config-router)# ! Configure Area 2 as NSSA
+S-A(config-router)# area 2 nssa
+S-A(config-router)# exit
+
+! Configuration Explained:
+! - ALL routers in NSSA must have "area 2 nssa" configured
+! - S-A will receive Type 7 LSAs from S-Z (ASBR)
+! - S-A will also receive default route from T-Z</div>
+
+<p style="margin-top: 15px;"><strong>Step 7.3: Remove Stub and Configure NSSA on S-Z (ASBR)</strong></p>
+<div class="code-block">! ========================================
+! S-Z NSSA Configuration
+! ========================================
+
+S-Z(config)# router ospf 1
+S-Z(config-router)# ! Remove stub configuration
+S-Z(config-router)# no area 2 stub
+S-Z(config-router)#
+S-Z(config-router)# ! Configure Area 2 as NSSA
+S-Z(config-router)# area 2 nssa
+S-Z(config-router)# exit
+
+! Configuration Explained:
+! - S-Z (ASBR) can now redistribute EIGRP 200 into OSPF properly
+! - Redistributed routes will appear as Type 7 LSAs in Area 2
+! - T-Z (ABR) will translate Type 7 to Type 5 for other areas (Area 0, Area 1)
+! - This is the correct way to have ASBR in a stub-like area</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 7 - Observe Type 7 LSAs:</strong>
+<div class="code-block" style="margin-top: 10px;">! On S-A - Check OSPF database for Type 7 LSAs (inside NSSA)
+S-A# show ip ospf database nssa-external
+
+! Expected output:
+! Type-7 AS External Link States (Area 2)
+!   Link State ID: 172.16.2.0 (EIGRP 200 route from S-Z)
+!   Advertising Router: 5.5.5.5 (S-Z)
+!   Metric Type: 2 (External Type 2)
+!   Metric: 100
+
+! On S-Z - Verify Type 7 LSA generation (self-originated)
+S-Z# show ip ospf database nssa-external self-originate
+
+! Expected output:
+! Type-7 AS External Link States (Area 2)
+!   Link State ID: 172.16.2.0
+!   Advertising Router: 5.5.5.5 (self)
+
+! On T-Z - Verify Type 7 to Type 5 translation (ABR function)
+T-Z# show ip ospf database external | include 172.16.2
+
+! Expected output:
+! Type-5 AS External Link States
+!   Link State ID: 172.16.2.0
+!   Advertising Router: 3.3.3.3 (T-Z translates Type 7→Type 5)
+! Note: Advertising Router changes from S-Z (5.5.5.5) to T-Z (3.3.3.3)
+
+! On Core-1 - Verify Type 5 LSA (translated from Type 7)
+Core-1# show ip ospf database external | include 172.16.2
+
+! Expected output:
+! Link State ID: 172.16.2.0
+! Advertising Router: 3.3.3.3 (T-Z, not S-Z)
+! This confirms Type 7 was translated to Type 5 at ABR
+
+! On S-A - Check routing table (inside NSSA)
+S-A# show ip route ospf | include 172.16.2
+
+! Expected output:
+! O N2  172.16.2.0/24 [110/100] via 203.18.64.2
+! N2 = NSSA External Type 2 (from Type 7 LSA)
+
+! On T-A - Check routing table (outside NSSA, in Area 1)
+T-A# show ip route ospf | include 172.16.2
+
+! Expected output:
+! O E2  172.16.2.0/24 [110/100] via ...
+! E2 = External Type 2 (from translated Type 5 LSA)
+
+! Test end-to-end connectivity
+Core-1# ping 172.16.2.1 source 192.168.1.1
+! Should succeed (Area 0 → Area 1 → Area 2 → EIGRP 200)
+
+S-A# ping 172.16.2.1 source 192.168.4.1
+! Should succeed (via Type 7 LSA in NSSA)
+
+T-A# ping 172.16.2.1 source 192.168.2.1
+! Should succeed (via translated Type 5 LSA)
+
+! Summary of LSA translation:
+! 1. S-Z redistributes EIGRP 200 → Type 7 LSA in Area 2 (NSSA)
+! 2. T-Z (ABR) translates Type 7 LSA → Type 5 LSA for Area 1 and Area 0
+! 3. Routers in Area 2 see Type 7 (N2 routes)
+! 4. Routers in Area 1 and Area 0 see Type 5 (E2 routes)</div>
+</div>
+
+<div class="section-title">📊 OSPF LSA Types Interactive Learning Tabs</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Interactive LSA Type Reference:</strong><br>
+Click each tab below to learn about specific LSA types with detailed explanations, commands, and examples from this lab.
+</div>
+
+<div class="lsa-tabs-container">
+<div class="lsa-tabs">
+<button class="lsa-tab-button active" onclick="openLSATab(event, 'lsa-type-1')">LSA Type 1<br>Router LSA</button>
+<button class="lsa-tab-button" onclick="openLSATab(event, 'lsa-type-2')">LSA Type 2<br>Network LSA</button>
+<button class="lsa-tab-button" onclick="openLSATab(event, 'lsa-type-3')">LSA Type 3<br>Summary LSA</button>
+<button class="lsa-tab-button" onclick="openLSATab(event, 'lsa-type-4')">LSA Type 4<br>ASBR-Summary</button>
+<button class="lsa-tab-button" onclick="openLSATab(event, 'lsa-type-5')">LSA Type 5<br>External LSA</button>
+<button class="lsa-tab-button" onclick="openLSATab(event, 'lsa-type-7')">LSA Type 7<br>NSSA External</button>
+<button class="lsa-tab-button" onclick="openLSATab(event, 'lsa-summary')">LSA Summary<br>Comparison</button>
+</div>
+
+<!-- LSA Type 1 Content -->
+<div id="lsa-type-1" class="lsa-tab-content active">
+<div class="lsa-type-header">
+<h3>📍 LSA Type 1 - Router LSA</h3>
+<p>Router Link-State Advertisement (Intra-Area)</p>
+</div>
+
+<div class="lsa-characteristics">
+<h4>🔍 Characteristics:</h4>
+<ul>
+<li><strong>Generated By:</strong> Every OSPF router</li>
+<li><strong>Flooded Within:</strong> Area only (intra-area)</li>
+<li><strong>Contains:</strong> Router ID, directly connected links, link types, costs</li>
+<li><strong>Link-State ID:</strong> Router ID of originating router</li>
+<li><strong>Purpose:</strong> Describes router's local topology and interfaces</li>
+<li><strong>Scope:</strong> Does NOT cross area boundaries</li>
+</ul>
+</div>
+
+<p><strong>In This Lab:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Core-1 generates Type 1 LSA in Area 0 and Area 1 (separate LSAs)</li>
+<li>T-A generates Type 1 LSA in Area 1</li>
+<li>T-Z generates Type 1 LSA in Area 1 and Area 2 (separate LSAs)</li>
+<li>S-A and S-Z generate Type 1 LSAs in Area 2</li>
+<li>Each router describes its own links to neighbors</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>Verification Commands:</strong></p>
+<div class="code-block">! View all Type 1 LSAs
+Router# show ip ospf database router
+
+! View Type 1 LSAs for specific area
+Router# show ip ospf database router area 1
+
+! View Type 1 LSA from specific router
+Router# show ip ospf database router 1.1.1.1
+
+! View self-originated Type 1 LSA
+Router# show ip ospf database router self-originate
+
+! Count Type 1 LSAs per area
+Router# show ip ospf database database-summary</div>
+
+<p style="margin-top: 15px;"><strong>Example Output from T-A:</strong></p>
+<div class="code-block">T-A# show ip ospf database router
+
+            OSPF Router with ID (2.2.2.2) (Process ID 1)
+
+                Router Link States (Area 1)
+
+  LS age: 123
+  Options: (No TOS-capability, DC)
+  LS Type: Router Links
+  Link State ID: 1.1.1.1
+  Advertising Router: 1.1.1.1
+  Number of Links: 2
+    Link connected to: another Router (point-to-point)
+    Link connected to: a Stub Network
+
+  LS age: 234
+  Options: (No TOS-capability, DC)
+  LS Type: Router Links
+  Link State ID: 2.2.2.2
+  Advertising Router: 2.2.2.2 (self)
+  Number of Links: 3
+
+  LS age: 345
+  Options: (No TOS-capability, DC)
+  LS Type: Router Links
+  Link State ID: 3.3.3.3
+  Advertising Router: 3.3.3.3
+  Number of Links: 2</div>
+
+<div class="alert alert-info">
+<strong>💡 Key Points:</strong><br>
+• Type 1 LSA is the foundation of OSPF<br>
+• Every router generates Type 1 LSA describing its links<br>
+• ABRs generate separate Type 1 LSAs for each area<br>
+• Used to build SPF tree within an area<br>
+• Does not contain routing information from other areas
+</div>
+</div>
+
+<!-- LSA Type 2 Content -->
+<div id="lsa-type-2" class="lsa-tab-content">
+<div class="lsa-type-header">
+<h3>🌐 LSA Type 2 - Network LSA</h3>
+<p>Network Link-State Advertisement (Multi-Access Networks)</p>
+</div>
+
+<div class="lsa-characteristics">
+<h4>🔍 Characteristics:</h4>
+<ul>
+<li><strong>Generated By:</strong> Designated Router (DR) only</li>
+<li><strong>Flooded Within:</strong> Area only (intra-area)</li>
+<li><strong>Contains:</strong> List of routers attached to multi-access network, network mask</li>
+<li><strong>Link-State ID:</strong> IP address of DR interface</li>
+<li><strong>Purpose:</strong> Describes multi-access network and attached routers</li>
+<li><strong>Scope:</strong> Only on multi-access segments (Ethernet LAN, not point-to-point)</li>
+<li><strong>Not Generated:</strong> On point-to-point links or NBMA without DR</li>
+</ul>
+</div>
+
+<p><strong>In This Lab:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Type 2 LSAs generated on multi-access segments (if DR elected)</li>
+<li>Most WAN links are point-to-point (/30 subnets), so Type 2 may not be present</li>
+<li>If interfaces configured as broadcast network, DR will generate Type 2 LSA</li>
+<li>Example: If using "ip ospf network broadcast" on interfaces</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>Verification Commands:</strong></p>
+<div class="code-block">! View all Type 2 LSAs
+Router# show ip ospf database network
+
+! View Type 2 LSA for specific network
+Router# show ip ospf database network 203.18.61.2
+
+! Check DR/BDR election on interface
+Router# show ip ospf interface GigabitEthernet0/0
+! Look for:
+! Designated Router (ID) X.X.X.X, Interface address Y.Y.Y.Y
+! Backup Designated router (ID) X.X.X.X, Interface address Y.Y.Y.Y
+
+! Check OSPF network type
+Router# show ip ospf interface brief
+! Network Type column shows: P2P, BROADCAST, etc.</div>
+
+<p style="margin-top: 15px;"><strong>Example Output (if DR elected):</strong></p>
+<div class="code-block">Router# show ip ospf database network
+
+            OSPF Router with ID (2.2.2.2) (Process ID 1)
+
+                Net Link States (Area 1)
+
+  LS age: 234
+  Options: (No TOS-capability, DC)
+  LS Type: Network Links
+  Link State ID: 203.18.61.2 (address of Designated Router)
+  Advertising Router: 2.2.2.2 (DR's Router ID)
+  Network Mask: /30
+        Attached Router: 1.1.1.1
+        Attached Router: 2.2.2.2</div>
+
+<div class="alert alert-info">
+<strong>💡 Key Points:</strong><br>
+• Only generated by DR on multi-access networks<br>
+• Lists all routers attached to the network segment<br>
+• Reduces LSA flooding on multi-access segments<br>
+• If "ip ospf network point-to-point" configured, Type 2 LSA not generated<br>
+• Common on Ethernet LAN segments, typically not on /30 WAN links
+</div>
+</div>
+
+<!-- LSA Type 3 Content -->
+<div id="lsa-type-3" class="lsa-tab-content">
+<div class="lsa-type-header">
+<h3>📝 LSA Type 3 - Summary LSA</h3>
+<p>Summary Link-State Advertisement (Inter-Area Routes)</p>
+</div>
+
+<div class="lsa-characteristics">
+<h4>🔍 Characteristics:</h4>
+<ul>
+<li><strong>Generated By:</strong> Area Border Router (ABR) only</li>
+<li><strong>Flooded To:</strong> Adjacent areas (inter-area)</li>
+<li><strong>Contains:</strong> Network prefix, mask, cost to reach network</li>
+<li><strong>Link-State ID:</strong> Network number being advertised</li>
+<li><strong>Purpose:</strong> Advertises routes from one area to another</li>
+<li><strong>Cost:</strong> Cumulative cost from ABR to destination</li>
+<li><strong>Summarization:</strong> Can be summarized by ABR to reduce routing table size</li>
+</ul>
+</div>
+
+<p><strong>In This Lab:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Core-1 (ABR) generates Type 3 LSAs between Area 0 and Area 1</li>
+<li>T-Z (ABR) generates Type 3 LSAs between Area 1 and Area 2</li>
+<li>S-A (ABR via Virtual Link) generates Type 3 LSAs for Area 2 networks</li>
+<li>Example: Area 0 network 192.168.1.0/24 advertised as Type 3 LSA into Area 1 by Core-1</li>
+<li>Example: Area 1 networks advertised as Type 3 LSAs into Area 2 by T-Z</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>Verification Commands:</strong></p>
+<div class="code-block">! View all Type 3 LSAs
+Router# show ip ospf database summary
+
+! View Type 3 LSA for specific network
+Router# show ip ospf database summary 192.168.1.0
+
+! View Type 3 LSAs in specific area
+Router# show ip ospf database summary area 2
+
+! Check inter-area routes in routing table
+Router# show ip route ospf | include IA
+! IA = Inter-Area routes (from Type 3 LSAs)
+
+! Check which ABR advertised the route
+Router# show ip route 192.168.1.0
+! Look for "via X.X.X.X" (ABR that generated Type 3 LSA)</div>
+
+<p style="margin-top: 15px;"><strong>Example Output from S-A (in Area 2):</strong></p>
+<div class="code-block">S-A# show ip ospf database summary 192.168.1.0
+
+            OSPF Router with ID (4.4.4.4) (Process ID 1)
+
+                Summary Net Link States (Area 2)
+
+  LS age: 456
+  Options: (No TOS-capability, DC, Upward)
+  LS Type: Summary Links(Network)
+  Link State ID: 192.168.1.0 (summary Network Number)
+  Advertising Router: 3.3.3.3 (T-Z, the ABR)
+  Network Mask: /24
+        Metric: 2
+
+! This Type 3 LSA advertises Area 0 network into Area 2
+! Generated by T-Z (ABR between Area 1 and Area 2)
+! Metric 2 = cumulative cost from T-Z to 192.168.1.0</div>
+
+<p style="margin-top: 15px;"><strong>Example: Type 3 LSA Flow in This Lab</strong></p>
+<div class="code-block">Area 0: 192.168.1.0/24 (Core-1)
+  ↓ Core-1 (ABR) generates Type 3 LSA
+Area 1: receives Type 3 LSA for 192.168.1.0/24
+  ↓ T-Z (ABR) generates Type 3 LSA
+Area 2: receives Type 3 LSA for 192.168.1.0/24
+
+Verification on S-A:
+S-A# show ip route 192.168.1.0
+O IA  192.168.1.0/24 [110/3] via 203.18.63.1
+! O IA = Inter-Area route (from Type 3 LSA)
+! Cost 3 = cumulative cost through multiple ABRs</div>
+
+<div class="alert alert-info">
+<strong>💡 Key Points:</strong><br>
+• Type 3 LSA is the primary inter-area routing mechanism<br>
+• Generated by ABRs to advertise routes between areas<br>
+• Does NOT carry full topology information (only summary)<br>
+• ABR can perform route summarization with "area X range" command<br>
+• Modified in Stub areas (default route replaces specific Type 3 LSAs)<br>
+• Present in all area types (Normal, Stub, NSSA)
+</div>
+</div>
+
+<!-- LSA Type 4 Content -->
+<div id="lsa-type-4" class="lsa-tab-content">
+<div class="lsa-type-header">
+<h3>🎯 LSA Type 4 - ASBR-Summary LSA</h3>
+<p>ASBR-Summary Link-State Advertisement (Location of ASBR)</p>
+</div>
+
+<div class="lsa-characteristics">
+<h4>🔍 Characteristics:</h4>
+<ul>
+<li><strong>Generated By:</strong> ABR that connects to an area containing ASBR</li>
+<li><strong>Flooded To:</strong> Other areas (to inform them about ASBR location)</li>
+<li><strong>Contains:</strong> Router ID of ASBR, cost to reach ASBR</li>
+<li><strong>Link-State ID:</strong> Router ID of ASBR</li>
+<li><strong>Purpose:</strong> Tells routers in other areas how to reach ASBR</li>
+<li><strong>Required For:</strong> Calculating correct path to external routes (Type 5 LSAs)</li>
+<li><strong>Blocked In:</strong> Stub and NSSA areas</li>
+</ul>
+</div>
+
+<p><strong>In This Lab:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Core-1 is ASBR (redistributing EIGRP 100) in Area 0/Area 1</li>
+<li>Core-1 advertises itself as ASBR (no Type 4 needed in Area 0)</li>
+<li>S-Z is ASBR (redistributing EIGRP 200) in Area 2</li>
+<li>T-Z (ABR) generates Type 4 LSA into Area 1 to advertise S-Z as ASBR</li>
+<li>Type 4 LSAs allow routers in Area 0 and Area 1 to calculate path to S-Z (ASBR in Area 2)</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>Verification Commands:</strong></p>
+<div class="code-block">! View all Type 4 LSAs
+Router# show ip ospf database asbr-summary
+
+! View Type 4 LSA for specific ASBR
+Router# show ip ospf database asbr-summary 5.5.5.5
+
+! Identify all ASBRs in OSPF domain
+Router# show ip ospf border-routers
+! Shows both ABRs and ASBRs with costs
+
+! Check which routers are ASBRs
+Router# show ip ospf | include autonomous
+! Look for: "It is an autonomous system boundary router"</div>
+
+<p style="margin-top: 15px;"><strong>Example Output from T-A (in Area 1):</strong></p>
+<div class="code-block">T-A# show ip ospf database asbr-summary
+
+            OSPF Router with ID (2.2.2.2) (Process ID 1)
+
+                Summary ASB Link States (Area 1)
+
+  LS age: 567
+  Options: (No TOS-capability, DC, Upward)
+  LS Type: Summary Links(AS Boundary Router)
+  Link State ID: 1.1.1.1 (AS Boundary Router address)
+  Advertising Router: 1.1.1.1 (Core-1 advertises itself)
+  Network Mask: /0
+        Metric: 1
+
+  LS age: 345
+  Options: (No TOS-capability, DC, Upward)
+  LS Type: Summary Links(AS Boundary Router)
+  Link State ID: 5.5.5.5 (AS Boundary Router address)
+  Advertising Router: 3.3.3.3 (T-Z advertises S-Z)
+  Network Mask: /0
+        Metric: 2
+
+! T-A receives Type 4 LSAs for:
+! 1. Core-1 (1.1.1.1) - ASBR in Area 0/1
+! 2. S-Z (5.5.5.5) - ASBR in Area 2, advertised by T-Z</div>
+
+<p style="margin-top: 15px;"><strong>Why Type 4 LSA is Important:</strong></p>
+<div class="code-block">Scenario: T-A wants to reach 172.16.2.0/24 (external route from S-Z)
+
+Step 1: T-A sees Type 5 LSA for 172.16.2.0/24
+        Advertising Router: 3.3.3.3 (translated by T-Z)
+        
+Step 2: T-A needs to know how to reach the original ASBR (S-Z)
+        
+Step 3: T-A looks up Type 4 LSA for S-Z (5.5.5.5)
+        Advertising Router: 3.3.3.3 (T-Z, the ABR)
+        Metric: 2 (cost to reach S-Z from T-Z)
+        
+Step 4: T-A calculates total cost:
+        Cost_to_ABR (T-Z) + Cost_to_ASBR (S-Z) + External_Cost
+        
+Step 5: T-A forwards packets toward T-Z to reach 172.16.2.0/24
+
+Without Type 4 LSA:
+- T-A wouldn't know S-Z (5.5.5.5) is the ASBR
+- T-A wouldn't know how to reach S-Z
+- External routing would fail!</div>
+
+<div class="alert alert-info">
+<strong>💡 Key Points:</strong><br>
+• Type 4 LSA provides path to ASBR (not the external routes themselves)<br>
+• Generated by ABR connecting to area with ASBR<br>
+• Essential for correct routing to external destinations<br>
+• Blocked in Stub areas (no external routes allowed, no need for Type 4)<br>
+• In NSSA, Type 7 LSAs include ASBR info, so Type 4 not needed within NSSA<br>
+• ABRs translate ASBR information when converting Type 7 to Type 5
+</div>
+</div>
+
+<!-- LSA Type 5 Content -->
+<div id="lsa-type-5" class="lsa-tab-content">
+<div class="lsa-type-header">
+<h3>🌍 LSA Type 5 - External LSA</h3>
+<p>AS-External Link-State Advertisement (External Routes)</p>
+</div>
+
+<div class="lsa-characteristics">
+<h4>🔍 Characteristics:</h4>
+<ul>
+<li><strong>Generated By:</strong> ASBR (Autonomous System Boundary Router)</li>
+<li><strong>Flooded To:</strong> Entire OSPF domain (except Stub and NSSA areas)</li>
+<li><strong>Contains:</strong> External network prefix, mask, external metric, metric type</li>
+<li><strong>Link-State ID:</strong> External network number</li>
+<li><strong>Purpose:</strong> Advertises routes redistributed from other routing protocols</li>
+<li><strong>Metric Types:</strong> E1 (Type 1) or E2 (Type 2 - default)</li>
+<li><strong>Blocked In:</strong> Stub and NSSA areas</li>
+</ul>
+</div>
+
+<p><strong>Metric Types Explained:</strong></p>
+<table style="margin: 15px 0;">
+<thead>
+<tr>
+<th>Metric Type</th>
+<th>Calculation</th>
+<th>Description</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>E1</strong></td>
+<td>Internal Cost + External Cost</td>
+<td>Adds OSPF internal cost to external metric</td>
+<td>When you want total cost considered</td>
+</tr>
+<tr>
+<td><strong>E2</strong></td>
+<td>External Cost Only (Default)</td>
+<td>Ignores OSPF internal cost</td>
+<td>Most common, simpler calculation</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>In This Lab:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Core-1 (ASBR) redistributes EIGRP 100 routes as Type 5 LSAs</li>
+<li>172.16.1.0/24 appears as Type 5 LSA throughout OSPF domain</li>
+<li>S-Z (ASBR) redistributes EIGRP 200 in Area 2 (NSSA)</li>
+<li>In NSSA: 172.16.2.0/24 appears as Type 7 LSA (then translated to Type 5)</li>
+<li>Routers in Area 0 and Area 1 see both external routes as Type 5 LSAs</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>Verification Commands:</strong></p>
+<div class="code-block">! View all Type 5 LSAs
+Router# show ip ospf database external
+
+! View Type 5 LSA for specific network
+Router# show ip ospf database external 172.16.1.0
+
+! View self-originated Type 5 LSAs (on ASBR)
+Router# show ip ospf database external self-originate
+
+! Check external routes in routing table
+Router# show ip route ospf | include E1
+Router# show ip route ospf | include E2
+! E1 = OSPF External Type 1
+! E2 = OSPF External Type 2 (default)
+
+! Compare external route metrics
+Router# show ip route 172.16.1.0 172.16.2.0</div>
+
+<p style="margin-top: 15px;"><strong>Example Output from T-A (in Area 1):</strong></p>
+<div class="code-block">T-A# show ip ospf database external
+
+            OSPF Router with ID (2.2.2.2) (Process ID 1)
+
+                Type-5 AS External Link States
+
+  LS age: 789
+  Options: (No TOS-capability, DC, Upward)
+  LS Type: AS External Link
+  Link State ID: 172.16.1.0 (External Network Number)
+  Advertising Router: 1.1.1.1 (Core-1, the ASBR)
+  Network Mask: /24
+        Metric Type: 2 (Larger than any link state path)
+        Metric: 100
+        Forward Address: 0.0.0.0
+        External Route Tag: 0
+
+  LS age: 234
+  Options: (No TOS-capability, DC, Upward)
+  LS Type: AS External Link
+  Link State ID: 172.16.2.0 (External Network Number)
+  Advertising Router: 3.3.3.3 (T-Z translated from Type 7)
+  Network Mask: /24
+        Metric Type: 2 (Larger than any link state path)
+        Metric: 100
+        Forward Address: 0.0.0.0
+        External Route Tag: 0</div>
+
+<p style="margin-top: 15px;"><strong>Example: Type 5 LSA in Routing Table</strong></p>
+<div class="code-block">T-A# show ip route ospf
+
+O     192.168.1.0/24 [110/2] via 203.18.61.1 (Inter-Area)
+O IA  192.168.3.0/24 [110/2] via 203.18.62.2 (Inter-Area)
+O IA  192.168.4.0/24 [110/3] via 203.18.62.2 (Inter-Area)
+O IA  192.168.5.0/24 [110/3] via 203.18.62.2 (Inter-Area)
+O E2  172.16.1.0/24 [110/100] via 203.18.61.1 (External Type 2)
+O E2  172.16.2.0/24 [110/100] via 203.18.62.2 (External Type 2)
+
+Explanation:
+- O E2 = External Type 2 routes (from Type 5 LSAs)
+- [110/100] = AD 110, Metric 100 (external cost only)
+- Metric 100 set by "default-metric 100" on ASBR
+- Internal OSPF cost NOT added (because it's E2)</div>
+
+<p style="margin-top: 15px;"><strong>Configuring Metric Type (E1 vs E2):</strong></p>
+<div class="code-block">! Default: External Type 2 (E2)
+Core-1(config)# router ospf 1
+Core-1(config-router)# redistribute eigrp 100 subnets
+! Result: Routes appear as E2
+
+! Change to External Type 1 (E1)
+Core-1(config)# router ospf 1
+Core-1(config-router)# redistribute eigrp 100 subnets metric-type 1
+! Result: Routes appear as E1
+
+Difference in routing table:
+E2: O E2  172.16.1.0/24 [110/100] via ...
+    Metric = 100 (external only)
+    
+E1: O E1  172.16.1.0/24 [110/102] via ...
+    Metric = 100 (external) + 2 (internal OSPF cost)
+    Total = 102</div>
+
+<div class="alert alert-info">
+<strong>💡 Key Points:</strong><br>
+• Type 5 LSA is the primary mechanism for external route advertisement<br>
+• Flooded throughout entire OSPF domain (except Stub/NSSA)<br>
+• Default metric type is E2 (external cost only, simpler)<br>
+• E1 includes internal OSPF cost (more accurate, but complex)<br>
+• E1 preferred over E2 if same destination reachable via both<br>
+• Blocked in Stub areas (default route used instead)<br>
+• In NSSA, external routes use Type 7 LSAs (translated to Type 5 at ABR)
+</div>
+</div>
+
+<!-- LSA Type 7 Content -->
+<div id="lsa-type-7" class="lsa-tab-content">
+<div class="lsa-type-header">
+<h3>🔒 LSA Type 7 - NSSA External LSA</h3>
+<p>Not-So-Stubby Area External Link-State Advertisement</p>
+</div>
+
+<div class="lsa-characteristics">
+<h4>🔍 Characteristics:</h4>
+<ul>
+<li><strong>Generated By:</strong> ASBR within NSSA</li>
+<li><strong>Flooded Within:</strong> NSSA only (not entire OSPF domain)</li>
+<li><strong>Contains:</strong> External network prefix, mask, external metric, metric type</li>
+<li><strong>Link-State ID:</strong> External network number</li>
+<li><strong>Purpose:</strong> Allows redistribution within NSSA (Stub areas can't do this)</li>
+<li><strong>Translation:</strong> ABR translates Type 7 to Type 5 when sending to other areas</li>
+<li><strong>P-bit:</strong> Propagate bit determines if Type 7 should be translated to Type 5</li>
+<li><strong>Metric Types:</strong> N1 (Type 1) or N2 (Type 2 - default)</li>
+</ul>
+</div>
+
+<p><strong>Why Type 7 LSA Exists:</strong></p>
+<div class="code-block">Problem: Stub areas block Type 5 LSAs (external routes)
+         But what if we need ASBR inside a stub area?
+         
+Example: Branch office (stub-like) needs to redistribute connected networks
+
+Traditional Stub: Can't have ASBR → Redistribution not allowed
+NSSA Solution:    Allows ASBR → Uses Type 7 LSAs instead of Type 5
+
+Benefits:
+1. NSSA blocks Type 5 LSAs from entering (like Stub)
+2. NSSA allows Type 7 LSAs within the area (unlike Stub)
+3. ABR translates Type 7 → Type 5 for other areas
+4. Result: Best of both worlds (stub benefits + local redistribution)</div>
+
+<p><strong>In This Lab:</strong></p>
+<ul style="margin-left: 20px;">
+<li>Area 2 configured as NSSA (Task 7)</li>
+<li>S-Z (ASBR) redistributes EIGRP 200 into OSPF within NSSA</li>
+<li>172.16.2.0/24 appears as Type 7 LSA in Area 2 only</li>
+<li>T-Z (ABR) translates Type 7 LSA to Type 5 LSA for Area 0 and Area 1</li>
+<li>Routers in Area 2 see Type 7 (N2 routes)</li>
+<li>Routers in other areas see translated Type 5 (E2 routes)</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>Verification Commands:</strong></p>
+<div class="code-block">! View all Type 7 LSAs (inside NSSA)
+Router# show ip ospf database nssa-external
+
+! View Type 7 LSA for specific network
+Router# show ip ospf database nssa-external 172.16.2.0
+
+! View self-originated Type 7 LSAs (on ASBR in NSSA)
+Router# show ip ospf database nssa-external self-originate
+
+! Check NSSA external routes in routing table
+Router# show ip route ospf | include N1
+Router# show ip route ospf | include N2
+! N1 = NSSA External Type 1
+! N2 = NSSA External Type 2 (default)
+
+! Verify NSSA configuration
+Router# show ip ospf | include not-so-stubby
+! Should show: "It is a not-so-stubby area"</div>
+
+<p style="margin-top: 15px;"><strong>Example Output from S-A (Inside NSSA, Area 2):</strong></p>
+<div class="code-block">S-A# show ip ospf database nssa-external
+
+            OSPF Router with ID (4.4.4.4) (Process ID 1)
+
+                Type-7 AS External Link States (Area 2)
+
+  LS age: 123
+  Options: (No TOS-capability, Type 7/5 translation, DC, Upward)
+  LS Type: AS External Link
+  Link State ID: 172.16.2.0 (External Network Number)
+  Advertising Router: 5.5.5.5 (S-Z, the ASBR in NSSA)
+  Network Mask: /24
+        Metric Type: 2 (Larger than any link state path)
+        Metric: 100
+        Forward Address: 0.0.0.0
+        External Route Tag: 0
+
+! This Type 7 LSA:
+! - Generated by S-Z (ASBR) in Area 2 (NSSA)
+! - Flooded only within Area 2
+! - Will be translated to Type 5 by T-Z (ABR)</div>
+
+<p style="margin-top: 15px;"><strong>Example: Type 7 to Type 5 Translation on ABR (T-Z):</strong></p>
+<div class="code-block">! On T-Z (ABR) - View Type 7 LSA (inside NSSA)
+T-Z# show ip ospf database nssa-external 172.16.2.0
+
+            Type-7 AS External Link States (Area 2)
+  Link State ID: 172.16.2.0
+  Advertising Router: 5.5.5.5 (S-Z, original ASBR)
+  Metric: 100
+
+! On T-Z (ABR) - View Type 5 LSA (translated for other areas)
+T-Z# show ip ospf database external 172.16.2.0
+
+            Type-5 AS External Link States
+  Link State ID: 172.16.2.0
+  Advertising Router: 3.3.3.3 (T-Z, ABR that translated it)
+  Metric: 100
+
+Translation Process:
+1. S-Z generates Type 7 LSA in Area 2 (NSSA)
+2. T-Z (ABR) receives Type 7 LSA
+3. T-Z translates Type 7 → Type 5
+4. T-Z floods Type 5 LSA to Area 0 and Area 1
+5. Advertising Router changes: S-Z (5.5.5.5) → T-Z (3.3.3.3)</div>
+
+<p style="margin-top: 15px;"><strong>Example: Type 7 LSA in Routing Table (Inside NSSA)</strong></p>
+<div class="code-block">S-A# show ip route ospf
+
+O IA  192.168.1.0/24 [110/3] via 203.18.63.1 (Inter-Area)
+O IA  192.168.2.0/24 [110/2] via 203.18.63.1 (Inter-Area)
+O IA  192.168.3.0/24 [110/2] via 203.18.63.1 (Inter-Area)
+O     192.168.5.0/24 [110/2] via 203.18.64.2 (Intra-Area)
+O*IA  0.0.0.0/0 [110/1] via 203.18.63.1 (Default from ABR)
+O E2  172.16.1.0/24 [110/100] via 203.18.63.1 (Ext Type 2 from Area 0)
+O N2  172.16.2.0/24 [110/100] via 203.18.64.2 (NSSA Ext Type 2)
+
+Explanation:
+- O N2 = NSSA External Type 2 (from Type 7 LSA)
+- O E2 = External Type 2 (from Type 5 LSA, allowed into NSSA)
+- [110/100] = AD 110, Metric 100
+- S-A sees 172.16.2.0 as N2 (Type 7) because it's in NSSA</div>
+
+<p style="margin-top: 15px;"><strong>Example: Translated Type 5 LSA in Other Areas</strong></p>
+<div class="code-block">T-A# show ip route ospf | include 172.16
+
+O E2  172.16.1.0/24 [110/100] via 203.18.61.1 (from Core-1 ASBR)
+O E2  172.16.2.0/24 [110/100] via 203.18.62.2 (translated by T-Z)
+
+Explanation:
+- T-A is in Area 1 (outside NSSA)
+- T-A sees 172.16.2.0 as E2 (Type 5 LSA), not N2
+- Type 7 was translated to Type 5 by T-Z (ABR)
+- Both external routes appear the same to routers outside NSSA</div>
+
+<p style="margin-top: 15px;"><strong>NSSA Configuration Options:</strong></p>
+<div class="code-block">! Basic NSSA configuration (on all Area 2 routers)
+Router(config)# router ospf 1
+Router(config-router)# area 2 nssa
+
+! NSSA with default route injection (on ABR)
+Router(config-router)# area 2 nssa default-information-originate
+
+! Totally NSSA (blocks Type 3 LSAs, only default route)
+Router(config-router)# area 2 nssa no-summary
+
+! NSSA without Type 7 to Type 5 translation
+Router(config-router)# area 2 nssa no-redistribution
+
+! NSSA with metric type 1 (instead of default type 2)
+Router(config-router)# area 2 nssa translate type7 metric-type 1</div>
+
+<div class="alert alert-info">
+<strong>💡 Key Points:</strong><br>
+• Type 7 LSA solves the "ASBR in Stub area" problem<br>
+• Only exists within NSSA (not flooded to other areas)<br>
+• ABR translates Type 7 to Type 5 for other areas<br>
+• NSSA routers see external routes as N1 or N2<br>
+• Other areas see translated routes as E1 or E2<br>
+• Advertising Router changes during translation (from ASBR to ABR)<br>
+• NSSA still blocks Type 5 LSAs from entering (like Stub)<br>
+• Default route can be injected into NSSA by ABR
+</div>
+</div>
+
+<!-- LSA Summary Comparison -->
+<div id="lsa-summary" class="lsa-tab-content">
+<div class="lsa-type-header">
+<h3>📊 LSA Types Summary & Comparison</h3>
+<p>Complete Comparison of OSPF LSA Types 1-7</p>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>LSA Type</th>
+<th>Name</th>
+<th>Generated By</th>
+<th>Flooded To</th>
+<th>Purpose</th>
+<th>Allowed In</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type 1</strong></td>
+<td>Router LSA</td>
+<td>Every router</td>
+<td>Area only</td>
+<td>Describes router's links</td>
+<td>All areas</td>
+</tr>
+<tr>
+<td><strong>Type 2</strong></td>
+<td>Network LSA</td>
+<td>DR</td>
+<td>Area only</td>
+<td>Describes multi-access network</td>
+<td>All areas</td>
+</tr>
+<tr>
+<td><strong>Type 3</strong></td>
+<td>Summary LSA</td>
+<td>ABR</td>
+<td>Adjacent areas</td>
+<td>Inter-area routes</td>
+<td>Normal, Stub, NSSA<br>(modified in Stub)</td>
+</tr>
+<tr>
+<td><strong>Type 4</strong></td>
+<td>ASBR-Summary</td>
+<td>ABR</td>
+<td>Other areas</td>
+<td>Location of ASBR</td>
+<td>Normal, Area 0<br>(NOT Stub/NSSA)</td>
+</tr>
+<tr>
+<td><strong>Type 5</strong></td>
+<td>External LSA</td>
+<td>ASBR</td>
+<td>Entire domain</td>
+<td>External routes</td>
+<td>Normal, Area 0<br>(NOT Stub/NSSA)</td>
+</tr>
+<tr>
+<td><strong>Type 7</strong></td>
+<td>NSSA External</td>
+<td>ASBR in NSSA</td>
+<td>NSSA only</td>
+<td>External routes in NSSA</td>
+<td>NSSA only<br>(translated to Type 5)</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title" style="font-size: 1.2em; margin-top: 30px;">LSA Types by Area Type</div>
+
+<table>
+<thead>
+<tr>
+<th>Area Type</th>
+<th>LSA Types Allowed</th>
+<th>LSA Types Blocked</th>
+<th>Special Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Normal Area</strong></td>
+<td>1, 2, 3, 4, 5</td>
+<td>None</td>
+<td>All LSA types allowed</td>
+</tr>
+<tr>
+<td><strong>Backbone (Area 0)</strong></td>
+<td>1, 2, 3, 4, 5</td>
+<td>None</td>
+<td>Must exist, all areas connect to it</td>
+</tr>
+<tr>
+<td><strong>Stub Area</strong></td>
+<td>1, 2, 3</td>
+<td>4, 5, 7</td>
+<td>Default route injected by ABR<br>Cannot contain ASBR</td>
+</tr>
+<tr>
+<td><strong>Totally Stubby</strong></td>
+<td>1, 2</td>
+<td>3, 4, 5, 7</td>
+<td>Only default route from ABR<br>Cisco proprietary</td>
+</tr>
+<tr>
+<td><strong>NSSA</strong></td>
+<td>1, 2, 3, 7</td>
+<td>4, 5</td>
+<td>Type 7 → Type 5 at ABR<br>Can contain ASBR</td>
+</tr>
+<tr>
+<td><strong>Totally NSSA</strong></td>
+<td>1, 2, 7</td>
+<td>3, 4, 5</td>
+<td>Type 7 → Type 5 at ABR<br>Default route only</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title" style="font-size: 1.2em; margin-top: 30px;">LSA Flooding Scope</div>
+
+<table>
+<thead>
+<tr>
+<th>Flooding Scope</th>
+<th>LSA Types</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Intra-Area</strong></td>
+<td>Type 1, Type 2</td>
+<td>Flooded within single area only, do not cross ABR</td>
+</tr>
+<tr>
+<td><strong>Inter-Area</strong></td>
+<td>Type 3, Type 4</td>
+<td>Generated by ABR, flooded to adjacent areas</td>
+</tr>
+<tr>
+<td><strong>Domain-Wide</strong></td>
+<td>Type 5</td>
+<td>Flooded throughout entire OSPF domain (except Stub/NSSA)</td>
+</tr>
+<tr>
+<td><strong>NSSA-Only</strong></td>
+<td>Type 7</td>
+<td>Flooded within NSSA only, translated to Type 5 by ABR</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title" style="font-size: 1.2em; margin-top: 30px;">Quick Command Reference</div>
+
+<div class="code-block">! ========================================
+! View ALL LSA types
+! ========================================
+Router# show ip ospf database
+
+! ========================================
+! View specific LSA type
+! ========================================
+Router# show ip ospf database router        # Type 1
+Router# show ip ospf database network       # Type 2
+Router# show ip ospf database summary       # Type 3
+Router# show ip ospf database asbr-summary  # Type 4
+Router# show ip ospf database external      # Type 5
+Router# show ip ospf database nssa-external # Type 7
+
+! ========================================
+! View LSAs for specific area
+! ========================================
+Router# show ip ospf database area 0
+Router# show ip ospf database area 1
+Router# show ip ospf database area 2
+
+! ========================================
+! View self-originated LSAs
+! ========================================
+Router# show ip ospf database self-originate
+
+! ========================================
+! View LSA statistics
+! ========================================
+Router# show ip ospf database database-summary
+
+! ========================================
+! View OSPF routing table with LSA indicators
+! ========================================
+Router# show ip route ospf
+! O    = Intra-area (Type 1, 2)
+! O IA = Inter-area (Type 3)
+! O E1 = External Type 1 (Type 5)
+! O E2 = External Type 2 (Type 5)
+! O N1 = NSSA External Type 1 (Type 7)
+! O N2 = NSSA External Type 2 (Type 7)
+
+! ========================================
+! Verify router roles
+! ========================================
+Router# show ip ospf
+! Look for:
+! "It is an area border router" (ABR)
+! "It is an autonomous system boundary router" (ASBR)
+
+! ========================================
+! Verify virtual links
+! ========================================
+Router# show ip ospf virtual-links
+
+! ========================================
+! View OSPF neighbors
+! ========================================
+Router# show ip ospf neighbor
+
+! ========================================
+! View OSPF interfaces
+! ========================================
+Router# show ip ospf interface brief</div>
+
+<div class="alert alert-success" style="margin-top: 20px;">
+<strong>✅ LSA Types Memory Aid:</strong><br>
+<strong>Type 1:</strong> <strong>R</strong>outer - Every router describes itself<br>
+<strong>Type 2:</strong> <strong>N</strong>etwork - DR describes multi-access network<br>
+<strong>Type 3:</strong> <strong>S</strong>ummary - ABR summarizes inter-area routes<br>
+<strong>Type 4:</strong> <strong>A</strong>SBR location - ABR points to ASBR<br>
+<strong>Type 5:</strong> <strong>E</strong>xternal - ASBR advertises external routes<br>
+<strong>Type 7:</strong> <strong>N</strong>SSA external - ASBR in NSSA advertises external routes<br>
+<br>
+<strong>Mnemonic:</strong> "Really Nice Summary About External Networks"
+</div>
+
+<div class="alert alert-info" style="margin-top: 20px;">
+<strong>💡 Best Practices:</strong><br>
+• Use <code>show ip ospf database</code> to verify LSA types after configuration changes<br>
+• Understand which LSA types are blocked in each area type<br>
+• Use Stub areas to reduce routing table size and LSA flooding<br>
+• Use NSSA when you need redistribution in a stub-like area<br>
+• Monitor LSA flooding with <code>show ip ospf interface</code><br>
+• Use route summarization at ABRs to reduce Type 3 LSAs<br>
+• Configure <code>passive-interface</code> on LAN segments to reduce LSA overhead<br>
+• Verify LSA counts with <code>show ip ospf database database-summary</code>
+</div>
+
+<div class="section-title" style="font-size: 1.2em; margin-top: 30px;">LSA Type Decision Tree</div>
+
+<div class="code-block">Question: Which LSA type do I need?
+
+├─ Is the router describing its own links?
+│  └─ YES → Type 1 (Router LSA)
+│
+├─ Is the router a DR on multi-access segment?
+│  └─ YES → Type 2 (Network LSA)
+│
+├─ Is the router an ABR advertising routes to another area?
+│  └─ YES → Type 3 (Summary LSA)
+│
+├─ Is the router an ABR advertising ASBR location?
+│  └─ YES → Type 4 (ASBR-Summary LSA)
+│
+├─ Is the router an ASBR redistributing external routes (not in NSSA)?
+│  └─ YES → Type 5 (External LSA)
+│
+└─ Is the router an ASBR redistributing external routes in NSSA?
+   └─ YES → Type 7 (NSSA External LSA)</div>
+</div>
+
+</div>
+
+<div class="section-title">✅ Complete Verification Checklist</div>
+
+<ul class="checklist">
+<li>☐ <strong>Task 1:</strong> All interfaces up/up on all 7 routers</li>
+<li>☐ <strong>Task 2:</strong> EIGRP 100 neighbors formed (AS-100 ↔ Core-1)</li>
+<li>☐ <strong>Task 2:</strong> EIGRP 200 neighbors formed (AS-200 ↔ S-Z)</li>
+<li>☐ <strong>Task 3:</strong> OSPF neighbors FULL in all areas</li>
+<li>☐ <strong>Task 4:</strong> Virtual link UP (T-Z ↔ S-A through Area 1)</li>
+<li>☐ <strong>Task 5:</strong> EIGRP routes redistributed into OSPF</li>
+<li>☐ <strong>LSA Type 1:</strong> Present in all areas (every router)</li>
+<li>☐ <strong>LSA Type 2:</strong> Present on multi-access segments (if DR elected)</li>
+<li>☐ <strong>LSA Type 3:</strong> Generated by ABRs between areas</li>
+<li>☐ <strong>LSA Type 4:</strong> Advertising ASBRs (Core-1, S-Z)</li>
+<li>☐ <strong>LSA Type 5:</strong> External routes (172.16.1.0, 172.16.2.0)</li>
+<li>☐ <strong>Task 6:</strong> Stub area configuration tested (Area 2 blocks Type 5)</li>
+<li>☐ <strong>Task 7:</strong> NSSA configuration working (Area 2 allows Type 7)</li>
+<li>☐ <strong>LSA Type 7:</strong> Present in NSSA (172.16.2.0/24 from S-Z)</li>
+<li>☐ <strong>Translation:</strong> Type 7 to Type 5 verified at T-Z (ABR)</li>
+<li>☐ <strong>Connectivity:</strong> End-to-end reachability (AS-100 ↔ AS-200)</li>
+<li>☐ <strong>Routing:</strong> All loopback networks reachable</li>
+</ul>
+
+<div class="section-title">🔧 Comprehensive Troubleshooting Guide</div>
+
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Possible Cause</th>
+<th>Verification Command</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type 1 LSA missing</td>
+<td>OSPF not running on router</td>
+<td>show ip ospf database router</td>
+<td>Verify OSPF process and network statements</td>
+</tr>
+<tr>
+<td>Type 2 LSA missing</td>
+<td>Point-to-point link (normal)</td>
+<td>show ip ospf interface</td>
+<td>Normal for P2P links, configure "ip ospf network broadcast" if needed</td>
+</tr>
+<tr>
+<td>Type 3 LSA missing</td>
+<td>ABR not configured properly</td>
+<td>show ip ospf border-routers</td>
+<td>Verify ABR has interfaces in multiple areas</td>
+</tr>
+<tr>
+<td>Type 4 LSA missing</td>
+<td>No ASBR in domain</td>
+<td>show ip ospf database asbr-summary</td>
+<td>Configure redistribution to create ASBR</td>
+</tr>
+<tr>
+<td>Type 5 LSA missing</td>
+<td>Redistribution not configured</td>
+<td>show ip ospf database external</td>
+<td>Configure "redistribute" under OSPF process</td>
+</tr>
+<tr>
+<td>Type 5 blocked in area</td>
+<td>Area is Stub or NSSA</td>
+<td>show ip ospf database</td>
+<td>Normal behavior, external connectivity uses default route or Type 7</td>
+</tr>
+<tr>
+<td>Type 7 LSA missing</td>
+<td>Area not configured as NSSA</td>
+<td>show ip ospf database nssa-external</td>
+<td>Configure "area X nssa" on all routers in area</td>
+</tr>
+<tr>
+<td>Type 7 not translated</td>
+<td>ABR misconfigured</td>
+<td>show ip ospf database external</td>
+<td>Verify ABR has "area X nssa" configured, check P-bit</td>
+</tr>
+<tr>
+<td>Virtual link down</td>
+<td>Transit area connectivity issue</td>
+<td>show ip ospf virtual-links</td>
+<td>Verify OSPF working in transit area, check Router IDs match</td>
+</tr>
+<tr>
+<td>EIGRP routes not in OSPF</td>
+<td>Redistribution missing or incorrect</td>
+<td>show ip route ospf | include E</td>
+<td>Verify "redistribute eigrp X subnets" command</td>
+</tr>
+<tr>
+<td>OSPF neighbors not FULL</td>
+<td>Area mismatch, network type mismatch</td>
+<td>show ip ospf neighbor</td>
+<td>Verify area numbers match, check network types</td>
+</tr>
+<tr>
+<td>Stub/NSSA neighbors down</td>
+<td>Not all routers configured as Stub/NSSA</td>
+<td>show ip ospf</td>
+<td>Configure "area X stub" or "area X nssa" on ALL routers in area</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">📄 Complete Device Configurations (NSSA Final)</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Ready-to-Use Configurations:</strong> Complete working configurations for all 7 routers with NSSA configuration. Copy and paste directly into your routers.
+</div>
+
+<p style="margin-top: 15px;"><strong>AS-100 Complete Configuration:</strong></p>
+<div class="code-block">! ========================================
+! AS-100 Complete Configuration
+! Role: EIGRP 100 Edge Router
+! ========================================
+
+hostname AS-100
+!
+interface GigabitEthernet0/1
+ description ** Link to Core-1 - EIGRP 100 **
+ ip address 203.18.60.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** AS-100 Internal Network - EIGRP 100 **
+ ip address 172.16.1.1 255.255.255.0
+!
+router eigrp 100
+ eigrp router-id 100.100.100.100
+ network 203.18.60.0 0.0.0.3
+ network 172.16.1.0 0.0.0.255
+ passive-interface Loopback0
+ no auto-summary
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Core-1 Complete Configuration (ASBR + ABR):</strong></p>
+<div class="code-block">! ========================================
+! Core-1 Complete Configuration
+! Role: ASBR + ABR (EIGRP 100 ↔ OSPF)
+! ========================================
+
+hostname Core-1
+!
+interface GigabitEthernet0/1
+ description ** Link to AS-100 - EIGRP 100 **
+ ip address 203.18.60.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/0
+ description ** Link to T-A - OSPF Area 1 **
+ ip address 203.18.61.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** Core-1 Internal Network - Area 0 **
+ ip address 192.168.1.1 255.255.255.0
+!
+router eigrp 100
+ eigrp router-id 1.1.1.1
+ network 203.18.60.0 0.0.0.3
+ no auto-summary
+!
+router ospf 1
+ router-id 1.1.1.1
+ log-adjacency-changes
+ redistribute eigrp 100 subnets
+ passive-interface Loopback0
+ network 192.168.1.0 0.0.0.255 area 0
+ network 203.18.61.0 0.0.0.3 area 1
+ default-metric 100
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>T-A Complete Configuration:</strong></p>
+<div class="code-block">! ========================================
+! T-A Complete Configuration
+! Role: Area 1 Internal Router
+! ========================================
+
+hostname T-A
+!
+interface GigabitEthernet0/0
+ description ** Link to Core-1 - OSPF Area 1 **
+ ip address 203.18.61.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ** Link to T-Z - OSPF Area 1 **
+ ip address 203.18.62.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** T-A Internal Network - Area 1 **
+ ip address 192.168.2.1 255.255.255.0
+!
+router ospf 1
+ router-id 2.2.2.2
+ log-adjacency-changes
+ area 1 virtual-link 3.3.3.3
+ passive-interface Loopback0
+ network 203.18.61.0 0.0.0.3 area 1
+ network 203.18.62.0 0.0.0.3 area 1
+ network 192.168.2.0 0.0.0.255 area 1
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>T-Z Complete Configuration (ABR + VL Endpoint):</strong></p>
+<div class="code-block">! ========================================
+! T-Z Complete Configuration
+! Role: ABR (Area 1 ↔ Area 2) + VL Endpoint
+! ========================================
+
+hostname T-Z
+!
+interface GigabitEthernet0/1
+ description ** Link to T-A - OSPF Area 1 **
+ ip address 203.18.62.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet1/0
+ description ** Link to S-A - OSPF Area 2 **
+ ip address 203.18.63.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** T-Z Internal Network - Area 1 **
+ ip address 192.168.3.1 255.255.255.0
+!
+router ospf 1
+ router-id 3.3.3.3
+ log-adjacency-changes
+ area 1 virtual-link 2.2.2.2
+ area 2 nssa default-information-originate
+ passive-interface Loopback0
+ network 203.18.62.0 0.0.0.3 area 1
+ network 192.168.3.0 0.0.0.255 area 1
+ network 203.18.63.0 0.0.0.3 area 2
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>S-A Complete Configuration (VL Endpoint + NSSA):</strong></p>
+<div class="code-block">! ========================================
+! S-A Complete Configuration
+! Role: Area 2 Router + VL Endpoint + NSSA
+! ========================================
+
+hostname S-A
+!
+interface GigabitEthernet1/0
+ description ** Link to T-Z - OSPF Area 2 **
+ ip address 203.18.63.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/0
+ description ** Link to S-Z - OSPF Area 2 **
+ ip address 203.18.64.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** S-A Internal Network - Area 2 **
+ ip address 192.168.4.1 255.255.255.0
+!
+router ospf 1
+ router-id 4.4.4.4
+ log-adjacency-changes
+ area 2 virtual-link 5.5.5.5
+ area 2 nssa
+ passive-interface Loopback0
+ network 203.18.63.0 0.0.0.3 area 2
+ network 203.18.64.0 0.0.0.3 area 2
+ network 192.168.4.0 0.0.0.255 area 2
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>S-Z Complete Configuration (ASBR in NSSA):</strong></p>
+<div class="code-block">! ========================================
+! S-Z Complete Configuration
+! Role: ASBR in NSSA (OSPF ↔ EIGRP 200)
+! ========================================
+
+hostname S-Z
+!
+interface GigabitEthernet0/0
+ description ** Link to S-A - OSPF Area 2 **
+ ip address 203.18.64.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ** Link to AS-200 - EIGRP 200 **
+ ip address 203.18.65.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** S-Z Internal Network - Area 2 **
+ ip address 192.168.5.1 255.255.255.0
+!
+router eigrp 200
+ eigrp router-id 5.5.5.5
+ network 203.18.65.0 0.0.0.3
+ no auto-summary
+!
+router ospf 1
+ router-id 5.5.5.5
+ log-adjacency-changes
+ redistribute eigrp 200 subnets
+ area 2 virtual-link 4.4.4.4
+ area 2 nssa
+ passive-interface Loopback0
+ network 203.18.64.0 0.0.0.3 area 2
+ network 192.168.5.0 0.0.0.255 area 2
+ default-metric 100
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>AS-200 Complete Configuration:</strong></p>
+<div class="code-block">! ========================================
+! AS-200 Complete Configuration
+! Role: EIGRP 200 Edge Router
+! ========================================
+
+hostname AS-200
+!
+interface GigabitEthernet0/1
+ description ** Link to S-Z - EIGRP 200 **
+ ip address 203.18.65.2 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** AS-200 Internal Network - EIGRP 200 **
+ ip address 172.16.2.1 255.255.255.0
+!
+router eigrp 200
+ eigrp router-id 200.200.200.200
+ network 203.18.65.0 0.0.0.3
+ network 172.16.2.0 0.0.0.255
+ passive-interface Loopback0
+ no auto-summary
+!
+end</div>
+
+<div class="alert alert-success" style="text-align: center; padding: 30px; margin-top: 20px;">
+<h2 style="color: #28a745; margin-bottom: 15px;">🎉 Lab 13.3 Complete!</h2>
+<p style="font-size: 1.3em;"><strong>OSPF LSA Types 1-7 Complete Understanding</strong></p>
+<p style="margin-top: 15px; font-size: 1.1em;">7 Routers | Multi-Area OSPF | EIGRP Redistribution | Stub & NSSA</p>
+<p style="margin-top: 10px; font-weight: bold; color: #667eea; font-size: 1.2em;">CCNP ENARSI - Expert Level Lab</p>
+<p style="margin-top: 15px; font-size: 1em;">All configurations, verifications, and LSA explanations included!</p>
+</div>
+
+<div class="section-title">🔖 Quick Reference Summary</div>
+
+<div class="alert alert-info">
+<strong>📝 Key Takeaways:</strong><br>
+• <strong>LSA Type 1:</strong> Every router, describes links, intra-area only<br>
+• <strong>LSA Type 2:</strong> DR only, multi-access networks, intra-area only<br>
+• <strong>LSA Type 3:</strong> ABR only, inter-area routes, crosses area boundaries<br>
+• <strong>LSA Type 4:</strong> ABR only, ASBR location, blocked in Stub/NSSA<br>
+• <strong>LSA Type 5:</strong> ASBR only, external routes, blocked in Stub/NSSA<br>
+• <strong>LSA Type 7:</strong> ASBR in NSSA, external routes, translated to Type 5 by ABR<br>
+<br>
+• <strong>Stub Area:</strong> Blocks Type 5, uses default route, no ASBRs allowed<br>
+• <strong>NSSA:</strong> Allows Type 7 (external in NSSA), ASBRs allowed, Type 7→5 translation<br>
+• <strong>Virtual Link:</strong> Extends Area 0 through transit area, uses Router IDs<br>
+• <strong>Redistribution:</strong> Creates ASBRs, generates Type 5 or Type 7 LSAs<br>
+<br>
+<strong>🎯 Lab Completion Criteria:</strong><br>
+✅ All 7 routers configured with complete configurations<br>
+✅ All LSA types (1-7) verified and understood<br>
+✅ Stub and NSSA configurations tested<br>
+✅ End-to-end connectivity confirmed<br>
+✅ Virtual link operational<br>
+✅ EIGRP-to-OSPF redistribution working
+</div>
+
+</div>
+</div>
+
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Lab 13.3 - OSPF LSA Types 1-7 Complete Understanding</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<script>
+const MASTER_PASSWORD = "CCNP@2026";
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+let isUnlocked = false;
+let sessionTimer = null;
+
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+});
+
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+}
+}
+
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+}
+
+function lockPage() {
+isUnlocked = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+function initializeProtection() {
+document.getElementById('protectedHeader').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('protectedBody').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('protectedFooter').addEventListener('contextmenu', e => e.preventDefault());
+}
+
+// LSA Tabs Functionality
+function openLSATab(evt, tabName) {
+var i, tabcontent, tabbuttons;
+
+tabcontent = document.getElementsByClassName("lsa-tab-content");
+for (i = 0; i < tabcontent.length; i++) {
+tabcontent[i].classList.remove("active");
+}
+
+tabbuttons = document.getElementsByClassName("lsa-tab-button");
+for (i = 0; i < tabbuttons.length; i++) {
+tabbuttons[i].classList.remove("active");
+}
+
+document.getElementById(tabName).classList.add("active");
+evt.currentTarget.classList.add("active");
+}
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => !isUnlocked && e.preventDefault());
+document.addEventListener('copy', e => !isUnlocked && e.preventDefault());
+document.addEventListener('cut', e => !isUnlocked && e.preventDefault());
+document.addEventListener('keydown', function(e) {
+if (e.keyCode === 123 || 
+(e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) ||
+(e.ctrlKey && e.keyCode === 85)) {
+e.preventDefault();
+return false;
+}
+if (e.ctrlKey && e.keyCode === 83 && !isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+});
+
+if (self !== top) {
+top.location = self.location;
+}
+</script>
+
+</body>
+</html>
