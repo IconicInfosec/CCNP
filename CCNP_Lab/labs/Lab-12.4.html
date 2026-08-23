@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP Lab 12.4 - EIGRP Stub Configuration - Iconic InfoSec Training</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+white-space: pre-wrap;
+word-wrap: break-word;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding-left: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+text-align: center;
+margin: 20px 0;
+}
+
+.topology-image img {
+max-width: 100%;
+height: auto;
+border: 3px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.stub-comparison {
+background: #f8f9fa;
+padding: 20px;
+border-radius: 8px;
+margin: 20px 0;
+border: 2px solid #667eea;
+}
+
+.stub-option {
+background: white;
+padding: 15px;
+margin: 10px 0;
+border-left: 4px solid #28a745;
+border-radius: 4px;
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+</style>
+</head>
+<body>
+
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<div id="protectedBody" class="protected-element">
+<div class="content-wrapper">
+
+<div class="lab-title">🔧 Lab 12.4: EIGRP Stub Configuration - Advanced Stub Options</div>
+<div class="lab-description">Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) - EIGRP Stub Routing Mastery</div>
+
+<div class="lab-metadata">
+<strong>📚 Lab Overview</strong><br>
+<strong>Duration:</strong> 90-120 minutes | <strong>Difficulty Level:</strong> Intermediate-Advanced | <strong>Lab Version:</strong> 1.0<br>
+<strong>Lab ID:</strong> Lab 12.4 | <strong>Topics:</strong> EIGRP Stub (Connected, Static, Summary, Receive-Only)<br>
+<strong>Autonomous System:</strong> AS 100 | <strong>Focus:</strong> Query Scoping, Stub Options, Network Optimization
+</div>
+
+<div class="section-title">🎯 Lab Objectives</div>
+<p>Upon completion of this lab, you will be able to:</p>
+<ul class="checklist">
+<li>✓ Understand EIGRP stub routing fundamentals and benefits</li>
+<li>✓ Configure EIGRP stub with connected routes option</li>
+<li>✓ Configure EIGRP stub with static routes option</li>
+<li>✓ Configure EIGRP stub with summary routes option</li>
+<li>✓ Implement EIGRP stub receive-only mode</li>
+<li>✓ Combine multiple stub options (connected + static + summary)</li>
+<li>✓ Verify stub configuration and route advertisement</li>
+<li>✓ Understand query scoping with stub routers</li>
+<li>✓ Compare different stub options and use cases</li>
+<li>✓ Troubleshoot EIGRP stub configuration issues</li>
+<li>✓ Apply stub routing best practices for hub-and-spoke topologies</li>
+</ul>
+
+<div class="section-title">📊 Network Topology</div>
+<div class="topology-image">
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-12.4.jpg" alt="Lab 12.4 Network Topology">
+<p style="margin-top: 10px; color: #667eea; font-weight: bold;">Figure 1: EIGRP Stub Configuration Topology (Hub-and-Spoke Design)</p>
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Topology Description:</strong><br>
+This lab features a classic hub-and-spoke topology with GW acting as the hub router connecting to two spoke sites (Site1 and Site2) and the Internet. This design is perfect for demonstrating EIGRP stub routing, where spoke routers are configured as stubs to prevent query propagation and optimize routing convergence. The topology includes static routes and multiple loopback networks to demonstrate different stub options.
+</div>
+
+<div class="section-title">🖥️ Device Information</div>
+<table>
+<thead>
+<tr>
+<th>Device Name</th>
+<th>Device Type</th>
+<th>EIGRP AS</th>
+<th>Role</th>
+<th>IOS Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GW</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Hub Router / Gateway</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>Site1</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Spoke Router / Stub Candidate</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>Site2</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Spoke Router / Stub Candidate</td>
+<td>IOS 15.x or higher</td>
+</tr>
+<tr>
+<td>Internet</td>
+<td>Cisco Router</td>
+<td>AS 100</td>
+<td>Simulated Internet / External Network</td>
+<td>IOS 15.x or higher</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">📋 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Site1</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.61.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.0/30</td>
+</tr>
+<tr>
+<td>Site1</td>
+<td>Loopback0</td>
+<td>192.168.3.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.3.0/24</td>
+</tr>
+<tr>
+<td>Site1</td>
+<td>Loopback1</td>
+<td>192.168.4.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.4.0/24</td>
+</tr>
+<tr>
+<td>Site2</td>
+<td>GigabitEthernet0/1</td>
+<td>203.18.61.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.4/30</td>
+</tr>
+<tr>
+<td>Site2</td>
+<td>Loopback0</td>
+<td>192.168.5.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.5.0/24</td>
+</tr>
+<tr>
+<td>Site2</td>
+<td>Loopback1</td>
+<td>192.168.6.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.6.0/24</td>
+</tr>
+<tr>
+<td>GW</td>
+<td>GigabitEthernet0/0</td>
+<td>203.18.61.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.0/30</td>
+</tr>
+<tr>
+<td>GW</td>
+<td>GigabitEthernet0/1</td>
+<td>203.18.61.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.61.4/30</td>
+</tr>
+<tr>
+<td>GW</td>
+<td>GigabitEthernet1/0</td>
+<td>203.18.62.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.62.0/30</td>
+</tr>
+<tr>
+<td>GW</td>
+<td>Loopback0</td>
+<td>192.168.7.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.7.0/24</td>
+</tr>
+<tr>
+<td>Internet</td>
+<td>GigabitEthernet1/0</td>
+<td>203.18.62.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>203.18.62.0/30</td>
+</tr>
+<tr>
+<td>Internet</td>
+<td>Loopback0</td>
+<td>192.168.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.1.0/24</td>
+</tr>
+<tr>
+<td>Internet</td>
+<td>Loopback1</td>
+<td>192.168.2.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>192.168.2.0/24</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🔌 Cable Connection Information</div>
+<table>
+<thead>
+<tr>
+<th>Connection</th>
+<th>Device 1</th>
+<th>Interface 1</th>
+<th>Device 2</th>
+<th>Interface 2</th>
+<th>Network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Link 1</td>
+<td>Site1</td>
+<td>G0/0</td>
+<td>GW</td>
+<td>G0/0</td>
+<td>203.18.61.0/30</td>
+</tr>
+<tr>
+<td>Link 2</td>
+<td>Site2</td>
+<td>G0/1</td>
+<td>GW</td>
+<td>G0/1</td>
+<td>203.18.61.4/30</td>
+</tr>
+<tr>
+<td>Link 3</td>
+<td>GW</td>
+<td>G1/0</td>
+<td>Internet</td>
+<td>G1/0</td>
+<td>203.18.62.0/30</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">📚 Prerequisites</div>
+<div class="alert alert-warning">
+<strong>⚠️ Before You Begin:</strong><br>
+• Basic EIGRP configuration knowledge required<br>
+• Understanding of EIGRP DUAL algorithm<br>
+• Familiarity with query/reply mechanism<br>
+• Knowledge of EIGRP neighbor relationships<br>
+• Understanding of static routing concepts<br>
+• Familiarity with route summarization<br>
+• Basic Cisco IOS CLI skills<br>
+• Completion of Lab 12.1, 12.2, and 12.3 recommended
+</div>
+
+<div class="section-title">📖 Understanding EIGRP Stub Routing</div>
+
+<div class="alert alert-success">
+<strong>🎓 What is EIGRP Stub Routing?</strong><br><br>
+<strong>Definition:</strong> EIGRP stub routing is a feature that limits query propagation and route advertisement from stub routers, improving network stability and convergence time.<br><br>
+<strong>Key Benefits:</strong><br>
+• Prevents queries from being sent to stub routers<br>
+• Reduces query domain and SIA risk<br>
+• Improves convergence time<br>
+• Reduces CPU and memory usage on stub routers<br>
+• Ideal for hub-and-spoke topologies<br>
+• Simplifies network design and troubleshooting<br><br>
+<strong>When to Use Stub Routing:</strong><br>
+• Spoke routers in hub-and-spoke topology<br>
+• Branch offices with single uplink<br>
+• Remote sites with no transit traffic<br>
+• Edge routers with limited resources<br>
+• Networks requiring fast convergence
+</div>
+
+<div class="section-title">🔍 EIGRP Stub Options Explained</div>
+
+<div class="stub-comparison">
+<h3 style="color: #1e3c72; margin-bottom: 15px;">📘 Available Stub Options:</h3>
+
+<div class="stub-option">
+<strong style="color: #28a745;">1️⃣ eigrp stub connected</strong><br>
+• Advertises only connected routes<br>
+• Does NOT advertise summary, static, or redistributed routes<br>
+• Best for: Basic spoke sites with only locally connected networks<br>
+• Command: <code style="background: #f0f0f0; padding: 2px 6px;">eigrp stub connected</code>
+</div>
+
+<div class="stub-option">
+<strong style="color: #28a745;">2️⃣ eigrp stub static</strong><br>
+• Advertises only static routes<br>
+• Does NOT advertise connected, summary, or redistributed routes<br>
+• Best for: Sites with static routes to be advertised<br>
+• Command: <code style="background: #f0f0f0; padding: 2px 6px;">eigrp stub static</code>
+</div>
+
+<div class="stub-option">
+<strong style="color: #28a745;">3️⃣ eigrp stub summary</strong><br>
+• Advertises only summary routes<br>
+• Does NOT advertise connected, static, or redistributed routes<br>
+• Best for: Sites advertising aggregated routes<br>
+• Command: <code style="background: #f0f0f0; padding: 2px 6px;">eigrp stub summary</code>
+</div>
+
+<div class="stub-option">
+<strong style="color: #28a745;">4️⃣ eigrp stub redistributed</strong><br>
+• Advertises only redistributed routes<br>
+• Does NOT advertise connected, static, or summary routes<br>
+• Best for: Sites redistributing routes from other protocols<br>
+• Command: <code style="background: #f0f0f0; padding: 2px 6px;">eigrp stub redistributed</code>
+</div>
+
+<div class="stub-option">
+<strong style="color: #28a745;">5️⃣ eigrp stub receive-only</strong><br>
+• Does NOT advertise ANY routes<br>
+• Only receives routes from neighbors<br>
+• Best for: Sites that should never advertise routes<br>
+• Command: <code style="background: #f0f0f0; padding: 2px 6px;">eigrp stub receive-only</code>
+</div>
+
+<div class="stub-option">
+<strong style="color: #28a745;">6️⃣ eigrp stub (default)</strong><br>
+• Equivalent to: <code style="background: #f0f0f0; padding: 2px 6px;">eigrp stub connected summary</code><br>
+• Advertises connected AND summary routes<br>
+• Most common configuration<br>
+• Command: <code style="background: #f0f0f0; padding: 2px 6px;">eigrp stub</code>
+</div>
+
+<div class="stub-option">
+<strong style="color: #28a745;">7️⃣ eigrp stub connected static summary</strong><br>
+• Advertises connected, static, AND summary routes<br>
+• Combines multiple options<br>
+• Best for: Complex sites needing multiple route types<br>
+• Command: <code style="background: #f0f0f0; padding: 2px 6px;">eigrp stub connected static summary</code>
+</div>
+</div>
+
+<div class="alert alert-info">
+<strong>💡 Important Notes:</strong><br>
+• Stub options can be combined (except receive-only)<br>
+• Stub routers do NOT receive queries (query scoping)<br>
+• Hub routers recognize stub status automatically<br>
+• Stub configuration is local to the router<br>
+• Changing stub options requires clearing neighbors<br>
+• Receive-only cannot be combined with other options
+</div>
+
+<div class="section-title">⚙️ Step-by-Step Configuration Guide</div>
+
+<div class="alert alert-info">
+<strong>📝 Step 1: Basic Interface Configuration on All Routers</strong>
+</div>
+
+<strong>Task 1.1: Configure Site1 Router (Spoke 1)</strong><br><br>
+
+<div class="code-block">Site1> enable
+Site1# configure terminal
+Site1(config)# hostname Site1
+
+! Configure G0/0 (to GW)
+Site1(config)# interface gigabitethernet 0/0
+Site1(config-if)# description ** Link to GW Hub Router **
+Site1(config-if)# ip address 203.18.61.2 255.255.255.252
+Site1(config-if)# no shutdown
+Site1(config-if)# exit
+
+! Configure Loopback0 (Internal Network 1)
+Site1(config)# interface loopback 0
+Site1(config-if)# description ** Site1 LAN Network 1 **
+Site1(config-if)# ip address 192.168.3.1 255.255.255.0
+Site1(config-if)# exit
+
+! Configure Loopback1 (Internal Network 2)
+Site1(config)# interface loopback 1
+Site1(config-if)# description ** Site1 LAN Network 2 **
+Site1(config-if)# ip address 192.168.4.1 255.255.255.0
+Site1(config-if)# exit
+
+Site1(config)# end
+Site1# write memory</div>
+
+<strong>Task 1.2: Configure Site2 Router (Spoke 2)</strong><br><br>
+
+<div class="code-block">Site2# configure terminal
+Site2(config)# hostname Site2
+
+! Configure G0/1 (to GW)
+Site2(config)# interface gigabitethernet 0/1
+Site2(config-if)# description ** Link to GW Hub Router **
+Site2(config-if)# ip address 203.18.61.6 255.255.255.252
+Site2(config-if)# no shutdown
+Site2(config-if)# exit
+
+! Configure Loopback0 (Internal Network 1)
+Site2(config)# interface loopback 0
+Site2(config-if)# description ** Site2 LAN Network 1 **
+Site2(config-if)# ip address 192.168.5.1 255.255.255.0
+Site2(config-if)# exit
+
+! Configure Loopback1 (Internal Network 2)
+Site2(config)# interface loopback 1
+Site2(config-if)# description ** Site2 LAN Network 2 **
+Site2(config-if)# ip address 192.168.6.1 255.255.255.0
+Site2(config-if)# exit
+
+Site2(config)# end
+Site2# write memory</div>
+
+<strong>Task 1.3: Configure GW Router (Hub)</strong><br><br>
+
+<div class="code-block">GW# configure terminal
+GW(config)# hostname GW
+
+! Configure G0/0 (to Site1)
+GW(config)# interface gigabitethernet 0/0
+GW(config-if)# description ** Link to Site1 **
+GW(config-if)# ip address 203.18.61.1 255.255.255.252
+GW(config-if)# no shutdown
+GW(config-if)# exit
+
+! Configure G0/1 (to Site2)
+GW(config)# interface gigabitethernet 0/1
+GW(config-if)# description ** Link to Site2 **
+GW(config-if)# ip address 203.18.61.5 255.255.255.252
+GW(config-if)# no shutdown
+GW(config-if)# exit
+
+! Configure G1/0 (to Internet)
+GW(config)# interface gigabitethernet 1/0
+GW(config-if)# description ** Link to Internet **
+GW(config-if)# ip address 203.18.62.1 255.255.255.252
+GW(config-if)# no shutdown
+GW(config-if)# exit
+
+! Configure Loopback0 (GW Internal Network)
+GW(config)# interface loopback 0
+GW(config-if)# description ** GW Internal Network **
+GW(config-if)# ip address 192.168.7.1 255.255.255.0
+GW(config-if)# exit
+
+GW(config)# end
+GW# write memory</div>
+
+<strong>Task 1.4: Configure Internet Router</strong><br><br>
+
+<div class="code-block">Internet# configure terminal
+Internet(config)# hostname Internet
+
+! Configure G1/0 (to GW)
+Internet(config)# interface gigabitethernet 1/0
+Internet(config-if)# description ** Link to GW **
+Internet(config-if)# ip address 203.18.62.2 255.255.255.252
+Internet(config-if)# no shutdown
+Internet(config-if)# exit
+
+! Configure Loopback0 (Simulated Internet Network 1)
+Internet(config)# interface loopback 0
+Internet(config-if)# description ** Internet Network 1 **
+Internet(config-if)# ip address 192.168.1.1 255.255.255.0
+Internet(config-if)# exit
+
+! Configure Loopback1 (Simulated Internet Network 2)
+Internet(config)# interface loopback 1
+Internet(config-if)# description ** Internet Network 2 **
+Internet(config-if)# ip address 192.168.2.1 255.255.255.0
+Internet(config-if)# exit
+
+Internet(config)# end
+Internet# write memory</div>
+
+<strong>Task 1.5: Verify Interface Configuration</strong><br><br>
+
+<div class="code-block">! Verify on each router
+Site1# show ip interface brief
+Site2# show ip interface brief
+GW# show ip interface brief
+Internet# show ip interface brief
+
+! Test connectivity between directly connected routers
+Site1# ping 203.18.61.1
+Site2# ping 203.18.61.5
+GW# ping 203.18.62.2</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 1:</strong> All interfaces configured and in "up/up" state. Basic connectivity verified between directly connected routers.
+</div>
+
+<div class="alert alert-info">
+<strong>📝 Step 2: Basic EIGRP Configuration (AS 100) - Without Stub</strong>
+</div>
+
+<strong>Task 2.1: Configure EIGRP on Site1</strong><br><br>
+
+<div class="code-block">Site1# configure terminal
+
+Site1(config)# router eigrp 100
+Site1(config-router)# network 203.18.61.0 0.0.0.3
+Site1(config-router)# network 192.168.3.0 0.0.0.255
+Site1(config-router)# network 192.168.4.0 0.0.0.255
+Site1(config-router)# no auto-summary
+Site1(config-router)# eigrp router-id 1.1.1.1
+Site1(config-router)# exit
+
+Site1(config)# end
+Site1# write memory</div>
+
+<strong>Task 2.2: Configure EIGRP on Site2</strong><br><br>
+
+<div class="code-block">Site2# configure terminal
+
+Site2(config)# router eigrp 100
+Site2(config-router)# network 203.18.61.4 0.0.0.3
+Site2(config-router)# network 192.168.5.0 0.0.0.255
+Site2(config-router)# network 192.168.6.0 0.0.0.255
+Site2(config-router)# no auto-summary
+Site2(config-router)# eigrp router-id 2.2.2.2
+Site2(config-router)# exit
+
+Site2(config)# end
+Site2# write memory</div>
+
+<strong>Task 2.3: Configure EIGRP on GW (Hub)</strong><br><br>
+
+<div class="code-block">GW# configure terminal
+
+GW(config)# router eigrp 100
+GW(config-router)# network 203.18.61.0 0.0.0.3
+GW(config-router)# network 203.18.61.4 0.0.0.3
+GW(config-router)# network 203.18.62.0 0.0.0.3
+GW(config-router)# network 192.168.7.0 0.0.0.255
+GW(config-router)# no auto-summary
+GW(config-router)# eigrp router-id 3.3.3.3
+GW(config-router)# exit
+
+GW(config)# end
+GW# write memory</div>
+
+<strong>Task 2.4: Configure EIGRP on Internet Router</strong><br><br>
+
+<div class="code-block">Internet# configure terminal
+
+Internet(config)# router eigrp 100
+Internet(config-router)# network 203.18.62.0 0.0.0.3
+Internet(config-router)# network 192.168.1.0 0.0.0.255
+Internet(config-router)# network 192.168.2.0 0.0.0.255
+Internet(config-router)# no auto-summary
+Internet(config-router)# eigrp router-id 4.4.4.4
+Internet(config-router)# exit
+
+Internet(config)# end
+Internet# write memory</div>
+
+<strong>Task 2.5: Verify EIGRP Neighbor Relationships</strong><br><br>
+
+<div class="code-block">! Check neighbors on all routers
+Site1# show ip eigrp neighbors
+! Should see GW (203.18.61.1)
+
+Site2# show ip eigrp neighbors
+! Should see GW (203.18.61.5)
+
+GW# show ip eigrp neighbors
+! Should see Site1, Site2, Internet
+
+Internet# show ip eigrp neighbors
+! Should see GW (203.18.62.1)</div>
+
+<strong>Task 2.6: Verify EIGRP Routing Tables</strong><br><br>
+
+<div class="code-block">! Check routing tables
+GW# show ip route eigrp
+! Should see routes from all neighbors
+
+Site1# show ip route eigrp
+! Should see routes to all networks
+
+! Test end-to-end connectivity
+Site1# ping 192.168.2.1 source 192.168.3.1
+Site2# ping 192.168.1.1 source 192.168.5.1</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 2:</strong> EIGRP neighbors established. Full routing convergence achieved. End-to-end connectivity verified. <strong>NO stub configuration yet - this is the baseline.</strong>
+</div>
+
+<div class="alert alert-info">
+<strong>📝 Step 3: Configure Static Routes (for Stub Static Testing)</strong>
+</div>
+
+<p>We'll add static routes on Site1 and Site2 to demonstrate the "eigrp stub static" option.</p>
+
+<strong>Task 3.1: Add Static Routes on Site1</strong><br><br>
+
+<div class="code-block">Site1# configure terminal
+
+! Create static route to a simulated network
+Site1(config)# ip route 10.10.10.0 255.255.255.0 null0
+
+! Redistribute static into EIGRP
+Site1(config)# router eigrp 100
+Site1(config-router)# redistribute static metric 1000 100 255 1 1500
+Site1(config-router)# exit
+
+Site1(config)# end
+Site1# write memory</div>
+
+<strong>Task 3.2: Add Static Routes on Site2</strong><br><br>
+
+<div class="code-block">Site2# configure terminal
+
+! Create static route to a simulated network
+Site2(config)# ip route 10.20.20.0 255.255.255.0 null0
+
+! Redistribute static into EIGRP
+Site2(config)# router eigrp 100
+Site2(config-router)# redistribute static metric 1000 100 255 1 1500
+Site2(config-router)# exit
+
+Site2(config)# end
+Site2# write memory</div>
+
+<strong>Task 3.3: Verify Static Route Redistribution</strong><br><br>
+
+<div class="code-block">! On GW, check for redistributed static routes
+GW# show ip route eigrp
+! Look for D EX (external) routes: 10.10.10.0/24 and 10.20.20.0/24
+
+GW# show ip route 10.10.10.0
+! Should show route via Site1
+
+GW# show ip route 10.20.20.0
+! Should show route via Site2</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 3:</strong> Static routes configured and redistributed into EIGRP. GW receiving external routes from both sites.
+</div>
+
+<div class="alert alert-info">
+<strong>📝 Step 4: Configure EIGRP Stub - Connected Option</strong>
+</div>
+
+<strong>Task 4.1: Configure Site1 as Stub (Connected Only)</strong><br><br>
+
+<div class="code-block">Site1# configure terminal
+
+Site1(config)# router eigrp 100
+Site1(config-router)# eigrp stub connected
+Site1(config-router)# exit
+
+Site1(config)# end
+Site1# write memory
+
+! Note: Neighbor relationship will reset</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Expected Behavior:</strong><br>
+With "eigrp stub connected":<br>
+• Site1 will advertise ONLY connected routes (192.168.3.0/24, 192.168.4.0/24, 203.18.61.0/30)<br>
+• Static route 10.10.10.0/24 will NO LONGER be advertised<br>
+• Site1 will NOT receive queries from GW<br>
+• GW will recognize Site1 as stub peer
+</div>
+
+<strong>Task 4.2: Verify Stub Connected Configuration</strong><br><br>
+
+<div class="code-block">! On Site1, verify stub configuration
+Site1# show ip protocols | section eigrp
+! Look for "Stub, connected"
+
+! On GW, verify stub status
+GW# show ip eigrp neighbors detail
+! Look for "Stub Peer Advertising ( CONNECTED ) Routes"
+
+! Check what routes GW receives from Site1
+GW# show ip route eigrp | include 192.168.3
+GW# show ip route eigrp | include 192.168.4
+! Should see these connected routes
+
+GW# show ip route 10.10.10.0
+! Should NOT see this static route anymore!</div>
+
+<strong>Task 4.3: Test Query Behavior</strong><br><br>
+
+<div class="code-block">! On Site1, enable query debugging
+Site1# debug eigrp packets query
+
+! On Internet, shut down a loopback to trigger queries
+Internet# configure terminal
+Internet(config)# interface loopback 0
+Internet(config-if)# shutdown
+Internet(config-if)# end
+
+! Watch Site1 - it should NOT receive queries
+! GW knows Site1 is a stub, so no queries sent
+
+! Restore Internet loopback
+Internet# configure terminal
+Internet(config)# interface loopback 0
+Internet(config-if)# no shutdown
+Internet(config-if)# end
+
+! Disable debugging
+Site1# undebug all</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 4:</strong> Site1 configured as stub with "connected" option. Only connected routes advertised. Queries no longer sent to Site1.
+</div>
+
+<div class="alert alert-info">
+<strong>📝 Step 5: Configure EIGRP Stub - Connected + Static Options</strong>
+</div>
+
+<strong>Task 5.1: Change Site1 to Stub (Connected + Static)</strong><br><br>
+
+<div class="code-block">Site1# configure terminal
+
+Site1(config)# router eigrp 100
+Site1(config-router)# eigrp stub connected static
+Site1(config-router)# exit
+
+Site1(config)# end
+Site1# write memory</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Expected Behavior:</strong><br>
+With "eigrp stub connected static":<br>
+• Site1 will advertise connected routes (192.168.3.0/24, 192.168.4.0/24, 203.18.61.0/30)<br>
+• Site1 will ALSO advertise static route (10.10.10.0/24)<br>
+• Combines both "connected" and "static" options<br>
+• Still no queries received
+</div>
+
+<strong>Task 5.2: Verify Connected + Static Configuration</strong><br><br>
+
+<div class="code-block">! On Site1, verify updated stub configuration
+Site1# show ip protocols | section eigrp
+! Look for "Stub, connected, static"
+
+! On GW, verify stub status
+GW# show ip eigrp neighbors detail
+! Look for "Stub Peer Advertising ( CONNECTED STATIC ) Routes"
+
+! Check if static route is now advertised
+GW# show ip route 10.10.10.0
+! Should NOW see the static route from Site1
+
+GW# show ip route eigrp | include 10.10.10
+! Route should be marked as D EX (external)</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 5:</strong> Site1 configured as stub with "connected static" options. Both connected and static routes advertised. Queries still not sent to Site1.
+</div>
+
+<div class="alert alert-info">
+<strong>📝 Step 6: Configure Route Summarization (for Stub Summary Testing)</strong>
+</div>
+
+<strong>Task 6.1: Configure Summarization on Site2</strong><br><br>
+
+<div class="code-block">Site2# configure terminal
+
+! Summarize 192.168.5.0/24 and 192.168.6.0/24 into 192.168.4.0/22
+Site2(config)# interface gigabitethernet 0/1
+Site2(config-if)# ip summary-address eigrp 100 192.168.4.0 255.255.252.0
+Site2(config-if)# exit
+
+Site2(config)# end
+Site2# write memory</div>
+
+<strong>Task 6.2: Verify Summarization</strong><br><br>
+
+<div class="code-block">! Check for Null0 summary route on Site2
+Site2# show ip route | include Null0
+! Should see 192.168.4.0/22 via Null0
+
+! On GW, verify summary is received
+GW# show ip route 192.168.4.0
+! Should show summary route 192.168.4.0/22 (not /24s)
+
+GW# show ip route 192.168.5.0 longer-prefixes
+! Should show summary, not specific routes</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 6:</strong> Route summarization configured on Site2. Summary route 192.168.4.0/22 advertised instead of specific /24 routes.
+</div>
+
+<div class="alert alert-info">
+<strong>📝 Step 7: Configure EIGRP Stub - Connected + Static + Summary Options</strong>
+</div>
+
+<strong>Task 7.1: Configure Site2 as Stub (Connected + Static + Summary)</strong><br><br>
+
+<div class="code-block">Site2# configure terminal
+
+Site2(config)# router eigrp 100
+Site2(config-router)# eigrp stub connected static summary
+Site2(config-router)# exit
+
+Site2(config)# end
+Site2# write memory</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Expected Behavior:</strong><br>
+With "eigrp stub connected static summary":<br>
+• Site2 will advertise connected routes<br>
+• Site2 will advertise static routes (10.20.20.0/24)<br>
+• Site2 will advertise summary routes (192.168.4.0/22)<br>
+• Combines all three options<br>
+• Still no queries received
+</div>
+
+<strong>Task 7.2: Verify Connected + Static + Summary Configuration</strong><br><br>
+
+<div class="code-block">! On Site2, verify stub configuration
+Site2# show ip protocols | section eigrp
+! Look for "Stub, connected, static, summary"
+
+! On GW, verify stub status
+GW# show ip eigrp neighbors detail
+! Look for "Stub Peer Advertising ( CONNECTED STATIC SUMMARY ) Routes"
+
+! Verify all route types are advertised
+GW# show ip route eigrp | include 192.168.4
+! Should see summary route
+
+GW# show ip route eigrp | include 10.20.20
+! Should see static route
+
+GW# show ip route eigrp | include 203.18.61.4
+! Should see connected route</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 7:</strong> Site2 configured as stub with "connected static summary" options. All three route types advertised. Comprehensive stub configuration.
+</div>
+
+<div class="alert alert-info">
+<strong>📝 Step 8: Configure EIGRP Stub - Receive-Only Option</strong>
+</div>
+
+<strong>Task 8.1: Test Receive-Only on Site1 (Temporary)</strong><br><br>
+
+<div class="code-block">! Save current configuration first
+Site1# write memory
+
+Site1# configure terminal
+
+Site1(config)# router eigrp 100
+Site1(config-router)# eigrp stub receive-only
+Site1(config-router)# exit
+
+Site1(config)# end</div>
+
+<div class="alert alert-danger">
+<strong>⚠️ CRITICAL - Receive-Only Behavior:</strong><br>
+With "eigrp stub receive-only":<br>
+• Site1 will NOT advertise ANY routes<br>
+• Site1 will ONLY receive routes from GW<br>
+• GW will lose all routes to Site1's networks<br>
+• Site1's loopbacks will become unreachable from GW<br>
+• This is the most restrictive stub option<br>
+• Useful only when site should never advertise routes<br>
+• Cannot be combined with other stub options
+</div>
+
+<strong>Task 8.2: Verify Receive-Only Configuration</strong><br><br>
+
+<div class="code-block">! On Site1, verify stub configuration
+Site1# show ip protocols | section eigrp
+! Look for "Stub, receive-only"
+
+! On GW, verify stub status
+GW# show ip eigrp neighbors detail
+! Look for "Stub Peer Advertising ( RECEIVE-ONLY ) Routes"
+
+! CRITICAL: Check if Site1 routes disappeared from GW
+GW# show ip route 192.168.3.0
+! Route should NOT exist (Site1 not advertising)
+
+GW# show ip route 192.168.4.0
+! Route should NOT exist
+
+! Test - this will fail
+GW# ping 192.168.3.1
+! Will fail - no route to Site1's networks</div>
+
+<strong>Task 8.3: Restore Previous Configuration</strong><br><br>
+
+<div class="code-block">! Receive-only is too restrictive for most scenarios
+! Restore previous "connected static" configuration
+
+Site1# configure terminal
+
+Site1(config)# router eigrp 100
+Site1(config-router)# no eigrp stub receive-only
+Site1(config-router)# eigrp stub connected static
+Site1(config-router)# exit
+
+Site1(config)# end
+Site1# write memory
+
+! Wait for convergence
+! Verify routes are back
+GW# show ip route 192.168.3.0
+! Route should be restored</div>
+
+<div class="alert alert-success">
+<strong>✅ Checkpoint 8:</strong> Receive-only mode tested and understood. Configuration restored to "connected static". Receive-only is useful only for specific scenarios where no routes should be advertised.
+</div>
+
+<div class="section-title">📄 Complete Router Configurations with EIGRP Stub</div>
+
+<strong>Site1 - Complete Configuration (Stub: Connected + Static)</strong>
+
+<div class="code-block">!
+! Site1 Complete Configuration - Lab 12.4
+!
+hostname Site1
+!
+interface Loopback0
+ description ** Site1 LAN Network 1 **
+ ip address 192.168.3.1 255.255.255.0
+!
+interface Loopback1
+ description ** Site1 LAN Network 2 **
+ ip address 192.168.4.1 255.255.255.0
+!
+interface GigabitEthernet0/0
+ description ** Link to GW Hub Router **
+ ip address 203.18.61.2 255.255.255.252
+ no shutdown
+!
+! Static route for stub testing
+ip route 10.10.10.0 255.255.255.0 Null0
+!
+router eigrp 100
+ network 192.168.3.0 0.0.0.255
+ network 192.168.4.0 0.0.0.255
+ network 203.18.61.0 0.0.0.3
+ redistribute static metric 1000 100 255 1 1500
+ no auto-summary
+ eigrp stub connected static
+ eigrp router-id 1.1.1.1
+!
+end</div>
+
+<strong>Site2 - Complete Configuration (Stub: Connected + Static + Summary)</strong>
+
+<div class="code-block">!
+! Site2 Complete Configuration - Lab 12.4
+!
+hostname Site2
+!
+interface Loopback0
+ description ** Site2 LAN Network 1 **
+ ip address 192.168.5.1 255.255.255.0
+!
+interface Loopback1
+ description ** Site2 LAN Network 2 **
+ ip address 192.168.6.1 255.255.255.0
+!
+interface GigabitEthernet0/1
+ description ** Link to GW Hub Router **
+ ip address 203.18.61.6 255.255.255.252
+ ip summary-address eigrp 100 192.168.4.0 255.255.252.0
+ no shutdown
+!
+! Static route for stub testing
+ip route 10.20.20.0 255.255.255.0 Null0
+!
+router eigrp 100
+ network 192.168.5.0 0.0.0.255
+ network 192.168.6.0 0.0.0.255
+ network 203.18.61.4 0.0.0.3
+ redistribute static metric 1000 100 255 1 1500
+ no auto-summary
+ eigrp stub connected static summary
+ eigrp router-id 2.2.2.2
+!
+end</div>
+
+<strong>GW - Complete Configuration (Hub Router - No Stub)</strong>
+
+<div class="code-block">!
+! GW Complete Configuration - Lab 12.4
+!
+hostname GW
+!
+interface Loopback0
+ description ** GW Internal Network **
+ ip address 192.168.7.1 255.255.255.0
+!
+interface GigabitEthernet0/0
+ description ** Link to Site1 **
+ ip address 203.18.61.1 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ** Link to Site2 **
+ ip address 203.18.61.5 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet1/0
+ description ** Link to Internet **
+ ip address 203.18.62.1 255.255.255.252
+ no shutdown
+!
+router eigrp 100
+ network 192.168.7.0 0.0.0.255
+ network 203.18.61.0 0.0.0.3
+ network 203.18.61.4 0.0.0.3
+ network 203.18.62.0 0.0.0.3
+ no auto-summary
+ eigrp router-id 3.3.3.3
+!
+end</div>
+
+<strong>Internet - Complete Configuration</strong>
+
+<div class="code-block">!
+! Internet Complete Configuration - Lab 12.4
+!
+hostname Internet
+!
+interface Loopback0
+ description ** Internet Network 1 **
+ ip address 192.168.1.1 255.255.255.0
+!
+interface Loopback1
+ description ** Internet Network 2 **
+ ip address 192.168.2.1 255.255.255.0
+!
+interface GigabitEthernet1/0
+ description ** Link to GW **
+ ip address 203.18.62.2 255.255.255.252
+ no shutdown
+!
+router eigrp 100
+ network 192.168.1.0 0.0.0.255
+ network 192.168.2.0 0.0.0.255
+ network 203.18.62.0 0.0.0.3
+ no auto-summary
+ eigrp router-id 4.4.4.4
+!
+end</div>
+
+<div class="section-title">✅ Comprehensive Verification Commands</div>
+
+<strong>1. Verify EIGRP Neighbor Relationships and Stub Status</strong>
+<div class="code-block">! Check neighbors
+GW# show ip eigrp neighbors
+
+! Check detailed neighbor information with stub status
+GW# show ip eigrp neighbors detail
+! Look for "Stub Peer Advertising" lines for each stub neighbor
+
+! Site1 should show: Stub Peer Advertising ( CONNECTED STATIC )
+! Site2 should show: Stub Peer Advertising ( CONNECTED STATIC SUMMARY )</div>
+
+<strong>2. Verify Stub Configuration on Spoke Routers</strong>
+<div class="code-block">! On Site1
+Site1# show ip protocols | section eigrp
+! Look for: Stub, connected, static
+
+! On Site2
+Site2# show ip protocols | section eigrp
+! Look for: Stub, connected, static, summary</div>
+
+<strong>3. Verify Route Advertisement</strong>
+<div class="code-block">! On GW, check all routes
+GW# show ip route eigrp
+
+! Verify Site1 connected routes
+GW# show ip route 192.168.3.0
+GW# show ip route 192.168.4.0
+
+! Verify Site1 static route
+GW# show ip route 10.10.10.0
+! Should be D EX (external)
+
+! Verify Site2 summary route
+GW# show ip route 192.168.4.0 255.255.252.0
+! Should show /22 summary
+
+! Verify Site2 static route
+GW# show ip route 10.20.20.0</div>
+
+<strong>4. Verify Query Behavior (No Queries to Stub)</strong>
+<div class="code-block">! Enable debug on stub router
+Site1# debug eigrp packets query
+
+! Trigger topology change on GW or Internet
+Internet# configure terminal
+Internet(config)# interface loopback 0
+Internet(config-if)# shutdown
+Internet(config-if)# no shutdown
+Internet(config-if)# end
+
+! Site1 should NOT receive queries
+! Disable debug
+Site1# undebug all</div>
+
+<strong>5. Verify EIGRP Topology</strong>
+<div class="code-block">! Check EIGRP topology
+GW# show ip eigrp topology
+! All routes should be in Passive state
+
+! Check specific route
+GW# show ip eigrp topology 192.168.3.0/24
+! Should show route via Site1</div>
+
+<strong>6. Verify Static Route Redistribution</strong>
+<div class="code-block">! Check redistributed routes
+GW# show ip route eigrp | include EX
+! Should show external routes (D EX)
+
+! On Site1, verify redistribution
+Site1# show ip protocols | section redistribute
+! Should show: Redistributing: static</div>
+
+<strong>7. Verify Route Summarization</strong>
+<div class="code-block">! On Site2, check Null0 summary
+Site2# show ip route | include Null0
+! Should show 192.168.4.0/22
+
+! On GW, verify summary received
+GW# show ip route 192.168.4.0
+! Should show /22, not /24s</div>
+
+<strong>8. Test End-to-End Connectivity</strong>
+<div class="code-block">! From Site1 to all networks
+Site1# ping 192.168.1.1 source 192.168.3.1
+Site1# ping 192.168.2.1 source 192.168.3.1
+Site1# ping 192.168.5.1 source 192.168.3.1
+Site1# ping 192.168.7.1 source 192.168.3.1
+
+! From Site2 to all networks
+Site2# ping 192.168.1.1 source 192.168.5.1
+Site2# ping 192.168.3.1 source 192.168.5.1</div>
+
+<strong>9. Verify EIGRP Traffic Statistics</strong>
+<div class="code-block">! Check EIGRP packet statistics
+GW# show ip eigrp traffic
+! Look for Query/Reply counts
+
+! Stub routers should have low Query counts</div>
+
+<strong>10. Compare Stub Options</strong>
+<div class="code-block">! Show all neighbors with stub details
+GW# show ip eigrp neighbors detail | include Stub
+! Compare what each stub router advertises</div>
+
+<div class="section-title">📋 Lab Verification Checklist</div>
+
+<ul class="checklist">
+<li>☑ All 4 routers have interfaces configured and operational</li>
+<li>☑ Basic IP connectivity verified between directly connected routers</li>
+<li>☑ EIGRP AS 100 configured on all routers</li>
+<li>☑ EIGRP neighbor relationships established (Site1-GW, Site2-GW, GW-Internet)</li>
+<li>☑ Static routes configured on Site1 and Site2</li>
+<li>☑ Static routes redistributed into EIGRP</li>
+<li>☑ Route summarization configured on Site2</li>
+<li>☑ Site1 configured as stub with "connected static" options</li>
+<li>☑ Site2 configured as stub with "connected static summary" options</li>
+<li>☑ GW recognizes both sites as stub peers</li>
+<li>☑ GW shows correct stub options for each neighbor</li>
+<li>☑ Connected routes advertised from stub routers</li>
+<li>☑ Static routes advertised from stub routers</li>
+<li>☑ Summary route advertised from Site2</li>
+<li>☑ Queries NOT sent to stub routers</li>
+<li>☑ Receive-only option tested and understood</li>
+<li>☑ End-to-end connectivity maintained with stub configuration</li>
+<li>☑ All routes reachable from all routers</li>
+<li>☑ EIGRP topology in Passive state</li>
+<li>☑ All configurations saved on all routers</li>
+</ul>
+
+<div class="section-title">📊 EIGRP Stub Options Comparison Table</div>
+
+<table>
+<thead>
+<tr>
+<th>Stub Option</th>
+<th>Command</th>
+<th>Advertises</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Connected</strong></td>
+<td>eigrp stub connected</td>
+<td>Connected routes only</td>
+<td>Basic spoke sites with local networks</td>
+</tr>
+<tr>
+<td><strong>Static</strong></td>
+<td>eigrp stub static</td>
+<td>Static routes only</td>
+<td>Sites with static routes to advertise</td>
+</tr>
+<tr>
+<td><strong>Summary</strong></td>
+<td>eigrp stub summary</td>
+<td>Summary routes only</td>
+<td>Sites advertising aggregated routes</td>
+</tr>
+<tr>
+<td><strong>Redistributed</strong></td>
+<td>eigrp stub redistributed</td>
+<td>Redistributed routes only</td>
+<td>Sites redistributing other protocols</td>
+</tr>
+<tr>
+<td><strong>Receive-Only</strong></td>
+<td>eigrp stub receive-only</td>
+<td>Nothing (no routes)</td>
+<td>Sites that should never advertise (rare)</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td>eigrp stub</td>
+<td>Connected + Summary</td>
+<td>Most common configuration</td>
+</tr>
+<tr>
+<td><strong>Connected + Static</strong></td>
+<td>eigrp stub connected static</td>
+<td>Connected + Static routes</td>
+<td>Sites with local networks and statics</td>
+</tr>
+<tr>
+<td><strong>Connected + Summary</strong></td>
+<td>eigrp stub connected summary</td>
+<td>Connected + Summary routes</td>
+<td>Same as default stub</td>
+</tr>
+<tr>
+<td><strong>All Options</strong></td>
+<td>eigrp stub connected static summary</td>
+<td>Connected + Static + Summary</td>
+<td>Complex sites needing all route types</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🔧 Comprehensive Troubleshooting Guide</div>
+
+<strong>Problem 1: Stub Router Not Recognized by Hub</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• GW doesn't show "Stub Peer" in neighbor details<br>
+• Queries still being sent to spoke routers<br>
+• Stub configuration not taking effect
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">! Step 1: Verify stub configuration on spoke
+Site1# show run | section router eigrp
+! Look for "eigrp stub" command
+
+! Step 2: Check if command is correct
+Site1# show ip protocols | include Stub
+! Should show stub mode
+
+! Step 3: Verify neighbor relationship
+Site1# show ip eigrp neighbors
+! Neighbor must be up
+
+! Step 4: Clear neighbor to force update
+Site1# clear ip eigrp neighbors *
+! Wait for convergence
+
+! Step 5: Verify on hub
+GW# show ip eigrp neighbors detail
+! Should now show stub status</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stub command not configured</td>
+<td>Add "eigrp stub" command under router eigrp</td>
+</tr>
+<tr>
+<td>Neighbor relationship down</td>
+<td>Troubleshoot connectivity, check interface status</td>
+</tr>
+<tr>
+<td>Configuration not applied</td>
+<td>Exit to privileged mode and verify with show commands</td>
+</tr>
+<tr>
+<td>Old IOS version</td>
+<td>Upgrade to IOS 12.0(7)T or higher</td>
+</tr>
+<tr>
+<td>Cached neighbor info</td>
+<td>Clear EIGRP neighbors to refresh</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 2: Routes Not Advertised with Stub Configuration</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Expected routes not appearing on hub router<br>
+• Connectivity lost after stub configuration<br>
+• Static or summary routes not advertised
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">! Step 1: Check stub options configured
+Site1# show ip protocols | section Stub
+! Verify correct options (connected, static, summary, etc.)
+
+! Step 2: Check what routes should be advertised
+Site1# show ip route
+! Identify connected, static, and summary routes
+
+! Step 3: Verify redistribution (if using static)
+Site1# show ip protocols | section redistribute
+! Static routes must be redistributed
+
+! Step 4: Check if routes exist locally
+Site1# show ip route 10.10.10.0
+! Route must exist to be advertised
+
+! Step 5: Check hub routing table
+GW# show ip route eigrp
+! Look for expected routes</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wrong stub options</td>
+<td>Use correct combination: connected, static, summary</td>
+</tr>
+<tr>
+<td>Receive-only mode</td>
+<td>Change to other stub options (receive-only advertises nothing)</td>
+</tr>
+<tr>
+<td>Static not redistributed</td>
+<td>Add "redistribute static" under router eigrp</td>
+</tr>
+<tr>
+<td>Summary not configured</td>
+<td>Add "ip summary-address eigrp" on interface</td>
+</tr>
+<tr>
+<td>Route doesn't exist</td>
+<td>Create the route first (static, connected, etc.)</td>
+</tr>
+<tr>
+<td>Network not advertised</td>
+<td>Add "network" command for connected routes</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 3: Static Routes Not Appearing After Stub Configuration</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Static routes were advertised before stub config<br>
+• After stub, static routes disappeared from hub<br>
+• "eigrp stub connected" doesn't include statics
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">! Step 1: Check current stub configuration
+Site1# show ip protocols | section Stub
+! If shows only "connected", static won't be advertised
+
+! Step 2: Verify static route exists
+Site1# show ip route static
+! Should see 10.10.10.0/24
+
+! Step 3: Check redistribution
+Site1# show run | section router eigrp
+! Look for "redistribute static"
+
+! Step 4: Change stub to include static
+Site1(config)# router eigrp 100
+Site1(config-router)# eigrp stub connected static
+
+! Step 5: Verify on hub
+GW# show ip route 10.10.10.0
+! Should now appear</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"eigrp stub connected" only</td>
+<td>Change to "eigrp stub connected static"</td>
+</tr>
+<tr>
+<td>Static not redistributed</td>
+<td>Add "redistribute static metric..." command</td>
+</tr>
+<tr>
+<td>Static route removed</td>
+<td>Re-add static route configuration</td>
+</tr>
+<tr>
+<td>Wrong stub option</td>
+<td>Use "static" option in stub command</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 4: Queries Still Sent to Stub Router</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• Stub router receives queries despite configuration<br>
+• Debug shows query packets arriving<br>
+• Expected query scoping not working
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">! Step 1: Verify stub is configured
+Site1# show ip protocols | include Stub
+
+! Step 2: Verify hub sees stub
+GW# show ip eigrp neighbors detail | include Stub
+! Must show "Stub Peer"
+
+! Step 3: Check if queries are from hub or elsewhere
+Site1# debug eigrp packets query
+! Note source of queries
+
+! Step 4: Verify EIGRP AS matches
+! Queries from different AS won't respect stub
+
+! Step 5: Clear and reestablish neighbors
+Site1# clear ip eigrp neighbors *</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stub not configured</td>
+<td>Add "eigrp stub" command</td>
+</tr>
+<tr>
+<td>Neighbor not aware</td>
+<td>Clear neighbors to update stub status</td>
+</tr>
+<tr>
+<td>Queries from non-hub</td>
+<td>Normal - queries from peers, not hub</td>
+</tr>
+<tr>
+<td>Different AS</td>
+<td>Ensure all routers in same AS</td>
+</tr>
+<tr>
+<td>Old IOS version</td>
+<td>Upgrade IOS to support stub properly</td>
+</tr>
+</tbody>
+</table>
+
+<strong>Problem 5: Receive-Only Mode Breaks Connectivity</strong>
+
+<div class="alert alert-danger">
+<strong>Symptoms:</strong><br>
+• After "eigrp stub receive-only", spoke networks unreachable<br>
+• Hub lost routes to spoke<br>
+• Connectivity broken
+</div>
+
+<strong>Troubleshooting Steps:</strong>
+<div class="code-block">! Step 1: Understand receive-only behavior
+! Receive-only advertises NO routes
+
+! Step 2: Check hub routing table
+GW# show ip route 192.168.3.0
+! Route will not exist
+
+! Step 3: Change to appropriate stub option
+Site1(config)# router eigrp 100
+Site1(config-router)# no eigrp stub receive-only
+Site1(config-router)# eigrp stub connected
+
+! Step 4: Wait for convergence
+! Routes should reappear on hub</div>
+
+<strong>Solutions:</strong>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Receive-only advertises nothing</td>
+<td>Change to connected, static, or summary options</td>
+</tr>
+<tr>
+<td>Wrong use case</td>
+<td>Receive-only only for special scenarios</td>
+</tr>
+<tr>
+<td>Misunderstood behavior</td>
+<td>Review stub options and select appropriate one</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">📚 Key Learning Points & Best Practices</div>
+
+<strong>1. EIGRP Stub Fundamentals:</strong>
+<ul class="checklist">
+<li>✓ Stub routing prevents query propagation to stub routers</li>
+<li>✓ Ideal for hub-and-spoke topologies</li>
+<li>✓ Reduces SIA risk significantly</li>
+<li>✓ Improves convergence time</li>
+<li>✓ Reduces CPU and memory on stub routers</li>
+<li>✓ Simplifies network design</li>
+</ul>
+
+<strong>2. Stub Option Selection:</strong>
+<ul class="checklist">
+<li>✓ <strong>Connected:</strong> Basic sites with only local networks</li>
+<li>✓ <strong>Static:</strong> Sites with static routes to advertise</li>
+<li>✓ <strong>Summary:</strong> Sites using route summarization</li>
+<li>✓ <strong>Redistributed:</strong> Sites redistributing other protocols</li>
+<li>✓ <strong>Receive-Only:</strong> Sites that should never advertise (rare)</li>
+<li>✓ <strong>Default (connected + summary):</strong> Most common</li>
+<li>✓ <strong>Multiple options:</strong> Can combine (except receive-only)</li>
+</ul>
+
+<strong>3. Query Scoping Benefits:</strong>
+<ul class="checklist">
+<li>✓ Hub routers don't send queries to stub routers</li>
+<li>✓ Reduces query domain dramatically</li>
+<li>✓ Faster convergence during failures</li>
+<li>✓ Prevents SIA conditions</li>
+<li>✓ Lower CPU usage during convergence</li>
+<li>✓ More predictable network behavior</li>
+</ul>
+
+<strong>4. Hub-and-Spoke Best Practices:</strong>
+<ul class="checklist">
+<li>✓ Always configure spoke routers as stubs</li>
+<li>✓ Never configure hub as stub</li>
+<li>✓ Use appropriate stub options for each spoke</li>
+<li>✓ Document stub configurations</li>
+<li>✓ Test connectivity after stub configuration</li>
+<li>✓ Monitor for query behavior</li>
+<li>✓ Combine with summarization for best results</li>
+</ul>
+
+<strong>5. Route Advertisement Control:</strong>
+<ul class="checklist">
+<li>✓ Stub options control what routes are advertised</li>
+<li>✓ Connected routes require "connected" option</li>
+<li>✓ Static routes require "static" option AND redistribution</li>
+<li>✓ Summary routes require "summary" option AND summary config</li>
+<li>✓ Receive-only advertises nothing</li>
+<li>✓ Multiple options can be combined</li>
+</ul>
+
+<strong>6. Static Route Redistribution:</strong>
+<ul class="checklist">
+<li>✓ Static routes must be redistributed into EIGRP</li>
+<li>✓ Use "redistribute static metric..." command</li>
+<li>✓ Stub must include "static" option</li>
+<li>✓ Static routes appear as D EX (external) on hub</li>
+<li>✓ Metric must be specified for redistribution</li>
+</ul>
+
+<strong>7. Route Summarization with Stub:</strong>
+<ul class="checklist">
+<li>✓ Summarization complements stub routing</li>
+<li>✓ Creates additional query boundaries</li>
+<li>✓ Reduces routing table size</li>
+<li>✓ Stub must include "summary" option</li>
+<li>✓ Configure on outbound interface</li>
+<li>✓ Null0 route created automatically</li>
+</ul>
+
+<strong>8. Receive-Only Special Cases:</strong>
+<ul class="checklist">
+<li>✓ Most restrictive stub option</li>
+<li>✓ Advertises NO routes</li>
+<li>✓ Use only when spoke should never advertise</li>
+<li>✓ Breaks connectivity to spoke networks</li>
+<li>✓ Cannot be combined with other options</li>
+<li>✓ Rare use case in production</li>
+</ul>
+
+<strong>9. Troubleshooting Methodology:</strong>
+<ul class="checklist">
+<li>✓ Verify stub configuration with show ip protocols</li>
+<li>✓ Check hub recognizes stub with show neighbors detail</li>
+<li>✓ Verify expected routes are advertised</li>
+<li>✓ Test query behavior with debug</li>
+<li>✓ Clear neighbors if stub status not updated</li>
+<li>✓ Match stub options to requirements</li>
+</ul>
+
+<strong>10. Production Deployment:</strong>
+<ul class="checklist">
+<li>✓ Plan stub configuration before deployment</li>
+<li>✓ Document which sites are stubs</li>
+<li>✓ Test in lab first</li>
+<li>✓ Deploy during maintenance window</li>
+<li>✓ Verify connectivity after configuration</li>
+<li>✓ Monitor for query behavior</li>
+<li>✓ Use consistent stub options per site type</li>
+</ul>
+
+<div class="section-title">🎓 Lab Completion Summary</div>
+
+<div class="alert alert-success">
+<strong>✅ Congratulations!</strong><br><br>
+You have successfully completed Lab 12.4: EIGRP Stub Configuration - Advanced Stub Options.<br><br>
+<strong>Skills Mastered:</strong><br>
+• Understanding of all EIGRP stub options<br>
+• Configuration of eigrp stub connected<br>
+• Configuration of eigrp stub static<br>
+• Configuration of eigrp stub summary<br>
+• Configuration of eigrp stub receive-only<br>
+• Combining multiple stub options<br>
+• Query scoping with stub routing<br>
+• Static route redistribution with stub<br>
+• Route summarization with stub<br>
+• Hub-and-spoke topology optimization<br>
+• Comprehensive verification techniques<br>
+• Advanced troubleshooting skills<br><br>
+<strong>Next Steps:</strong><br>
+• Practice different stub option combinations<br>
+• Design and implement hub-and-spoke topologies<br>
+• Study EIGRP Named Mode (advanced)<br>
+• Explore EIGRP over DMVPN scenarios<br>
+• Continue with other routing protocols (OSPF, BGP)<br>
+• Prepare for CCNP ENCOR and ENARSI exams
+</div>
+
+<div class="section-title">⚠️ Important Final Notes</div>
+
+<div class="alert alert-warning">
+<strong>EIGRP Stub Best Practices:</strong><br>
+• Always use stub routing in hub-and-spoke topologies<br>
+• Choose stub options based on what routes should be advertised<br>
+• Document stub configurations clearly<br>
+• Test connectivity after stub configuration<br>
+• Combine with route summarization for optimal results<br>
+• Monitor query behavior to verify stub is working<br>
+• Never configure hub routers as stub<br>
+• Use receive-only sparingly (only when appropriate)<br>
+• Clear neighbors after changing stub options<br>
+• Keep IOS versions current for stub features
+</div>
+
+<div class="alert alert-info">
+<strong>📘 Stub Options Quick Reference:</strong><br>
+• <strong>eigrp stub connected:</strong> Advertise connected routes<br>
+• <strong>eigrp stub static:</strong> Advertise static routes<br>
+• <strong>eigrp stub summary:</strong> Advertise summary routes<br>
+• <strong>eigrp stub redistributed:</strong> Advertise redistributed routes<br>
+• <strong>eigrp stub receive-only:</strong> Advertise nothing<br>
+• <strong>eigrp stub:</strong> Default = connected + summary<br>
+• <strong>eigrp stub connected static:</strong> Connected + static<br>
+• <strong>eigrp stub connected static summary:</strong> All three types<br><br>
+Remember: Multiple options can be combined (except receive-only)!
+</div>
+
+<div style="text-align: center; margin: 40px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+<h2 style="color: #1e3c72;">🏆 End of Lab 12.4 🏆</h2>
+<p style="font-size: 1.2em; color: #667eea; font-weight: bold;">EIGRP Stub Configuration - Advanced Stub Options</p>
+<p style="margin-top: 15px;">Lab Duration: 90-120 minutes</p>
+<p>CCNP Enterprise (ENCOR 350-401 & ENARSI 300-410)</p>
+<p style="margin-top: 20px; font-size: 0.9em; color: #666;">
+Excellent work mastering EIGRP stub routing!<br>
+You now have the knowledge to optimize hub-and-spoke<br>
+topologies and prevent SIA conditions effectively.<br><br>
+This is a critical skill for enterprise network design!<br><br>
+Keep practicing and good luck with your CCNP journey!
+</p>
+</div>
+
+</div>
+</div>
+
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<script>
+const MASTER_PASSWORD = "CCNP@2026";
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+let isUnlocked = false;
+let sessionTimer = null;
+
+window.addEventListener('load', function() {
+checkSession();
+setupSecurityMonitoring();
+});
+
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+if (sessionToken === MASTER_PASSWORD && sessionTime && currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+}
+}
+
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+}
+
+function lockPage() {
+isUnlocked = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+element.style.userSelect = 'none';
+});
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+function setupSecurityMonitoring() {
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', function(e) {
+if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && [67,73,74].includes(e.keyCode)) || (e.ctrlKey && e.keyCode === 85)) {
+e.preventDefault();
+return false;
+}
+if (e.ctrlKey && e.keyCode === 83 && !isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+});
+document.addEventListener('copy', function(e) { if (!isUnlocked) { e.preventDefault(); return false; } });
+document.addEventListener('cut', function(e) { if (!isUnlocked) { e.preventDefault(); return false; } });
+}
+
+window.addEventListener('load', function() {
+setTimeout(function() {
+console.clear();
+console.log('%c🔐 ICONIC INFOSEC TRAINING - PROTECTED CONTENT', 'color: #667eea; font-size: 18px; font-weight: bold;');
+console.log('%cLab 12.4: EIGRP Stub - Password Protected', 'color: #1e3c72; font-size: 14px; font-weight: bold;');
+console.log('%c⚠️ Content Protections: ACTIVE', 'color: #ff6b6b; font-size: 12px;');
+console.log('%cMaster Password: CCNP@2026', 'color: red; font-size: 11px; font-weight: bold;');
+}, 500);
+});
+
+window.addEventListener('beforeunload', function() {
+if (isUnlocked) {
+console.log('[SECURITY LOG] Page unload - isAuthenticated: ' + isUnlocked);
+}
+});
+</script>
+
+</body>
+</html>

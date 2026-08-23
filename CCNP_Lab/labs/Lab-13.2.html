@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 13.2 - OSPF Virtual Links & Advanced Filtering - CCNP Lab</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+white-space: pre-wrap;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+width: 100%;
+max-width: 900px;
+margin: 20px auto;
+display: block;
+border: 2px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<div id="protectedBody" class="protected-element">
+<div class="content-wrapper">
+
+<div class="lab-title">🔧 Lab 13.2 - OSPF Virtual Links & Advanced Filtering</div>
+<div class="lab-description">Cisco CCNP 300-410 (ENARSI) - OSPF Virtual Links, Route Filtering with Prefix-List & Route-Map</div>
+
+<div class="lab-metadata">
+<strong>Lab Focus:</strong> OSPF Virtual Links (Broken Backbone Fix), Advanced Route Filtering, Prefix-List, Route-Map | Password Protected<br>
+<strong>Duration:</strong> 150-180 minutes | <strong>Difficulty Level:</strong> Expert | <strong>Lab Version:</strong> 1.0<br>
+<strong>CCNP Exam Topics:</strong> 300-410 ENARSI (2.4-2.6) - Advanced OSPF Configuration
+</div>
+
+<div class="section-title">🎯 Lab Objective</div>
+<p>This advanced CCNP-level lab addresses a critical OSPF design challenge: <strong>Area 2 is not directly connected to Area 0 (broken backbone topology)</strong>. You will configure OSPF Virtual Links to logically extend Area 0 through Area 1 (transit area). Additionally, you'll implement advanced route filtering using prefix-lists and route-maps to control route advertisement.</p>
+
+<p style="margin-top: 15px;"><strong>Upon completion, you will master:</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>OSPF Virtual Links:</strong> Solving broken backbone topology</li>
+<li>Understanding transit areas and virtual link requirements</li>
+<li><strong>Advanced Route Filtering:</strong> Using prefix-lists and route-maps</li>
+<li>Filtering specific networks from OSPF advertisement</li>
+<li>Troubleshooting virtual link issues and verification</li>
+<li>OSPF multi-area design with complex topologies</li>
+</ul>
+
+<div class="alert alert-danger">
+<strong>⚠️ Critical Design Issue:</strong><br>
+<strong>Problem:</strong> B-1 is in Area 2, but Area 2 has NO direct connection to Area 0<br>
+<strong>Solution:</strong> Configure Virtual Link through Area 1 (transit area)<br>
+<strong>Without Virtual Link:</strong> B-1 cannot participate in OSPF (OSPF requires all areas connect to Area 0)
+</div>
+
+<div class="section-title">🗺️ Network Topology</div>
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-13.2.jpg" alt="Lab 13.2 Network Topology" class="topology-image">
+
+<p style="margin-top: 15px;"><strong>Topology Description:</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Core-1:</strong> Area 0 router (ABR to Area 1)</li>
+<li><strong>S-A & S-Z:</strong> Area 1 routers (S-Z is ABR to Area 2)</li>
+<li><strong>B-1:</strong> Area 2 router (NOT connected to Area 0 - requires Virtual Link)</li>
+<li><strong>Design Challenge:</strong> Area 2 must reach Area 0 through Area 1 (transit area)</li>
+</ul>
+
+<div class="alert alert-warning">
+<strong>⚠️ Virtual Link Requirement:</strong><br>
+Because Area 2 (B-1) is not directly connected to Area 0, we must create a <strong>Virtual Link</strong> between:<br>
+• <strong>S-Z</strong> (ABR between Area 1 and Area 2)<br>
+• <strong>Core-1</strong> (ABR between Area 0 and Area 1)<br>
+• <strong>Transit Area:</strong> Area 1 (must be a normal area, not stub)
+</div>
+
+<div class="section-title">📋 Device Information</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Role</th>
+<th>OSPF Areas</th>
+<th>Router ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Core-1</strong></td>
+<td>ABR (Area 0 ↔ Area 1)</td>
+<td>Area 0, Area 1</td>
+<td>1.1.1.1</td>
+</tr>
+<tr>
+<td><strong>S-A</strong></td>
+<td>Area 1 Internal Router</td>
+<td>Area 1</td>
+<td>2.2.2.2</td>
+</tr>
+<tr>
+<td><strong>S-Z</strong></td>
+<td>ABR (Area 1 ↔ Area 2) + Virtual Link Endpoint</td>
+<td>Area 1, Area 2, Virtual Link to Area 0</td>
+<td>3.3.3.3</td>
+</tr>
+<tr>
+<td><strong>B-1</strong></td>
+<td>Area 2 Router (Isolated from Area 0)</td>
+<td>Area 2</td>
+<td>4.4.4.4</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🌐 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Connected To</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Core-1</strong></td>
+<td>G0/0</td>
+<td>203.18.61.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>S-A G0/0</td>
+</tr>
+<tr>
+<td><strong>Core-1</strong></td>
+<td>Loopback0</td>
+<td>192.168.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internal Network</td>
+</tr>
+<tr>
+<td><strong>S-A</strong></td>
+<td>G0/0</td>
+<td>203.18.61.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>Core-1 G0/0</td>
+</tr>
+<tr>
+<td><strong>S-A</strong></td>
+<td>G0/1</td>
+<td>203.18.62.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>S-Z G0/1</td>
+</tr>
+<tr>
+<td><strong>S-A</strong></td>
+<td>Loopback0</td>
+<td>192.168.2.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internal Network</td>
+</tr>
+<tr>
+<td><strong>S-Z</strong></td>
+<td>G0/1</td>
+<td>203.18.62.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>S-A G0/1</td>
+</tr>
+<tr>
+<td><strong>S-Z</strong></td>
+<td>G1/0</td>
+<td>203.18.63.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>B-1 G1/0</td>
+</tr>
+<tr>
+<td><strong>S-Z</strong></td>
+<td>Loopback0</td>
+<td>192.168.3.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internal Network</td>
+</tr>
+<tr>
+<td><strong>B-1</strong></td>
+<td>G1/0</td>
+<td>203.18.63.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>S-Z G1/0</td>
+</tr>
+<tr>
+<td><strong>B-1</strong></td>
+<td>Loopback0</td>
+<td>192.168.4.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internal Network</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🔌 Cable Connection Summary</div>
+<table>
+<thead>
+<tr>
+<th>Connection</th>
+<th>Network Subnet</th>
+<th>Purpose</th>
+<th>OSPF Area</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Core-1 (G0/0) ↔ S-A (G0/0)</td>
+<td>203.18.61.0/30</td>
+<td>Area 0 to Area 1</td>
+<td>Area 0 / Area 1</td>
+</tr>
+<tr>
+<td>S-A (G0/1) ↔ S-Z (G0/1)</td>
+<td>203.18.62.0/30</td>
+<td>Area 1 Internal</td>
+<td>Area 1</td>
+</tr>
+<tr>
+<td>S-Z (G1/0) ↔ B-1 (G1/0)</td>
+<td>203.18.63.4/30</td>
+<td>Area 1 to Area 2</td>
+<td>Area 1 / Area 2</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🏗️ OSPF Design Architecture</div>
+<table>
+<thead>
+<tr>
+<th>OSPF Area</th>
+<th>Type</th>
+<th>Routers</th>
+<th>Networks</th>
+<th>Special Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Area 0</strong></td>
+<td>Backbone</td>
+<td>Core-1</td>
+<td>203.18.61.0/30 (Core-1 side)<br>192.168.1.0/24</td>
+<td>Backbone area</td>
+</tr>
+<tr>
+<td><strong>Area 1</strong></td>
+<td>Transit Area</td>
+<td>Core-1, S-A, S-Z</td>
+<td>203.18.61.0/30 (S-A side)<br>203.18.62.0/30<br>192.168.2.0/24<br>192.168.3.0/24</td>
+<td><strong>Transit area for Virtual Link</strong></td>
+</tr>
+<tr>
+<td><strong>Area 2</strong></td>
+<td>Standard (Isolated)</td>
+<td>S-Z, B-1</td>
+<td>203.18.63.4/30<br>192.168.4.0/24</td>
+<td><strong>NOT connected to Area 0 - needs Virtual Link</strong></td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-info">
+<strong>ℹ️ Virtual Link Explanation:</strong><br>
+A Virtual Link is a logical tunnel that extends Area 0 through a transit area (Area 1) to reach a remote area (Area 2). It's configured between two ABRs:<br>
+• <strong>Core-1</strong> (1.1.1.1) - ABR between Area 0 and Area 1<br>
+• <strong>S-Z</strong> (3.3.3.3) - ABR between Area 1 and Area 2<br>
+• The virtual link uses <strong>Router IDs</strong>, not IP addresses<br>
+• Area 1 becomes the <strong>transit area</strong> carrying virtual link traffic
+</div>
+
+<div class="section-title">⚙️ Lab Configuration Tasks</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Configuration Sequence:</strong> Complete tasks in order. Virtual Link must be configured AFTER basic OSPF.
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 1: Basic Interface Configuration</div>
+<p><strong>Objective:</strong> Configure all interfaces with correct IP addressing.</p>
+
+<p style="margin-top: 15px;"><strong>Step 1.1: Configure Core-1</strong></p>
+<div class="code-block">Core-1(config)# hostname Core-1
+Core-1(config)#
+Core-1(config)# interface GigabitEthernet0/0
+Core-1(config-if)# description ** Link to S-A - Area 0/1 Boundary **
+Core-1(config-if)# ip address 203.18.61.1 255.255.255.252
+Core-1(config-if)# no shutdown
+Core-1(config-if)# exit
+Core-1(config)#
+Core-1(config)# interface Loopback0
+Core-1(config-if)# description ** Core-1 Internal Network - Area 0 **
+Core-1(config-if)# ip address 192.168.1.1 255.255.255.0
+Core-1(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.2: Configure S-A</strong></p>
+<div class="code-block">S-A(config)# hostname S-A
+S-A(config)#
+S-A(config)# interface GigabitEthernet0/0
+S-A(config-if)# description ** Link to Core-1 - Area 1 **
+S-A(config-if)# ip address 203.18.61.2 255.255.255.252
+S-A(config-if)# no shutdown
+S-A(config-if)# exit
+S-A(config)#
+S-A(config)# interface GigabitEthernet0/1
+S-A(config-if)# description ** Link to S-Z - Area 1 **
+S-A(config-if)# ip address 203.18.62.1 255.255.255.252
+S-A(config-if)# no shutdown
+S-A(config-if)# exit
+S-A(config)#
+S-A(config)# interface Loopback0
+S-A(config-if)# description ** S-A Internal Network - Area 1 **
+S-A(config-if)# ip address 192.168.2.1 255.255.255.0
+S-A(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.3: Configure S-Z</strong></p>
+<div class="code-block">S-Z(config)# hostname S-Z
+S-Z(config)#
+S-Z(config)# interface GigabitEthernet0/1
+S-Z(config-if)# description ** Link to S-A - Area 1 **
+S-Z(config-if)# ip address 203.18.62.2 255.255.255.252
+S-Z(config-if)# no shutdown
+S-Z(config-if)# exit
+S-Z(config)#
+S-Z(config)# interface GigabitEthernet1/0
+S-Z(config-if)# description ** Link to B-1 - Area 2 **
+S-Z(config-if)# ip address 203.18.63.5 255.255.255.252
+S-Z(config-if)# no shutdown
+S-Z(config-if)# exit
+S-Z(config)#
+S-Z(config)# interface Loopback0
+S-Z(config-if)# description ** S-Z Internal Network - Area 1 **
+S-Z(config-if)# ip address 192.168.3.1 255.255.255.0
+S-Z(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.4: Configure B-1</strong></p>
+<div class="code-block">B-1(config)# hostname B-1
+B-1(config)#
+B-1(config)# interface GigabitEthernet1/0
+B-1(config-if)# description ** Link to S-Z - Area 2 **
+B-1(config-if)# ip address 203.18.63.6 255.255.255.252
+B-1(config-if)# no shutdown
+B-1(config-if)# exit
+B-1(config)#
+B-1(config)# interface Loopback0
+B-1(config-if)# description ** B-1 Internal Network - Area 2 **
+B-1(config-if)# ip address 192.168.4.1 255.255.255.0
+B-1(config-if)# exit</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 1:</strong>
+<div class="code-block" style="margin-top: 10px;">Core-1# show ip interface brief
+Core-1# ping 203.18.61.2
+S-A# ping 203.18.62.2
+S-Z# ping 203.18.63.6</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 2: Configure OSPF (WITHOUT Virtual Link First)</div>
+<p><strong>Objective:</strong> Configure basic OSPF with proper area assignments. At this stage, Area 2 will NOT work properly.</p>
+
+<div class="alert alert-warning">
+<strong>⚠️ Expected Issue:</strong> After this task, B-1 (Area 2) will NOT see routes from Area 0 because Area 2 is not connected to Area 0. This is normal - we'll fix it in Task 3 with Virtual Link.
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.1: Configure Core-1 (ABR: Area 0 ↔ Area 1)</strong></p>
+<div class="code-block">Core-1(config)# router ospf 1
+Core-1(config-router)# router-id 1.1.1.1
+Core-1(config-router)# log-adjacency-changes
+Core-1(config-router)#
+Core-1(config-router)# ! Area 0 Network
+Core-1(config-router)# network 192.168.1.0 0.0.0.255 area 0
+Core-1(config-router)#
+Core-1(config-router)# ! Area 1 Network
+Core-1(config-router)# network 203.18.61.0 0.0.0.3 area 1
+Core-1(config-router)#
+Core-1(config-router)# passive-interface Loopback0
+Core-1(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.2: Configure S-A (Area 1 Internal Router)</strong></p>
+<div class="code-block">S-A(config)# router ospf 1
+S-A(config-router)# router-id 2.2.2.2
+S-A(config-router)# log-adjacency-changes
+S-A(config-router)#
+S-A(config-router)# ! All networks in Area 1
+S-A(config-router)# network 203.18.61.0 0.0.0.3 area 1
+S-A(config-router)# network 203.18.62.0 0.0.0.3 area 1
+S-A(config-router)# network 192.168.2.0 0.0.0.255 area 1
+S-A(config-router)#
+S-A(config-router)# passive-interface Loopback0
+S-A(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.3: Configure S-Z (ABR: Area 1 ↔ Area 2)</strong></p>
+<div class="code-block">S-Z(config)# router ospf 1
+S-Z(config-router)# router-id 3.3.3.3
+S-Z(config-router)# log-adjacency-changes
+S-Z(config-router)#
+S-Z(config-router)# ! Area 1 Networks
+S-Z(config-router)# network 203.18.62.0 0.0.0.3 area 1
+S-Z(config-router)# network 192.168.3.0 0.0.0.255 area 1
+S-Z(config-router)#
+S-Z(config-router)# ! Area 2 Network
+S-Z(config-router)# network 203.18.63.4 0.0.0.3 area 2
+S-Z(config-router)#
+S-Z(config-router)# passive-interface Loopback0
+S-Z(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.4: Configure B-1 (Area 2 Router)</strong></p>
+<div class="code-block">B-1(config)# router ospf 1
+B-1(config-router)# router-id 4.4.4.4
+B-1(config-router)# log-adjacency-changes
+B-1(config-router)#
+B-1(config-router)# ! All networks in Area 2
+B-1(config-router)# network 203.18.63.4 0.0.0.3 area 2
+B-1(config-router)# network 192.168.4.0 0.0.0.255 area 2
+B-1(config-router)#
+B-1(config-router)# passive-interface Loopback0
+B-1(config-router)# exit</div>
+
+<div class="alert alert-danger">
+<strong>⚠️ Verification Task 2 - Observe the Problem:</strong>
+<div class="code-block" style="margin-top: 10px;">! On Core-1 (Area 0)
+Core-1# show ip ospf neighbor
+! Should see S-A as neighbor
+
+Core-1# show ip route ospf
+! Will NOT see 192.168.4.0/24 (B-1's network)
+
+! On B-1 (Area 2)
+B-1# show ip route ospf
+! Will NOT see 192.168.1.0/24 (Core-1's Area 0 network)
+! This is because Area 2 is NOT connected to Area 0
+
+! On S-Z (ABR)
+S-Z# show ip ospf border-routers
+! Will show Core-1 as unreachable for Area 0</div>
+
+<strong>🔴 Expected Problem:</strong> Area 2 cannot communicate with Area 0 because there's no direct connection. Virtual Link is required!
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 3: Configure OSPF Virtual Link (Fix Broken Backbone)</div>
+<p><strong>Objective:</strong> Create a virtual link through Area 1 (transit area) to logically connect Area 2 to Area 0.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ Virtual Link Requirements:</strong><br>
+1. Both endpoints must be ABRs<br>
+2. Transit area (Area 1) must be a normal area (not stub)<br>
+3. Configuration uses Router IDs (not IP addresses)<br>
+4. Must be configured on BOTH endpoints
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.1: Configure Virtual Link on S-A</strong></p>
+<div class="code-block">Core-1(config)# router ospf 1
+S-A(config-router)# ! Virtual Link through Area 1 to S-Z (3.3.3.3)
+S-A(config-router)# area 1 virtual-link 3.3.3.3
+S-A(config-router)# exit
+
+! Explanation:
+! - "area 1" = Transit area
+! - "virtual-link 3.3.3.3" = S-Z's Router ID (the other endpoint)
+! - This creates a logical tunnel through Area 1</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.2: Configure Virtual Link on S-Z</strong></p>
+<div class="code-block">S-Z(config)# router ospf 1
+S-Z(config-router)# ! Virtual Link through Area 1 to S-A (2.2.2.2)
+S-Z(config-router)# area 1 virtual-link 2.2.2.2
+S-Z(config-router)# exit
+
+! Explanation:
+! - "area 1" = Transit area (must match S-A)
+! - "virtual-link 2.2.2.2" = S-A's Router ID
+! - Both sides must have matching configuration</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 3 - Virtual Link Should Work:</strong>
+<div class="code-block" style="margin-top: 10px;">! On S-A
+S-A# show ip ospf virtual-links
+! Should show virtual link to 3.3.3.3 in UP state
+
+! On S-Z
+S-Z# show ip ospf virtual-links
+! Should show virtual link to 2.2.2.2 in UP state
+
+! On S-A
+S-A# show ip route ospf
+! Should NOW see 192.168.4.0/24 (B-1's network) via virtual link
+
+! On B-1
+B-1# show ip route ospf
+! Should NOW see 192.168.1.0/24 (Core-1's Area 0 network)
+
+! Test end-to-end connectivity
+B-1# ping 192.168.1.1 source 192.168.4.1
+! Should succeed via virtual link</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 4: Configure Advanced Route Filtering</div>
+<p><strong>Objective:</strong> Use prefix-list and route-map to filter specific networks from OSPF advertisement.</p>
+
+<p style="margin-top: 15px;"><strong>Scenario:</strong> We want to prevent <strong>192.168.2.0/24</strong> (S-A's loopback) from being advertised to Area 0.</p>
+
+<p style="margin-top: 15px;"><strong>Step 4.1: Create Prefix-List on Core-1</strong></p>
+<div class="code-block">Core-1(config)# ! Create prefix-list to identify network to filter
+Core-1(config)# ip prefix-list FILTER_SA_NETWORK seq 5 deny 192.168.2.0/24
+Core-1(config)# ip prefix-list FILTER_SA_NETWORK seq 10 permit 0.0.0.0/0 le 32
+Core-1(config)#
+Core-1(config)# ! Explanation:
+Core-1(config)# ! seq 5: DENY 192.168.2.0/24 (S-A's loopback)
+Core-1(config)# ! seq 10: PERMIT all other routes (0.0.0.0/0 le 32 = any route)</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.2: Create Route-Map on Core-1</strong></p>
+<div class="code-block">Core-1(config)# ! Create route-map using the prefix-list
+Core-1(config)# route-map OSPF_FILTER_IN deny 10
+Core-1(config-route-map)# match ip address prefix-list FILTER_SA_NETWORK
+Core-1(config-route-map)# exit
+Core-1(config)#
+Core-1(config)# route-map OSPF_FILTER_IN permit 20
+Core-1(config-route-map)# exit
+Core-1(config)#
+Core-1(config)# ! Explanation:
+Core-1(config)# ! Sequence 10: DENY routes matching FILTER_SA_NETWORK (192.168.2.0/24)
+Core-1(config)# ! Sequence 20: PERMIT all other routes</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.3: Apply Route-Map to OSPF</strong></p>
+<div class="code-block">Core-1(config)# router ospf 1
+Core-1(config-router)# ! Apply route-map to filter routes from Area 1 into Area 0
+Core-1(config-router)# distribute-list route-map OSPF_FILTER_IN in
+Core-1(config-router)# exit
+
+! Explanation:
+! - "distribute-list route-map OSPF_FILTER_IN in"
+! - Filters routes ENTERING the routing table from OSPF
+! - 192.168.2.0/24 will be filtered from Core-1's routing table</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 4 - Route Filtering:</strong>
+<div class="code-block" style="margin-top: 10px;">! On Core-1 - Verify prefix-list
+Core-1# show ip prefix-list FILTER_SA_NETWORK
+! Should show deny 192.168.2.0/24 and permit 0.0.0.0/0 le 32
+
+! On Core-1 - Verify route-map
+Core-1# show route-map OSPF_FILTER_IN
+! Should show the route-map with prefix-list match
+
+! On Core-1 - Check routing table
+Core-1# show ip route ospf | include 192.168.2
+! Should NOT show 192.168.2.0/24 (filtered)
+
+! On Core-1 - Check OSPF database
+Core-1# show ip ospf database | include 192.168.2
+! May still appear in OSPF database (LSA) but not in routing table
+
+! On S-A - Verify route is still advertised
+S-A# show ip route | include 192.168.2
+! Should still show 192.168.2.0/24 (only filtered on Core-1)</div>
+</div>
+
+<div class="alert alert-warning">
+<strong>⚠️ Important Note - Filtering Behavior:</strong><br>
+• <strong>distribute-list in:</strong> Filters routes from entering the routing table (local router only)<br>
+• <strong>distribute-list out:</strong> Filters routes from being advertised to neighbors<br>
+• The filtered route (192.168.2.0/24) still exists in OSPF LSDB but won't be installed in Core-1's routing table
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 5: Alternative Filtering - Filter at ABR (Advanced)</div>
+<p><strong>Objective:</strong> Filter routes at the ABR boundary to prevent Type 3 LSA generation.</p>
+
+<p style="margin-top: 15px;"><strong>Scenario:</strong> Prevent <strong>192.168.3.0/24</strong> (S-Z's loopback) from being advertised into Area 0.</p>
+
+<p style="margin-top: 15px;"><strong>Step 5.1: Configure Area Filtering on Core-1</strong></p>
+<div class="code-block">Core-1(config)# ! Create prefix-list for S-Z's network
+Core-1(config)# ip prefix-list FILTER_SZ_NETWORK seq 5 deny 192.168.3.0/24
+Core-1(config)# ip prefix-list FILTER_SZ_NETWORK seq 10 permit 0.0.0.0/0 le 32
+Core-1(config)#
+Core-1(config)# ! Apply filter at ABR boundary (Area 1 to Area 0)
+Core-1(config)# router ospf 1
+Core-1(config-router)# area 1 filter-list prefix FILTER_SZ_NETWORK in
+Core-1(config-router)# exit
+
+! Explanation:
+! - "area 1 filter-list prefix FILTER_SZ_NETWORK in"
+! - Filters Type 3 LSAs coming FROM Area 1 INTO Area 0
+! - This is ABR-specific filtering (only works on ABRs)</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Difference: distribute-list vs area filter-list:</strong><br>
+<strong>distribute-list:</strong><br>
+• Filters routes from entering local routing table<br>
+• LSAs still exist in OSPF database<br>
+• Works on any OSPF router<br><br>
+<strong>area filter-list:</strong><br>
+• Prevents Type 3 LSA generation at ABR boundary<br>
+• LSAs are NOT created/advertised to other areas<br>
+• Only works on ABRs (Area Border Routers)
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 5:</strong>
+<div class="code-block" style="margin-top: 10px;">! On Core-1 - Check routing table
+Core-1# show ip route ospf | include 192.168.3
+! Should NOT show 192.168.3.0/24 (filtered at ABR)
+
+! On Core-1 - Check OSPF database for Type 3 LSAs
+Core-1# show ip ospf database summary | include 192.168.3
+! Should NOT show Type 3 LSA for 192.168.3.0/24
+
+! On S-Z - Verify route is still in Area 1
+S-Z# show ip route | include 192.168.3
+! Should still show 192.168.3.0/24 (only filtered from Area 0)</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 6: Complete Verification</div>
+<p><strong>Objective:</strong> Verify all OSPF features including virtual link and filtering.</p>
+
+<p style="margin-top: 15px;"><strong>Step 6.1: Verify Virtual Link Status</strong></p>
+<div class="code-block">S-A# show ip ospf virtual-links
+
+Virtual Link OSPF_VL0 to router 3.3.3.3 is up
+  Run as demand circuit
+  DoNotAge LSA allowed.
+  Transit area 1, via interface GigabitEthernet0/0
+  Topology-MTID    Cost    Disabled    Shutdown      Topology Name
+        0           1         no          no            Base
+  Transmit Delay is 1 sec, State POINT_TO_POINT,
+  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.2: Verify Virtual Link Status</strong></p>
+<div class="code-block">S-Z# show ip ospf virtual-links
+
+Virtual Link OSPF_VL0 to router 2.2.2.2 is up
+  Run as demand circuit
+  DoNotAge LSA allowed.
+  Transit area 1, via interface GigabitEthernet0/0
+  Topology-MTID    Cost    Disabled    Shutdown      Topology Name
+        0           1         no          no            Base
+  Transmit Delay is 1 sec, State POINT_TO_POINT,
+  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.3: Test End-to-End Connectivity</strong></p>
+<div class="code-block">! From B-1 (Area 2) to Core-1 (Area 0)
+B-1# ping 192.168.1.1 source 192.168.4.1
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.168.1.1, timeout is 2 seconds:
+Packet sent with a source address of 192.168.4.1
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms
+
+! Traceroute to see path
+B-1# traceroute 192.168.1.1 source 192.168.4.1
+  1 203.18.63.5 1 msec 1 msec 1 msec    ! S-Z
+  2 203.18.62.1 1 msec 1 msec 1 msec    ! S-A
+  3 192.168.1.1 1 msec *  1 msec        ! Core-1 (via virtual link)</div>
+
+<div class="section-title">📄 Complete Device Configurations</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Complete Configurations:</strong> Copy-paste ready configurations for all devices.
+</div>
+
+<p style="margin-top: 15px;"><strong>Core-1 Complete Configuration:</strong></p>
+<div class="code-block">hostname Core-1
+!
+interface GigabitEthernet0/0
+ description ** Link to S-A - Area 0/1 Boundary **
+ ip address 203.18.61.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** Core-1 Internal Network - Area 0 **
+ ip address 192.168.1.1 255.255.255.0
+!
+! Prefix-list for filtering S-A's network
+ip prefix-list FILTER_SA_NETWORK seq 5 deny 192.168.2.0/24
+ip prefix-list FILTER_SA_NETWORK seq 10 permit 0.0.0.0/0 le 32
+!
+! Prefix-list for filtering S-Z's network at ABR
+ip prefix-list FILTER_SZ_NETWORK seq 5 deny 192.168.3.0/24
+ip prefix-list FILTER_SZ_NETWORK seq 10 permit 0.0.0.0/0 le 32
+!
+! Route-map for distribute-list filtering
+route-map OSPF_FILTER_IN deny 10
+ match ip address prefix-list FILTER_SA_NETWORK
+!
+route-map OSPF_FILTER_IN permit 20
+!
+router ospf 1
+ router-id 1.1.1.1
+ log-adjacency-changes
+ area 1 filter-list prefix FILTER_SZ_NETWORK in
+ passive-interface Loopback0
+ network 192.168.1.0 0.0.0.255 area 0
+ network 203.18.61.0 0.0.0.3 area 1
+ distribute-list route-map OSPF_FILTER_IN in
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>S-A Complete Configuration:</strong></p>
+<div class="code-block">hostname S-A
+!
+interface GigabitEthernet0/0
+ description ** Link to Core-1 - Area 1 **
+ ip address 203.18.61.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ** Link to S-Z - Area 1 **
+ ip address 203.18.62.1 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** S-A Internal Network - Area 1 **
+ ip address 192.168.2.1 255.255.255.0
+!
+router ospf 1
+ router-id 2.2.2.2
+ log-adjacency-changes
+ passive-interface Loopback0
+ area 1 virtual-link 3.3.3.3
+ network 203.18.61.0 0.0.0.3 area 1
+ network 203.18.62.0 0.0.0.3 area 1
+ network 192.168.2.0 0.0.0.255 area 1
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>S-Z Complete Configuration:</strong></p>
+<div class="code-block">hostname S-Z
+!
+interface GigabitEthernet0/1
+ description ** Link to S-A - Area 1 **
+ ip address 203.18.62.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet1/0
+ description ** Link to B-1 - Area 2 **
+ ip address 203.18.63.5 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** S-Z Internal Network - Area 1 **
+ ip address 192.168.3.1 255.255.255.0
+!
+router ospf 1
+ router-id 3.3.3.3
+ log-adjacency-changes
+ area 1 virtual-link 2.2.2.2
+ passive-interface Loopback0
+ network 203.18.62.0 0.0.0.3 area 1
+ network 192.168.3.0 0.0.0.255 area 1
+ network 203.18.63.4 0.0.0.3 area 2
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>B-1 Complete Configuration:</strong></p>
+<div class="code-block">hostname B-1
+!
+interface GigabitEthernet1/0
+ description ** Link to S-Z - Area 2 **
+ ip address 203.18.63.6 255.255.255.252
+ no shutdown
+!
+interface Loopback0
+ description ** B-1 Internal Network - Area 2 **
+ ip address 192.168.4.1 255.255.255.0
+!
+router ospf 1
+ router-id 4.4.4.4
+ log-adjacency-changes
+ passive-interface Loopback0
+ network 203.18.63.4 0.0.0.3 area 2
+ network 192.168.4.0 0.0.0.255 area 2
+!
+end</div>
+
+<div class="section-title">✅ Lab Verification Checklist</div>
+
+<ul class="checklist">
+<li>☐ All interfaces up/up (show ip interface brief)</li>
+<li>☐ Ping connectivity between direct neighbors</li>
+<li>☐ OSPF process running on all routers</li>
+<li>☐ Explicit Router IDs configured</li>
+<li>☐ OSPF neighbors in FULL state</li>
+<li>☐ <strong>Virtual link UP between Core-1 and S-Z</strong></li>
+<li>☐ <strong>Virtual link neighbor appears in "show ip ospf neighbor"</strong></li>
+<li>☐ <strong>B-1 can see Area 0 routes (192.168.1.0/24)</strong></li>
+<li>☐ <strong>Core-1 can see Area 2 routes (192.168.4.0/24)</strong></li>
+<li>☐ <strong>192.168.2.0/24 filtered from Core-1 routing table</strong></li>
+<li>☐ <strong>192.168.3.0/24 filtered at ABR (not in Area 0)</strong></li>
+<li>☐ Prefix-lists configured correctly</li>
+<li>☐ Route-maps configured and applied</li>
+<li>☐ End-to-end ping successful (B-1 to Core-1)</li>
+<li>☐ Traceroute shows path through virtual link</li>
+<li>☐ No OSPF errors in logs</li>
+</ul>
+
+<div class="section-title">🔍 Verification Commands Reference</div>
+
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>show ip ospf virtual-links</strong></td>
+<td>Verify virtual link status and state</td>
+</tr>
+<tr>
+<td><strong>show ip ospf neighbor</strong></td>
+<td>Verify OSPF adjacencies (including virtual link)</td>
+</tr>
+<tr>
+<td><strong>show ip ospf border-routers</strong></td>
+<td>View ABR information and reachability</td>
+</tr>
+<tr>
+<td><strong>show ip route ospf</strong></td>
+<td>View OSPF routes (check filtering)</td>
+</tr>
+<tr>
+<td><strong>show ip prefix-list</strong></td>
+<td>Verify prefix-list configuration and matches</td>
+</tr>
+<tr>
+<td><strong>show route-map</strong></td>
+<td>Verify route-map configuration</td>
+</tr>
+<tr>
+<td><strong>show ip ospf database summary</strong></td>
+<td>View Type 3 LSAs (inter-area routes)</td>
+</tr>
+<tr>
+<td><strong>show ip protocols</strong></td>
+<td>View OSPF configuration and filters</td>
+</tr>
+<tr>
+<td><strong>debug ip ospf adj</strong></td>
+<td>Debug OSPF adjacency formation</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🔧 Troubleshooting Guide</div>
+
+<div class="alert alert-danger">
+<strong>⚠️ Common Issues:</strong> Systematic troubleshooting for virtual links and filtering.
+</div>
+
+<p><strong>Issue 1: Virtual Link Not Coming Up</strong></p>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Virtual link down</td>
+<td>Incorrect Router IDs</td>
+<td>Verify Router IDs match configuration (show ip ospf)</td>
+</tr>
+<tr>
+<td>Virtual link not forming</td>
+<td>Transit area mismatch</td>
+<td>Both sides must use same transit area number</td>
+</tr>
+<tr>
+<td>Virtual link unreachable</td>
+<td>No connectivity through transit area</td>
+<td>Verify OSPF in transit area (Area 1) is working</td>
+</tr>
+<tr>
+<td>Virtual link neighbor missing</td>
+<td>Transit area is stub</td>
+<td>Transit area CANNOT be stub/NSSA</td>
+</tr>
+</tbody>
+</table>
+
+<p style="margin-top: 15px;"><strong>Virtual Link Troubleshooting Commands:</strong></p>
+<div class="code-block">! Check virtual link status
+show ip ospf virtual-links
+
+! Verify Router IDs
+show ip ospf | include Router ID
+
+! Check OSPF neighbors (virtual link appears as neighbor)
+show ip ospf neighbor
+
+! Check ABR status
+show ip ospf border-routers
+
+! Enable debugging
+debug ip ospf adj
+debug ip ospf virtual-links
+
+! Disable debugging
+undebug all</div>
+
+<p style="margin-top: 15px;"><strong>Issue 2: Route Filtering Not Working</strong></p>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Route still appears</td>
+<td>Prefix-list not matching</td>
+<td>Verify prefix-list with "show ip prefix-list"</td>
+</tr>
+<tr>
+<td>All routes filtered</td>
+<td>Missing permit statement</td>
+<td>Add "permit 0.0.0.0/0 le 32" to prefix-list</td>
+</tr>
+<tr>
+<td>Filter not applied</td>
+<td>distribute-list not configured</td>
+<td>Verify with "show ip protocols"</td>
+</tr>
+<tr>
+<td>ABR filter not working</td>
+<td>Wrong area specified</td>
+<td>Check area number in filter-list command</td>
+</tr>
+</tbody>
+</table>
+
+<p style="margin-top: 15px;"><strong>Filtering Troubleshooting Commands:</strong></p>
+<div class="code-block">! Check prefix-list matches
+show ip prefix-list FILTER_SA_NETWORK
+show ip prefix-list detail
+
+! Verify route-map
+show route-map OSPF_FILTER_IN
+
+! Check if filters are applied
+show ip protocols | section ospf
+
+! View routing table
+show ip route ospf
+
+! Check OSPF database
+show ip ospf database summary
+
+! Test prefix-list match
+show ip prefix-list FILTER_SA_NETWORK 192.168.2.1</div>
+
+<p style="margin-top: 15px;"><strong>Issue 3: Area 2 Cannot Reach Area 0</strong></p>
+<div class="code-block">! On B-1 (Area 2)
+B-1# show ip route ospf
+! Should see Area 0 routes
+
+! If missing, check virtual link on S-Z
+S-Z# show ip ospf virtual-links
+! Must be UP
+
+! Check S-Z is ABR for both Area 1 and Area 2
+S-Z# show ip ospf | include Area
+
+! Verify Area 1 is normal area (not stub)
+Core-1# show ip ospf | include Area
+S-Z# show ip ospf | include Area
+
+! Check OSPF database on S-Z
+S-Z# show ip ospf database
+! Should see LSAs from all areas</div>
+
+<div class="section-title">🎓 Key Learning Points</div>
+
+<p><strong>1. OSPF Virtual Links</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Purpose:</strong> Connect areas that cannot directly reach Area 0</li>
+<li><strong>Requirement:</strong> Must transit through a normal area (not stub)</li>
+<li><strong>Configuration:</strong> Uses Router IDs, not IP addresses</li>
+<li><strong>Topology:</strong> Logical tunnel between two ABRs</li>
+<li><strong>Best Practice:</strong> Virtual links are temporary solutions - redesign topology if possible</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>2. OSPF Route Filtering</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>distribute-list in:</strong> Filters routes from entering routing table (local)</li>
+<li><strong>distribute-list out:</strong> Filters routes from being advertised</li>
+<li><strong>area filter-list:</strong> Prevents Type 3 LSA creation at ABR (inter-area)</li>
+<li>Prefix-lists provide flexible matching (exact, range, subnet)</li>
+<li>Route-maps add conditional logic to filtering</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>3. Prefix-Lists</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Syntax:</strong> <code>ip prefix-list NAME [seq #] {permit|deny} A.B.C.D/length [le #] [ge #]</code></li>
+<li><strong>le (less than or equal):</strong> Match up to specified prefix length</li>
+<li><strong>ge (greater than or equal):</strong> Match from specified prefix length</li>
+<li><strong>0.0.0.0/0 le 32:</strong> Matches any route (any prefix, any length)</li>
+<li>Processed sequentially (like ACLs)</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>4. Route-Maps</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li>Provide if-then-else logic for routing policies</li>
+<li>Can match prefix-lists, ACLs, route-types, metrics</li>
+<li>Can set metrics, tags, next-hop, etc.</li>
+<li>Used with distribute-list for advanced filtering</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>5. OSPF Area Design Rules</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Rule 1:</strong> All areas must connect to Area 0 (directly or via virtual link)</li>
+<li><strong>Rule 2:</strong> Area 0 must be contiguous (no partitioning)</li>
+<li><strong>Rule 3:</strong> Transit areas for virtual links cannot be stub</li>
+<li><strong>Rule 4:</strong> ABRs generate Type 3 LSAs between areas</li>
+</ul>
+
+<div class="section-title">🚀 Advanced Topics</div>
+
+<p><strong>1. Virtual Link Authentication</strong></p>
+<div class="code-block">! Add MD5 authentication to virtual link
+Core-1(config-router)# area 1 virtual-link 3.3.3.3 authentication message-digest
+Core-1(config-router)# area 1 virtual-link 3.3.3.3 message-digest-key 1 md5 SECRET_KEY
+
+! On S-Z
+S-Z(config-router)# area 1 virtual-link 1.1.1.1 authentication message-digest
+S-Z(config-router)# area 1 virtual-link 1.1.1.1 message-digest-key 1 md5 SECRET_KEY</div>
+
+<p style="margin-top: 15px;"><strong>2. Advanced Prefix-List Examples</strong></p>
+<div class="code-block">! Match specific network
+ip prefix-list EXACT seq 5 permit 192.168.1.0/24
+
+! Match any /24 subnet in 10.0.0.0/8
+ip prefix-list RANGE seq 5 permit 10.0.0.0/8 ge 24 le 24
+
+! Match any subnet from /24 to /30 in 172.16.0.0/12
+ip prefix-list SUBNET seq 5 permit 172.16.0.0/12 ge 24 le 30
+
+! Match default route only
+ip prefix-list DEFAULT seq 5 permit 0.0.0.0/0
+
+! Match all routes except default
+ip prefix-list NO_DEFAULT seq 5 deny 0.0.0.0/0
+ip prefix-list NO_DEFAULT seq 10 permit 0.0.0.0/0 le 32</div>
+
+<p style="margin-top: 15px;"><strong>3. Multiple Virtual Links</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li>Can have multiple virtual links through different transit areas</li>
+<li>Provides redundancy for Area 0 connectivity</li>
+<li>Each virtual link requires separate configuration</li>
+</ul>
+
+<div class="section-title">📖 Lab Summary</div>
+
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Configuration</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Network Topology</strong></td>
+<td>4 routers, 3 OSPF areas (broken backbone)</td>
+<td>✅ Configured</td>
+</tr>
+<tr>
+<td><strong>Virtual Link</strong></td>
+<td>Core-1 ↔ S-Z through Area 1</td>
+<td>✅ Working</td>
+</tr>
+<tr>
+<td><strong>Route Filtering</strong></td>
+<td>Prefix-list + Route-map + Area filter</td>
+<td>✅ Active</td>
+</tr>
+<tr>
+<td><strong>Filtered Networks</strong></td>
+<td>192.168.2.0/24, 192.168.3.0/24</td>
+<td>✅ Filtered</td>
+</tr>
+<tr>
+<td><strong>Area 2 Connectivity</strong></td>
+<td>Reaches Area 0 via virtual link</td>
+<td>✅ Verified</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-success" style="text-align: center; padding: 30px; margin-top: 20px;">
+<h2 style="color: #28a745; margin-bottom: 15px;">🎉 Lab 13.2 Completed!</h2>
+<p style="font-size: 1.2em;"><strong>OSPF Virtual Links & Advanced Filtering</strong></p>
+<p style="margin-top: 15px;">Skills Mastered: Virtual Links | Broken Backbone Fix | Prefix-Lists | Route-Maps | ABR Filtering</p>
+<p style="margin-top: 10px; font-weight: bold; color: #667eea;">CCNP ENARSI - Expert Level Lab</p>
+</div>
+
+<div class="section-title">🔖 Quick Reference Card</div>
+
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Configure Virtual Link</strong></td>
+<td><code>area [transit-area] virtual-link [router-id]</code></td>
+</tr>
+<tr>
+<td><strong>Create Prefix-List</strong></td>
+<td><code>ip prefix-list NAME seq # {permit|deny} A.B.C.D/len</code></td>
+</tr>
+<tr>
+<td><strong>Create Route-Map</strong></td>
+<td><code>route-map NAME {permit|deny} [seq]</code></td>
+</tr>
+<tr>
+<td><strong>Match Prefix-List</strong></td>
+<td><code>match ip address prefix-list NAME</code></td>
+</tr>
+<tr>
+<td><strong>Apply Distribute-List</strong></td>
+<td><code>distribute-list route-map NAME {in|out}</code></td>
+</tr>
+<tr>
+<td><strong>ABR Area Filter</strong></td>
+<td><code>area X filter-list prefix NAME {in|out}</code></td>
+</tr>
+<tr>
+<td><strong>Show Virtual Links</strong></td>
+<td><code>show ip ospf virtual-links</code></td>
+</tr>
+<tr>
+<td><strong>Show Prefix-List</strong></td>
+<td><code>show ip prefix-list [NAME]</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<script>
+const MASTER_PASSWORD = "CCNP@2026";
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+let isUnlocked = false;
+let sessionTimer = null;
+
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+});
+
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+}
+}
+
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+}
+
+function lockPage() {
+isUnlocked = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+function initializeProtection() {
+document.getElementById('protectedHeader').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('protectedBody').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('protectedFooter').addEventListener('contextmenu', e => e.preventDefault());
+}
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => !isUnlocked && e.preventDefault());
+document.addEventListener('copy', e => !isUnlocked && e.preventDefault());
+document.addEventListener('cut', e => !isUnlocked && e.preventDefault());
+document.addEventListener('keydown', function(e) {
+if (e.keyCode === 123 || 
+(e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) ||
+(e.ctrlKey && e.keyCode === 85)) {
+e.preventDefault();
+return false;
+}
+if (e.ctrlKey && e.keyCode === 83 && !isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+});
+
+if (self !== top) {
+top.location = self.location;
+}
+</script>
+
+</body>
+</html>

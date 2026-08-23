@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 13.1 - OSPF Multi-Area with Route Summarization - CCNP Lab</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1200px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+white-space: pre-wrap;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+width: 100%;
+max-width: 900px;
+margin: 20px auto;
+display: block;
+border: 2px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #667eea;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #667eea;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<div id="protectedBody" class="protected-element">
+<div class="content-wrapper">
+
+<div class="lab-title">🔧 Lab 13.1 - OSPF Multi-Area with Route Summarization</div>
+<div class="lab-description">Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) - OSPF Implementation, Authentication & Summarization</div>
+
+<div class="lab-metadata">
+<strong>Lab Focus:</strong> OSPF Multi-Area Design, MD5 Authentication, Route Summarization, ABR Configuration | Password Protected<br>
+<strong>Duration:</strong> 120-150 minutes | <strong>Difficulty Level:</strong> Advanced | <strong>Lab Version:</strong> 2.0<br>
+<strong>CCNP Exam Topics:</strong> 350-401 ENCOR (3.2), 300-410 ENARSI (2.4-2.6)
+</div>
+
+<div class="section-title">🎯 Lab Objective</div>
+<p>This comprehensive CCNP-level lab covers OSPF multi-area design with route summarization. You will configure Area 0 as the backbone connecting to Area 1 and Area 2, implement MD5 authentication, and configure route summarization at ABR boundaries to reduce routing overhead.</p>
+
+<p style="margin-top: 15px;"><strong>Upon completion, you will master:</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li>OSPF multi-area design with Area 0, Area 1, and Area 2</li>
+<li>Area Border Router (ABR) configuration on Core-1 and Core-2</li>
+<li>OSPF MD5 authentication for secure routing updates</li>
+<li><strong>OSPF route summarization at ABR boundaries (NEW FEATURE)</strong></li>
+<li>Inter-area routing with Type 3 LSAs</li>
+<li>OSPF verification and troubleshooting techniques</li>
+</ul>
+
+<div class="section-title">🗺️ Network Topology</div>
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-13.1.jpg" alt="Lab 13.1 Network Topology" class="topology-image">
+
+<p style="margin-top: 15px;"><strong>Topology Description:</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Core-1 & Core-2:</strong> Backbone routers in Area 0 (ABRs)</li>
+<li><strong>Site-1:</strong> Remote site in Area 1 (connected to Core-1)</li>
+<li><strong>Site-2:</strong> Remote site in Area 2 (connected to Core-2)</li>
+<li><strong>Design:</strong> Hub-and-spoke with Area 0 as central backbone</li>
+</ul>
+
+<div class="alert alert-info">
+<strong>ℹ️ Enhanced Design Note:</strong> This lab uses standard OSPF areas (Area 0, 1, 2) instead of higher numbers, demonstrating proper enterprise design. Route summarization is configured at ABR boundaries to minimize Type 3 LSA flooding.
+</div>
+
+<div class="section-title">📋 Device Information</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Role</th>
+<th>OSPF Areas</th>
+<th>Router ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Core-1</strong></td>
+<td>ABR (Area Border Router)</td>
+<td>Area 0, Area 1</td>
+<td>1.1.1.1</td>
+</tr>
+<tr>
+<td><strong>Core-2</strong></td>
+<td>ABR (Area Border Router)</td>
+<td>Area 0, Area 2</td>
+<td>2.2.2.2</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>Remote Site Router</td>
+<td>Area 1</td>
+<td>11.11.11.11</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>Remote Site Router</td>
+<td>Area 2</td>
+<td>22.22.22.22</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🌐 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet Mask</th>
+<th>Connected To</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Core-1</strong></td>
+<td>G0/0</td>
+<td>203.18.61.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>Core-2 G0/0</td>
+</tr>
+<tr>
+<td><strong>Core-1</strong></td>
+<td>G0/1</td>
+<td>203.18.62.1</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-1 G0/1</td>
+</tr>
+<tr>
+<td><strong>Core-1</strong></td>
+<td>Loopback0</td>
+<td>192.168.1.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internal Network</td>
+</tr>
+<tr>
+<td><strong>Core-2</strong></td>
+<td>G0/0</td>
+<td>203.18.61.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>Core-1 G0/0</td>
+</tr>
+<tr>
+<td><strong>Core-2</strong></td>
+<td>G1/0</td>
+<td>203.18.62.5</td>
+<td>255.255.255.252 (/30)</td>
+<td>Site-2 G1/0</td>
+</tr>
+<tr>
+<td><strong>Core-2</strong></td>
+<td>Loopback0</td>
+<td>192.168.2.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internal Network</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>G0/1</td>
+<td>203.18.62.2</td>
+<td>255.255.255.252 (/30)</td>
+<td>Core-1 G0/1</td>
+</tr>
+<tr>
+<td><strong>Site-1</strong></td>
+<td>Loopback0</td>
+<td>192.168.11.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internal Network</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>G1/0</td>
+<td>203.18.62.6</td>
+<td>255.255.255.252 (/30)</td>
+<td>Core-2 G1/0</td>
+</tr>
+<tr>
+<td><strong>Site-2</strong></td>
+<td>Loopback0</td>
+<td>192.168.22.1</td>
+<td>255.255.255.0 (/24)</td>
+<td>Internal Network</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🔌 Cable Connection Summary</div>
+<table>
+<thead>
+<tr>
+<th>Connection</th>
+<th>Network Subnet</th>
+<th>Purpose</th>
+<th>OSPF Area</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Core-1 (G0/0) ↔ Core-2 (G0/0)</td>
+<td>203.18.61.0/30</td>
+<td>Backbone Link</td>
+<td>Area 0</td>
+</tr>
+<tr>
+<td>Core-1 (G0/1) ↔ Site-1 (G0/1)</td>
+<td>203.18.62.0/30</td>
+<td>Area 1 Connection</td>
+<td>Area 1</td>
+</tr>
+<tr>
+<td>Core-2 (G1/0) ↔ Site-2 (G1/0)</td>
+<td>203.18.62.4/30</td>
+<td>Area 2 Connection</td>
+<td>Area 2</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🏗️ OSPF Design Architecture</div>
+<table>
+<thead>
+<tr>
+<th>OSPF Area</th>
+<th>Type</th>
+<th>Routers</th>
+<th>Networks</th>
+<th>Summary Routes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Area 0</strong></td>
+<td>Backbone</td>
+<td>Core-1, Core-2</td>
+<td>203.18.61.0/30<br>192.168.1.0/24<br>192.168.2.0/24</td>
+<td>None (backbone)</td>
+</tr>
+<tr>
+<td><strong>Area 1</strong></td>
+<td>Standard</td>
+<td>Core-1 (ABR), Site-1</td>
+<td>203.18.62.0/30<br>192.168.11.0/24</td>
+<td>192.168.11.0/24 → Summarized by Core-1</td>
+</tr>
+<tr>
+<td><strong>Area 2</strong></td>
+<td>Standard</td>
+<td>Core-2 (ABR), Site-2</td>
+<td>203.18.62.4/30<br>192.168.22.0/24</td>
+<td>192.168.22.0/24 → Summarized by Core-2</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-warning">
+<strong>⚠️ Route Summarization Strategy:</strong><br>
+• Core-1 (ABR) summarizes Area 1 routes: <strong>192.168.11.0/24</strong><br>
+• Core-2 (ABR) summarizes Area 2 routes: <strong>192.168.22.0/24</strong><br>
+• Reduces Type 3 LSAs in Area 0<br>
+• Improves scalability and reduces routing table size
+</div>
+
+<div class="section-title">⚙️ Lab Configuration Tasks</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Configuration Sequence:</strong> Complete tasks in order. Verify each step before proceeding.
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 1: Basic Interface Configuration</div>
+<p><strong>Objective:</strong> Configure all interfaces with correct IP addressing.</p>
+
+<p style="margin-top: 15px;"><strong>Step 1.1: Configure Core-1</strong></p>
+<div class="code-block">Core-1(config)# hostname Core-1
+Core-1(config)#
+Core-1(config)# interface GigabitEthernet0/0
+Core-1(config-if)# description ** Link to Core-2 - Area 0 **
+Core-1(config-if)# ip address 203.18.61.1 255.255.255.252
+Core-1(config-if)# no shutdown
+Core-1(config-if)# exit
+Core-1(config)#
+Core-1(config)# interface GigabitEthernet0/1
+Core-1(config-if)# description ** Link to Site-1 - Area 1 **
+Core-1(config-if)# ip address 203.18.62.1 255.255.255.252
+Core-1(config-if)# no shutdown
+Core-1(config-if)# exit
+Core-1(config)#
+Core-1(config)# interface Loopback0
+Core-1(config-if)# description ** Core-1 Internal Network **
+Core-1(config-if)# ip address 192.168.1.1 255.255.255.0
+Core-1(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.2: Configure Core-2</strong></p>
+<div class="code-block">Core-2(config)# hostname Core-2
+Core-2(config)#
+Core-2(config)# interface GigabitEthernet0/0
+Core-2(config-if)# description ** Link to Core-1 - Area 0 **
+Core-2(config-if)# ip address 203.18.61.2 255.255.255.252
+Core-2(config-if)# no shutdown
+Core-2(config-if)# exit
+Core-2(config)#
+Core-2(config)# interface GigabitEthernet1/0
+Core-2(config-if)# description ** Link to Site-2 - Area 2 **
+Core-2(config-if)# ip address 203.18.62.5 255.255.255.252
+Core-2(config-if)# no shutdown
+Core-2(config-if)# exit
+Core-2(config)#
+Core-2(config)# interface Loopback0
+Core-2(config-if)# description ** Core-2 Internal Network **
+Core-2(config-if)# ip address 192.168.2.1 255.255.255.0
+Core-2(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.3: Configure Site-1</strong></p>
+<div class="code-block">Site-1(config)# hostname Site-1
+Site-1(config)#
+Site-1(config)# interface GigabitEthernet0/1
+Site-1(config-if)# description ** Link to Core-1 **
+Site-1(config-if)# ip address 203.18.62.2 255.255.255.252
+Site-1(config-if)# no shutdown
+Site-1(config-if)# exit
+Site-1(config)#
+Site-1(config)# interface Loopback0
+Site-1(config-if)# description ** Site-1 Internal Network **
+Site-1(config-if)# ip address 192.168.11.1 255.255.255.0
+Site-1(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 1.4: Configure Site-2</strong></p>
+<div class="code-block">Site-2(config)# hostname Site-2
+Site-2(config)#
+Site-2(config)# interface GigabitEthernet1/0
+Site-2(config-if)# description ** Link to Core-2 **
+Site-2(config-if)# ip address 203.18.62.6 255.255.255.252
+Site-2(config-if)# no shutdown
+Site-2(config-if)# exit
+Site-2(config)#
+Site-2(config)# interface Loopback0
+Site-2(config-if)# description ** Site-2 Internal Network **
+Site-2(config-if)# ip address 192.168.22.1 255.255.255.0
+Site-2(config-if)# exit</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 1:</strong>
+<div class="code-block" style="margin-top: 10px;">Core-1# show ip interface brief
+Core-1# ping 203.18.61.2
+Core-1# ping 203.18.62.2</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 2: Configure OSPF with Multi-Area Design</div>
+<p><strong>Objective:</strong> Configure OSPF Process 1 with proper area assignments.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ Area Design:</strong><br>
+• <strong>Area 0:</strong> Backbone (Core-1 ↔ Core-2)<br>
+• <strong>Area 1:</strong> Site-1 networks (connected via Core-1 ABR)<br>
+• <strong>Area 2:</strong> Site-2 networks (connected via Core-2 ABR)
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.1: Configure Core-1 (ABR for Area 0 and Area 1)</strong></p>
+<div class="code-block">Core-1(config)# router ospf 1
+Core-1(config-router)# router-id 1.1.1.1
+Core-1(config-router)# log-adjacency-changes
+Core-1(config-router)#
+Core-1(config-router)# ! Area 0 Networks
+Core-1(config-router)# network 203.18.61.0 0.0.0.3 area 0
+Core-1(config-router)# network 192.168.1.0 0.0.0.255 area 0
+Core-1(config-router)#
+Core-1(config-router)# ! Area 1 Networks
+Core-1(config-router)# network 203.18.62.0 0.0.0.3 area 1
+Core-1(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.2: Configure Core-2 (ABR for Area 0 and Area 2)</strong></p>
+<div class="code-block">Core-2(config)# router ospf 1
+Core-2(config-router)# router-id 2.2.2.2
+Core-2(config-router)# log-adjacency-changes
+Core-2(config-router)#
+Core-2(config-router)# ! Area 0 Networks
+Core-2(config-router)# network 203.18.61.0 0.0.0.3 area 0
+Core-2(config-router)# network 192.168.2.0 0.0.0.255 area 0
+Core-2(config-router)#
+Core-2(config-router)# ! Area 2 Networks
+Core-2(config-router)# network 203.18.62.4 0.0.0.3 area 2
+Core-2(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.3: Configure Site-1 (Area 1)</strong></p>
+<div class="code-block">Site-1(config)# router ospf 1
+Site-1(config-router)# router-id 11.11.11.11
+Site-1(config-router)# log-adjacency-changes
+Site-1(config-router)#
+Site-1(config-router)# ! Area 1 Networks
+Site-1(config-router)# network 203.18.62.0 0.0.0.3 area 1
+Site-1(config-router)# network 192.168.11.0 0.0.0.255 area 1
+Site-1(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.4: Configure Site-2 (Area 2)</strong></p>
+<div class="code-block">Site-2(config)# router ospf 1
+Site-2(config-router)# router-id 22.22.22.22
+Site-2(config-router)# log-adjacency-changes
+Site-2(config-router)#
+Site-2(config-router)# ! Area 2 Networks
+Site-2(config-router)# network 203.18.62.4 0.0.0.3 area 2
+Site-2(config-router)# network 192.168.22.0 0.0.0.255 area 2
+Site-2(config-router)# exit</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 2:</strong>
+<div class="code-block" style="margin-top: 10px;">Core-1# show ip ospf neighbor
+Core-1# show ip ospf interface brief
+Core-1# show ip route ospf
+
+! Expected: Core-1 has neighbors in Area 0 (Core-2) and Area 1 (Site-1)</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 3: Configure OSPF MD5 Authentication</div>
+<p><strong>Objective:</strong> Secure OSPF routing updates with MD5 authentication per area.</p>
+
+<div class="alert alert-danger">
+<strong>⚠️ Security Critical:</strong> OSPF without authentication is vulnerable to routing attacks. Always implement authentication in production.
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.1: Configure Area 0 Authentication (Core-1 & Core-2)</strong></p>
+
+<p><strong>Core-1:</strong></p>
+<div class="code-block">Core-1(config)# router ospf 1
+Core-1(config-router)# area 0 authentication message-digest
+Core-1(config-router)# exit
+Core-1(config)#
+Core-1(config)# interface GigabitEthernet0/0
+Core-1(config-if)# ip ospf message-digest-key 1 md5 CCNP_Area0_Secure
+Core-1(config-if)# exit</div>
+
+<p><strong>Core-2:</strong></p>
+<div class="code-block">Core-2(config)# router ospf 1
+Core-2(config-router)# area 0 authentication message-digest
+Core-2(config-router)# exit
+Core-2(config)#
+Core-2(config)# interface GigabitEthernet0/0
+Core-2(config-if)# ip ospf message-digest-key 1 md5 CCNP_Area0_Secure
+Core-2(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.2: Configure Area 1 Authentication (Core-1 & Site-1)</strong></p>
+
+<p><strong>Core-1:</strong></p>
+<div class="code-block">Core-1(config)# router ospf 1
+Core-1(config-router)# area 1 authentication message-digest
+Core-1(config-router)# exit
+Core-1(config)#
+Core-1(config)# interface GigabitEthernet0/1
+Core-1(config-if)# ip ospf message-digest-key 1 md5 Area1_Secure_Key
+Core-1(config-if)# exit</div>
+
+<p><strong>Site-1:</strong></p>
+<div class="code-block">Site-1(config)# router ospf 1
+Site-1(config-router)# area 1 authentication message-digest
+Site-1(config-router)# exit
+Site-1(config)#
+Site-1(config)# interface GigabitEthernet0/1
+Site-1(config-if)# ip ospf message-digest-key 1 md5 Area1_Secure_Key
+Site-1(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.3: Configure Area 2 Authentication (Core-2 & Site-2)</strong></p>
+
+<p><strong>Core-2:</strong></p>
+<div class="code-block">Core-2(config)# router ospf 1
+Core-2(config-router)# area 2 authentication message-digest
+Core-2(config-router)# exit
+Core-2(config)#
+Core-2(config)# interface GigabitEthernet1/0
+Core-2(config-if)# ip ospf message-digest-key 1 md5 Area2_Secure_Key
+Core-2(config-if)# exit</div>
+
+<p><strong>Site-2:</strong></p>
+<div class="code-block">Site-2(config)# router ospf 1
+Site-2(config-router)# area 2 authentication message-digest
+Site-2(config-router)# exit
+Site-2(config)#
+Site-2(config)# interface GigabitEthernet1/0
+Site-2(config-if)# ip ospf message-digest-key 1 md5 Area2_Secure_Key
+Site-2(config-if)# exit</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 3:</strong>
+<div class="code-block" style="margin-top: 10px;">Core-1# show ip ospf interface | include authentication
+Core-1# show ip ospf neighbor
+
+! Expected: "Message digest authentication enabled" on all OSPF interfaces</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 4: Configure Route Summarization (NEW FEATURE)</div>
+<p><strong>Objective:</strong> Configure route summarization at ABR boundaries to reduce Type 3 LSA flooding.</p>
+
+<div class="alert alert-warning">
+<strong>⚠️ Route Summarization Benefits:</strong><br>
+• Reduces routing table size<br>
+• Minimizes Type 3 LSA propagation<br>
+• Improves network scalability<br>
+• Faster SPF convergence<br>
+• Configured on ABRs only
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.1: Configure Route Summarization on Core-1 (ABR)</strong></p>
+<div class="code-block">Core-1(config)# router ospf 1
+Core-1(config-router)# ! Summarize Area 1 routes into Area 0
+Core-1(config-router)# area 1 range 192.168.11.0 255.255.255.0
+Core-1(config-router)# exit
+
+! Explanation:
+! - Summarizes all Area 1 subnets (192.168.11.0/24)
+! - Advertises single Type 3 LSA to Area 0
+! - Reduces LSA flooding in backbone</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.2: Configure Route Summarization on Core-2 (ABR)</strong></p>
+<div class="code-block">Core-2(config)# router ospf 1
+Core-2(config-router)# ! Summarize Area 2 routes into Area 0
+Core-2(config-router)# area 2 range 192.168.22.0 255.255.255.0
+Core-2(config-router)# exit
+
+! Explanation:
+! - Summarizes all Area 2 subnets (192.168.22.0/24)
+! - Advertises single Type 3 LSA to Area 0
+! - Reduces LSA flooding in backbone</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Route Summarization Verification:</strong><br>
+Before summarization: Each /24 subnet generates separate Type 3 LSA<br>
+After summarization: Single summary route (Type 3 LSA) advertised to Area 0<br>
+Command: <code>show ip ospf database summary</code>
+</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 4:</strong>
+<div class="code-block" style="margin-top: 10px;">Core-1# show ip ospf database summary
+Core-2# show ip route ospf
+Site-1# show ip route ospf
+
+! On Core-2, verify you see summarized route 192.168.11.0/24 (from Area 1)
+! On Site-1, verify you see summarized route 192.168.22.0/24 (from Area 2)</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 5: OSPF Optimization</div>
+<p><strong>Objective:</strong> Optimize OSPF for faster convergence and reduced overhead.</p>
+
+<p style="margin-top: 15px;"><strong>Step 5.1: Configure Point-to-Point Network Type</strong></p>
+<div class="code-block">! Core-1
+Core-1(config)# interface GigabitEthernet0/0
+Core-1(config-if)# ip ospf network point-to-point
+Core-1(config-if)# exit
+Core-1(config)# interface GigabitEthernet0/1
+Core-1(config-if)# ip ospf network point-to-point
+Core-1(config-if)# exit
+
+! Core-2
+Core-2(config)# interface GigabitEthernet0/0
+Core-2(config-if)# ip ospf network point-to-point
+Core-2(config-if)# exit
+Core-2(config)# interface GigabitEthernet1/0
+Core-2(config-if)# ip ospf network point-to-point
+Core-2(config-if)# exit
+
+! Site-1
+Site-1(config)# interface GigabitEthernet0/1
+Site-1(config-if)# ip ospf network point-to-point
+Site-1(config-if)# exit
+
+! Site-2
+Site-2(config)# interface GigabitEthernet1/0
+Site-2(config-if)# ip ospf network point-to-point
+Site-2(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.2: Configure Passive Interfaces</strong></p>
+<div class="code-block">! Core-1
+Core-1(config)# router ospf 1
+Core-1(config-router)# passive-interface Loopback0
+Core-1(config-router)# exit
+
+! Core-2
+Core-2(config)# router ospf 1
+Core-2(config-router)# passive-interface Loopback0
+Core-2(config-router)# exit
+
+! Site-1
+Site-1(config)# router ospf 1
+Site-1(config-router)# passive-interface Loopback0
+Site-1(config-router)# exit
+
+! Site-2
+Site-2(config)# router ospf 1
+Site-2(config-router)# passive-interface Loopback0
+Site-2(config-router)# exit</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 5:</strong>
+<div class="code-block" style="margin-top: 10px;">Core-1# show ip ospf interface brief
+Core-1# show ip protocols | section Passive</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 6: Complete Verification</div>
+<p><strong>Objective:</strong> Verify full OSPF operation with summarization.</p>
+
+<p style="margin-top: 15px;"><strong>Step 6.1: Verify OSPF Neighbors</strong></p>
+<div class="code-block">Core-1# show ip ospf neighbor
+
+! Expected Output:
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           0   FULL/  -        00:00:35    203.18.61.2     GigabitEthernet0/0
+11.11.11.11       0   FULL/  -        00:00:36    203.18.62.2     GigabitEthernet0/1</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.2: Verify OSPF Routing Table</strong></p>
+<div class="code-block">Core-1# show ip route ospf
+
+! Expected: See summarized routes from other areas
+O IA  192.168.2.0/24 [110/2] via 203.18.61.2, GigabitEthernet0/0
+O IA  192.168.22.0/24 [110/3] via 203.18.61.2, GigabitEthernet0/0
+O     192.168.11.0/24 [110/2] via 203.18.62.2, GigabitEthernet0/1</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.3: Verify Route Summarization</strong></p>
+<div class="code-block">Core-1# show ip ospf database summary
+
+! Verify Type 3 LSAs show summarized routes
+! Should see 192.168.11.0/24 summarized for Area 1
+
+Core-2# show ip route ospf | include 192.168.11
+
+! Should see summarized route 192.168.11.0/24 from Core-1</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.4: Test End-to-End Connectivity</strong></p>
+<div class="code-block">Site-1# ping 192.168.22.1 source 192.168.11.1
+Site-1# traceroute 192.168.22.1 source 192.168.11.1
+
+! Should successfully ping across areas via Area 0 backbone</div>
+
+<div class="section-title">📄 Complete Device Configurations</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Complete Configurations:</strong> Copy-paste ready configurations for all devices.
+</div>
+
+<p style="margin-top: 15px;"><strong>Core-1 Complete Configuration:</strong></p>
+<div class="code-block">hostname Core-1
+!
+interface GigabitEthernet0/0
+ description ** Link to Core-2 - Area 0 **
+ ip address 203.18.61.1 255.255.255.252
+ ip ospf message-digest-key 1 md5 CCNP_Area0_Secure
+ ip ospf network point-to-point
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ** Link to Site-1 - Area 1 **
+ ip address 203.18.62.1 255.255.255.252
+ ip ospf message-digest-key 1 md5 Area1_Secure_Key
+ ip ospf network point-to-point
+ no shutdown
+!
+interface Loopback0
+ description ** Core-1 Internal Network **
+ ip address 192.168.1.1 255.255.255.0
+!
+router ospf 1
+ router-id 1.1.1.1
+ log-adjacency-changes
+ area 0 authentication message-digest
+ area 1 authentication message-digest
+ area 1 range 192.168.11.0 255.255.255.0
+ passive-interface Loopback0
+ network 203.18.61.0 0.0.0.3 area 0
+ network 192.168.1.0 0.0.0.255 area 0
+ network 203.18.62.0 0.0.0.3 area 1
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Core-2 Complete Configuration:</strong></p>
+<div class="code-block">hostname Core-2
+!
+interface GigabitEthernet0/0
+ description ** Link to Core-1 - Area 0 **
+ ip address 203.18.61.2 255.255.255.252
+ ip ospf message-digest-key 1 md5 CCNP_Area0_Secure
+ ip ospf network point-to-point
+ no shutdown
+!
+interface GigabitEthernet1/0
+ description ** Link to Site-2 - Area 2 **
+ ip address 203.18.62.5 255.255.255.252
+ ip ospf message-digest-key 1 md5 Area2_Secure_Key
+ ip ospf network point-to-point
+ no shutdown
+!
+interface Loopback0
+ description ** Core-2 Internal Network **
+ ip address 192.168.2.1 255.255.255.0
+!
+router ospf 1
+ router-id 2.2.2.2
+ log-adjacency-changes
+ area 0 authentication message-digest
+ area 2 authentication message-digest
+ area 2 range 192.168.22.0 255.255.255.0
+ passive-interface Loopback0
+ network 203.18.61.0 0.0.0.3 area 0
+ network 192.168.2.0 0.0.0.255 area 0
+ network 203.18.62.4 0.0.0.3 area 2
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Site-1 Complete Configuration:</strong></p>
+<div class="code-block">hostname Site-1
+!
+interface GigabitEthernet0/1
+ description ** Link to Core-1 **
+ ip address 203.18.62.2 255.255.255.252
+ ip ospf message-digest-key 1 md5 Area1_Secure_Key
+ ip ospf network point-to-point
+ no shutdown
+!
+interface Loopback0
+ description ** Site-1 Internal Network **
+ ip address 192.168.11.1 255.255.255.0
+!
+router ospf 1
+ router-id 11.11.11.11
+ log-adjacency-changes
+ area 1 authentication message-digest
+ passive-interface Loopback0
+ network 203.18.62.0 0.0.0.3 area 1
+ network 192.168.11.0 0.0.0.255 area 1
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>Site-2 Complete Configuration:</strong></p>
+<div class="code-block">hostname Site-2
+!
+interface GigabitEthernet1/0
+ description ** Link to Core-2 **
+ ip address 203.18.62.6 255.255.255.252
+ ip ospf message-digest-key 1 md5 Area2_Secure_Key
+ ip ospf network point-to-point
+ no shutdown
+!
+interface Loopback0
+ description ** Site-2 Internal Network **
+ ip address 192.168.22.1 255.255.255.0
+!
+router ospf 1
+ router-id 22.22.22.22
+ log-adjacency-changes
+ area 2 authentication message-digest
+ passive-interface Loopback0
+ network 203.18.62.4 0.0.0.3 area 2
+ network 192.168.22.0 0.0.0.255 area 2
+!
+end</div>
+
+<div class="section-title">✅ Lab Verification Checklist</div>
+
+<ul class="checklist">
+<li>☐ All interfaces up/up (show ip interface brief)</li>
+<li>☐ Ping connectivity between neighbors verified</li>
+<li>☐ OSPF process running on all routers</li>
+<li>☐ Explicit Router IDs configured (1.1.1.1, 2.2.2.2, 11.11.11.11, 22.22.22.22)</li>
+<li>☐ OSPF area assignments correct (Area 0, 1, 2)</li>
+<li>☐ All OSPF neighbors in FULL state</li>
+<li>☐ MD5 authentication enabled on all OSPF interfaces</li>
+<li>☐ Point-to-point network type configured</li>
+<li>☐ Passive interfaces configured (Loopbacks)</li>
+<li>☐ <strong>Route summarization configured on ABRs (NEW)</strong></li>
+<li>☐ <strong>Summary routes visible in OSPF database (NEW)</strong></li>
+<li>☐ All remote networks in routing table</li>
+<li>☐ Inter-area routes (O IA) present</li>
+<li>☐ End-to-end ping successful (Site-1 to Site-2)</li>
+<li>☐ Traceroute shows correct path via Area 0</li>
+<li>☐ No OSPF errors in logs</li>
+</ul>
+
+<div class="section-title">🔍 Verification Commands Reference</div>
+
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>show ip ospf neighbor</strong></td>
+<td>Verify OSPF adjacencies</td>
+</tr>
+<tr>
+<td><strong>show ip ospf interface brief</strong></td>
+<td>View OSPF-enabled interfaces</td>
+</tr>
+<tr>
+<td><strong>show ip route ospf</strong></td>
+<td>View OSPF routes</td>
+</tr>
+<tr>
+<td><strong>show ip ospf database summary</strong></td>
+<td>View Type 3 LSAs (summarization)</td>
+</tr>
+<tr>
+<td><strong>show ip ospf border-routers</strong></td>
+<td>View ABR information</td>
+</tr>
+<tr>
+<td><strong>show ip protocols</strong></td>
+<td>View OSPF configuration</td>
+</tr>
+<tr>
+<td><strong>show ip ospf</strong></td>
+<td>View OSPF process details</td>
+</tr>
+<tr>
+<td><strong>show ip ospf interface | include auth</strong></td>
+<td>Verify authentication status</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🔧 Troubleshooting Guide</div>
+
+<div class="alert alert-danger">
+<strong>⚠️ Common Issues:</strong> Use systematic approach to identify and resolve problems.
+</div>
+
+<p><strong>Issue 1: OSPF Neighbors Not Forming</strong></p>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Neighbor stuck in INIT</td>
+<td>Area mismatch</td>
+<td>Verify both sides have same area ID</td>
+</tr>
+<tr>
+<td>Authentication failure</td>
+<td>Password mismatch</td>
+<td>Verify MD5 keys match exactly (case-sensitive)</td>
+</tr>
+<tr>
+<td>Hello/Dead timer mismatch</td>
+<td>Different timers configured</td>
+<td>Ensure timers match on both sides</td>
+</tr>
+<tr>
+<td>MTU mismatch</td>
+<td>Different MTU values</td>
+<td>Use "ip ospf mtu-ignore" or adjust MTU</td>
+</tr>
+</tbody>
+</table>
+
+<p style="margin-top: 15px;"><strong>Troubleshooting Commands:</strong></p>
+<div class="code-block">! Check neighbor status
+show ip ospf neighbor
+
+! Detailed interface info
+show ip ospf interface GigabitEthernet0/0
+
+! Enable debugging (use carefully!)
+debug ip ospf adj
+debug ip ospf hello
+
+! Check for errors
+show logging | include OSPF
+
+! Disable debugging
+undebug all</div>
+
+<p style="margin-top: 15px;"><strong>Issue 2: Route Summarization Not Working</strong></p>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Summary route not advertised</td>
+<td>Not configured on ABR</td>
+<td>Configure "area X range" on ABR only</td>
+</tr>
+<tr>
+<td>Individual routes still visible</td>
+<td>Wrong area specified</td>
+<td>Verify area number in range command</td>
+</tr>
+<tr>
+<td>Summary route with wrong mask</td>
+<td>Incorrect subnet mask</td>
+<td>Verify mask covers all subnets</td>
+</tr>
+</tbody>
+</table>
+
+<p style="margin-top: 15px;"><strong>Summarization Verification:</strong></p>
+<div class="code-block">! On ABR (Core-1 or Core-2)
+show ip ospf database summary
+
+! Verify summary route
+show ip route ospf | include 192.168
+
+! Check ABR configuration
+show run | section router ospf</div>
+
+<p style="margin-top: 15px;"><strong>Issue 3: Missing Routes in Routing Table</strong></p>
+<div class="code-block">! Check OSPF is advertising networks
+show ip protocols
+
+! View OSPF database
+show ip ospf database
+
+! Check for filters
+show ip prefix-list
+show route-map
+
+! Verify area configuration
+show ip ospf interface brief</div>
+
+<div class="section-title">🎓 Key Learning Points</div>
+
+<p><strong>1. OSPF Multi-Area Design</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Area 0 (Backbone):</strong> Central transit area, all other areas connect to it</li>
+<li><strong>ABR (Area Border Router):</strong> Connects multiple areas, generates Type 3 LSAs</li>
+<li><strong>Inter-Area Routing:</strong> Uses Type 3 Summary LSAs between areas</li>
+<li>Each area maintains separate LSDB, reduces SPF calculations</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>2. Route Summarization (Key Feature)</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Purpose:</strong> Reduces routing table size and Type 3 LSA flooding</li>
+<li><strong>Configuration:</strong> <code>area X range A.B.C.D mask</code> (on ABR only)</li>
+<li><strong>Benefits:</strong> Faster convergence, reduced memory, improved scalability</li>
+<li><strong>Best Practice:</strong> Summarize at ABR boundaries</li>
+<li>Creates Null0 route on ABR to prevent routing loops</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>3. OSPF Authentication</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>MD5 Authentication:</strong> Secure cryptographic hash</li>
+<li><strong>Area-level:</strong> <code>area X authentication message-digest</code></li>
+<li><strong>Interface-level:</strong> <code>ip ospf message-digest-key ID md5 PASSWORD</code></li>
+<li>Different keys per area enhances security</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>4. OSPF Optimization</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Point-to-Point:</strong> No DR/BDR election, faster convergence</li>
+<li><strong>Passive Interface:</strong> Prevents unnecessary Hello packets</li>
+<li><strong>Explicit Router IDs:</strong> Prevents topology changes</li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>5. OSPF LSA Types</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Type 1 (Router LSA):</strong> Flooded within area only</li>
+<li><strong>Type 2 (Network LSA):</strong> Generated by DR on broadcast segments</li>
+<li><strong>Type 3 (Summary LSA):</strong> Generated by ABR for inter-area routes</li>
+<li>Summarization reduces number of Type 3 LSAs</li>
+</ul>
+
+<div class="section-title">🚀 Advanced Topics</div>
+
+<p><strong>1. Stub Areas</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li>Blocks Type 5 LSAs (external routes)</li>
+<li>Uses default route for external destinations</li>
+<li>Configuration: <code>area X stub</code></li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>2. Advanced Summarization</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li>Summary route calculation: Find common bits</li>
+<li>Null0 route prevents loops</li>
+<li>Can suppress advertisement: <code>not-advertise</code></li>
+</ul>
+
+<p style="margin-top: 15px;"><strong>3. Virtual Links</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li>Connect non-contiguous Area 0</li>
+<li>Logical tunnel through transit area</li>
+<li>Configuration: <code>area X virtual-link router-id</code></li>
+</ul>
+
+<div class="section-title">📖 Lab Summary</div>
+
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Configuration</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Network Topology</strong></td>
+<td>4 routers, 3 OSPF areas</td>
+<td>✅ Configured</td>
+</tr>
+<tr>
+<td><strong>OSPF Areas</strong></td>
+<td>Area 0, Area 1, Area 2</td>
+<td>✅ Configured</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>MD5 (3 different keys)</td>
+<td>✅ Secured</td>
+</tr>
+<tr>
+<td><strong>Route Summarization</strong></td>
+<td>ABR summarization enabled</td>
+<td>✅ Optimized</td>
+</tr>
+<tr>
+<td><strong>ABRs</strong></td>
+<td>Core-1, Core-2</td>
+<td>✅ Configured</td>
+</tr>
+<tr>
+<td><strong>Optimization</strong></td>
+<td>Point-to-Point, Passive interfaces</td>
+<td>✅ Optimized</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-success" style="text-align: center; padding: 30px; margin-top: 20px;">
+<h2 style="color: #28a745; margin-bottom: 15px;">🎉 Lab 13.1 Completed!</h2>
+<p style="font-size: 1.2em;"><strong>OSPF Multi-Area with Route Summarization</strong></p>
+<p style="margin-top: 15px;">Skills Mastered: Multi-Area Design | MD5 Authentication | Route Summarization | ABR Configuration</p>
+<p style="margin-top: 10px; font-weight: bold; color: #667eea;">CCNP Enterprise Track - Advanced Lab Series</p>
+</div>
+
+<div class="section-title">🔖 Quick Reference Card</div>
+
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Enable OSPF</strong></td>
+<td><code>router ospf [process-id]</code></td>
+</tr>
+<tr>
+<td><strong>Set Router ID</strong></td>
+<td><code>router-id X.X.X.X</code></td>
+</tr>
+<tr>
+<td><strong>Add Network</strong></td>
+<td><code>network A.B.C.D wildcard area X</code></td>
+</tr>
+<tr>
+<td><strong>Enable Area Auth</strong></td>
+<td><code>area X authentication message-digest</code></td>
+</tr>
+<tr>
+<td><strong>Set MD5 Key</strong></td>
+<td><code>ip ospf message-digest-key ID md5 PASSWORD</code></td>
+</tr>
+<tr>
+<td><strong>Summarize Routes</strong></td>
+<td><code>area X range A.B.C.D mask</code></td>
+</tr>
+<tr>
+<td><strong>Set Network Type</strong></td>
+<td><code>ip ospf network point-to-point</code></td>
+</tr>
+<tr>
+<td><strong>Passive Interface</strong></td>
+<td><code>passive-interface [interface]</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">This content is password-protected and cannot be edited without authorization.</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Authorized Use Only | Strict Access Control Enabled</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<script>
+const MASTER_PASSWORD = "CCNP@2026";
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+let isUnlocked = false;
+let sessionTimer = null;
+
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+});
+
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+}
+}
+
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+}
+
+function lockPage() {
+isUnlocked = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+function initializeProtection() {
+document.getElementById('protectedHeader').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('protectedBody').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('protectedFooter').addEventListener('contextmenu', e => e.preventDefault());
+}
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => !isUnlocked && e.preventDefault());
+document.addEventListener('copy', e => !isUnlocked && e.preventDefault());
+document.addEventListener('cut', e => !isUnlocked && e.preventDefault());
+document.addEventListener('keydown', function(e) {
+if (e.keyCode === 123 || 
+(e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) ||
+(e.ctrlKey && e.keyCode === 85)) {
+e.preventDefault();
+return false;
+}
+if (e.ctrlKey && e.keyCode === 83 && !isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+});
+
+if (self !== top) {
+top.location = self.location;
+}
+</script>
+
+</body>
+</html>
