@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 14.2 - IS-IS Advanced Configuration - CCNP Lab</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: #333;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 20px;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+header {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+padding: 40px 20px;
+text-align: center;
+max-width: 1400px;
+margin: 0 auto 20px auto;
+border-radius: 8px;
+}
+
+header h1 {
+font-size: 2.5em;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 1.1em;
+opacity: 0.9;
+}
+
+.content-wrapper {
+background: white;
+max-width: 1400px;
+margin: 0 auto 20px auto;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lab-title {
+color: #1e3c72;
+font-size: 2em;
+margin-bottom: 10px;
+}
+
+.lab-description {
+color: #667eea;
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 15px;
+}
+
+.lab-metadata {
+background: #f8f9fa;
+padding: 15px;
+border-left: 4px solid #667eea;
+margin: 20px 0;
+border-radius: 4px;
+}
+
+.section-title {
+color: #1e3c72;
+font-size: 1.5em;
+margin-top: 25px;
+margin-bottom: 15px;
+border-bottom: 2px solid #667eea;
+padding-bottom: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+}
+
+table th {
+background: #667eea;
+color: white;
+padding: 12px;
+text-align: left;
+}
+
+table td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+background-color: #f5f5f5;
+}
+
+.code-block {
+background: #1e3c72;
+color: #00ff00;
+padding: 15px;
+border-radius: 5px;
+font-family: 'Courier New', monospace;
+margin: 15px 0;
+overflow-x: auto;
+white-space: pre-wrap;
+}
+
+.alert {
+padding: 15px;
+margin: 15px 0;
+border-radius: 5px;
+}
+
+.alert-danger {
+background-color: #f8d7da;
+border-left: 4px solid #dc3545;
+color: #721c24;
+}
+
+.alert-success {
+background-color: #d4edda;
+border-left: 4px solid #28a745;
+color: #155724;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border-left: 4px solid #17a2b8;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border-left: 4px solid #ffc107;
+color: #856404;
+}
+
+.checklist {
+list-style: none;
+padding: 0;
+}
+
+.checklist li {
+padding: 10px;
+margin: 5px 0;
+background: #f8f9fa;
+border-radius: 4px;
+}
+
+.topology-image {
+width: 100%;
+max-width: 1100px;
+margin: 20px auto;
+display: block;
+border: 2px solid #667eea;
+border-radius: 8px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+footer {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+color: white;
+text-align: center;
+padding: 30px 20px;
+margin-top: 40px;
+border-top: 3px solid #667eea;
+max-width: 1400px;
+margin-left: auto;
+margin-right: auto;
+border-radius: 8px;
+}
+
+footer h3 {
+font-size: 1.3em;
+margin-bottom: 10px;
+color: #fff;
+font-weight: bold;
+}
+
+footer p {
+margin: 5px 0;
+font-size: 0.95em;
+}
+
+footer .company-name {
+font-weight: bold;
+font-size: 1.1em;
+color: #667eea;
+margin-top: 15px;
+}
+
+footer .footer-divider {
+width: 60px;
+height: 2px;
+background: #667eea;
+margin: 15px auto;
+}
+
+.password-modal {
+display: none;
+position: fixed;
+z-index: 10000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(5px);
+}
+
+.password-modal.show {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal-content {
+background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+max-width: 400px;
+width: 90%;
+text-align: center;
+color: white;
+border: 3px solid #667eea;
+}
+
+.modal-content h2 {
+margin-bottom: 20px;
+font-size: 1.8em;
+color: #fff;
+}
+
+.modal-content p {
+margin-bottom: 20px;
+font-size: 1em;
+}
+
+.modal-content input {
+width: 100%;
+padding: 12px;
+margin: 15px 0;
+border: 2px solid #667eea;
+border-radius: 5px;
+font-size: 1em;
+background: white;
+color: #333;
+}
+
+.modal-content input:focus {
+outline: none;
+border-color: #00ff00;
+box-shadow: 0 0 10px #667eea;
+}
+
+.modal-content button {
+padding: 12px 30px;
+margin: 10px 5px;
+background: #667eea;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.modal-content button:hover {
+background: #764ba2;
+transform: scale(1.05);
+}
+
+.modal-content button.cancel {
+background: #dc3545;
+}
+
+.modal-content button.cancel:hover {
+background: #c82333;
+}
+
+.error-message {
+color: #ff6b6b;
+font-weight: bold;
+margin-top: 10px;
+display: none;
+}
+
+.protected-element {
+position: relative;
+}
+
+.protection-indicator {
+position: absolute;
+top: 5px;
+right: 5px;
+background: #667eea;
+color: white;
+padding: 3px 8px;
+border-radius: 3px;
+font-size: 0.8em;
+opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<div id="passwordModal" class="password-modal">
+<div class="modal-content">
+<h2>🔐 Access Denied</h2>
+<p>This page is password protected</p>
+<p>Enter your master password to view/edit content</p>
+<input type="password" id="passwordInput" placeholder="Enter Master Password" onkeypress="if(event.key==='Enter') verifyPassword()">
+<button onclick="verifyPassword()">🔓 Unlock</button>
+<button class="cancel" onclick="lockPage()">🔒 Lock</button>
+<div class="error-message" id="errorMsg">❌ Incorrect Password - Access Denied!</div>
+</div>
+</div>
+
+<header class="protected-element" id="protectedHeader">
+<h1>🌐 CCNP Foundational Networking Labs</h1>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Training</p>
+<p style="margin-top: 10px; font-size: 0.9em;">Enterprise Network Foundation - Laboratory Setup & Configuration Guides</p>
+<div class="protection-indicator">🔒 Protected</div>
+</header>
+
+<div id="protectedBody" class="protected-element">
+<div class="content-wrapper">
+
+<div class="lab-title">🔧 Lab 14.2 - IS-IS Advanced Configuration</div>
+<div class="lab-description">Cisco CCNP 350-401 (ENCOR) - IS-IS Optimization, Authentication & Tuning</div>
+
+<div class="lab-metadata">
+<strong>Lab Focus:</strong> IS-IS Advanced Features: Authentication, Metrics, Timers, Passive Interfaces, Route Leaking | Password Protected<br>
+<strong>Duration:</strong> 120-150 minutes | <strong>Difficulty Level:</strong> Advanced | <strong>Lab Version:</strong> 1.0<br>
+<strong>CCNP Exam Topics:</strong> 350-401 ENCOR (3.3) - IS-IS Advanced Configuration<br>
+<strong>Prerequisites:</strong> Completion of Lab 14.1 (Basic IS-IS Configuration)
+</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Lab Objective:</strong><br>
+This advanced lab builds upon Lab 14.1 by implementing IS-IS security features (authentication), metric manipulation, interface optimization, timer tuning, passive interfaces, and route leaking between levels. You will configure production-grade IS-IS deployments with security and performance optimizations.
+</div>
+
+<div class="section-title">🎯 Lab Learning Outcomes</div>
+<p>Upon completion of this lab, you will master:</p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>IS-IS Authentication:</strong> Interface and area-level security</li>
+<li><strong>Metric Manipulation:</strong> Controlling path selection with custom metrics</li>
+<li><strong>Passive Interfaces:</strong> Optimizing routing updates on loopback/LAN segments</li>
+<li><strong>Timer Optimization:</strong> Hello intervals and hold timers for faster convergence</li>
+<li><strong>Route Leaking:</strong> Redistributing specific routes between Level 1 and Level 2</li>
+<li><strong>Interface Priority:</strong> DIS (Designated IS) election manipulation</li>
+<li><strong>Wide Metrics:</strong> Supporting large-scale networks with 24-bit metrics</li>
+<li><strong>Advanced Troubleshooting:</strong> Debugging IS-IS authentication and adjacency issues</li>
+</ul>
+
+<div class="section-title">🗺️ Network Topology</div>
+<img src="https://f005.backblazeb2.com/file/CCNPLabPic/Lab-14.1.jpg" alt="Lab 14.2 Network Topology" class="topology-image">
+
+<p style="margin-top: 15px;"><strong>Topology Description:</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Same topology as Lab 14.1</strong> with advanced IS-IS features</li>
+<li><strong>Core Routers (C-1, C-2, C-3):</strong> Backbone with authentication and metric tuning</li>
+<li><strong>Site Routers (S-1, S-2, S-3):</strong> Edge routers with passive interfaces and route leaking</li>
+<li><strong>Security:</strong> IS-IS authentication on all links</li>
+<li><strong>Optimization:</strong> Custom metrics, timers, and passive interfaces</li>
+</ul>
+
+<div class="alert alert-warning">
+<strong>⚠️ Lab 14.2 Enhancements Over Lab 14.1:</strong><br>
+• <strong>Authentication:</strong> MD5 authentication on all IS-IS adjacencies<br>
+• <strong>Metrics:</strong> Custom wide metrics for traffic engineering<br>
+• <strong>Passive Interfaces:</strong> Loopback interfaces configured as passive<br>
+• <strong>Timers:</strong> Optimized hello/hold timers for faster convergence<br>
+• <strong>Route Leaking:</strong> Specific Level 2 routes leaked into Level 1 areas<br>
+• <strong>Production Ready:</strong> Enterprise-grade IS-IS deployment
+</div>
+
+<div class="section-title">📋 Device Information</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Role</th>
+<th>IS-IS Level</th>
+<th>Area</th>
+<th>System ID</th>
+<th>Authentication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>C-1</strong></td>
+<td>Core Router</td>
+<td>Level 2</td>
+<td>Backbone</td>
+<td>0000.0000.0001</td>
+<td>MD5 (cisco123)</td>
+</tr>
+<tr>
+<td><strong>C-2</strong></td>
+<td>Core Router / ABR</td>
+<td>Level 1-2</td>
+<td>49.0001 / Backbone</td>
+<td>0000.0000.0002</td>
+<td>MD5 (cisco123/secure456)</td>
+</tr>
+<tr>
+<td><strong>C-3</strong></td>
+<td>Core Router / ABR</td>
+<td>Level 1-2</td>
+<td>49.0002 / Backbone</td>
+<td>0000.0000.0003</td>
+<td>MD5 (cisco123/secure789)</td>
+</tr>
+<tr>
+<td><strong>S-1</strong></td>
+<td>Site Router</td>
+<td>Level 1</td>
+<td>49.0002</td>
+<td>0000.0000.0004</td>
+<td>MD5 (secure789)</td>
+</tr>
+<tr>
+<td><strong>S-2</strong></td>
+<td>Site Router</td>
+<td>Level 1</td>
+<td>49.0002</td>
+<td>0000.0000.0005</td>
+<td>MD5 (secure789)</td>
+</tr>
+<tr>
+<td><strong>S-3</strong></td>
+<td>Site Router</td>
+<td>Level 1</td>
+<td>49.0001</td>
+<td>0000.0000.0006</td>
+<td>MD5 (secure456)</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🌐 IP Addressing Table</div>
+<table>
+<thead>
+<tr>
+<th>Connection</th>
+<th>Device 1</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Device 2</th>
+<th>Interface</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Link 1</td>
+<td>C-1</td>
+<td>G0/0</td>
+<td>203.18.61.1</td>
+<td>C-2</td>
+<td>G0/0</td>
+<td>203.18.61.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 2</td>
+<td>C-1</td>
+<td>G0/1</td>
+<td>203.18.62.1</td>
+<td>C-3</td>
+<td>G0/1</td>
+<td>203.18.62.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 3</td>
+<td>C-2</td>
+<td>G1/0</td>
+<td>203.18.63.1</td>
+<td>C-3</td>
+<td>G1/0</td>
+<td>203.18.63.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 4</td>
+<td>C-2</td>
+<td>G1/1</td>
+<td>203.18.64.1</td>
+<td>S-3</td>
+<td>G1/1</td>
+<td>203.18.64.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 5</td>
+<td>C-3</td>
+<td>G0/0</td>
+<td>203.18.65.1</td>
+<td>S-1</td>
+<td>G0/0</td>
+<td>203.18.65.2</td>
+<td>/30</td>
+</tr>
+<tr>
+<td>Link 6</td>
+<td>C-3</td>
+<td>G1/1</td>
+<td>203.18.66.1</td>
+<td>S-2</td>
+<td>G1/1</td>
+<td>203.18.66.2</td>
+<td>/30</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🔌 Loopback Networks</div>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Loopback0</th>
+<th>Subnet Mask</th>
+<th>Purpose</th>
+<th>Passive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>C-1</strong></td>
+<td>192.168.1.1</td>
+<td>255.255.255.0</td>
+<td>Core network identification</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>C-2</strong></td>
+<td>192.168.2.1</td>
+<td>255.255.255.0</td>
+<td>Core network identification</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>C-3</strong></td>
+<td>192.168.3.1</td>
+<td>255.255.255.0</td>
+<td>Core network identification</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>S-1</strong></td>
+<td>192.168.4.1</td>
+<td>255.255.255.0</td>
+<td>Site network identification</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>S-2</strong></td>
+<td>192.168.5.1</td>
+<td>255.255.255.0</td>
+<td>Site network identification</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>S-3</strong></td>
+<td>192.168.6.1</td>
+<td>255.255.255.0</td>
+<td>Site network identification</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">🔐 IS-IS Authentication Design</div>
+<table>
+<thead>
+<tr>
+<th>Area/Level</th>
+<th>Authentication Type</th>
+<th>Password</th>
+<th>Applied To</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Level 2 (Backbone)</strong></td>
+<td>MD5</td>
+<td>cisco123</td>
+<td>C-1 ↔ C-2, C-1 ↔ C-3, C-2 ↔ C-3</td>
+</tr>
+<tr>
+<td><strong>Area 49.0001 (Level 1)</strong></td>
+<td>MD5</td>
+<td>secure456</td>
+<td>C-2 ↔ S-3</td>
+</tr>
+<tr>
+<td><strong>Area 49.0002 (Level 1)</strong></td>
+<td>MD5</td>
+<td>secure789</td>
+<td>C-3 ↔ S-1, C-3 ↔ S-2</td>
+</tr>
+</tbody>
+</table>
+
+<div class="section-title">⚙️ Lab Configuration Tasks Overview</div>
+
+<div class="alert alert-info">
+<strong>ℹ️ Prerequisites:</strong> This lab assumes Lab 14.1 basic IS-IS configuration is complete. If not, configure basic IS-IS first.
+</div>
+
+<p style="margin-top: 15px;"><strong>Configuration Tasks:</strong></p>
+<ul style="margin-left: 30px; margin-top: 10px;">
+<li><strong>Task 1:</strong> Complete Basic IS-IS Configuration (from Lab 14.1)</li>
+<li><strong>Task 2:</strong> Configure IS-IS Authentication</li>
+<li><strong>Task 3:</strong> Configure Passive Interfaces</li>
+<li><strong>Task 4:</strong> Configure IS-IS Metrics (Wide Metrics)</li>
+<li><strong>Task 5:</strong> Optimize IS-IS Timers</li>
+<li><strong>Task 6:</strong> Configure Route Leaking</li>
+<li><strong>Task 7:</strong> Complete Verification and Testing</li>
+</ul>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 1: Complete Basic IS-IS Configuration</div>
+<p><strong>Objective:</strong> Ensure basic IS-IS from Lab 14.1 is configured and operational.</p>
+
+<div class="alert alert-warning">
+<strong>⚠️ Important:</strong> If you completed Lab 14.1, skip to Task 2. If not, use these quick configurations to establish basic IS-IS.
+</div>
+
+<p style="margin-top: 15px;"><strong>Quick Basic IS-IS Configuration (All Routers):</strong></p>
+
+<div class="code-block">! ========================================
+! C-1 Basic Configuration
+! ========================================
+hostname C-1
+!
+interface GigabitEthernet0/0
+ ip address 203.18.61.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface GigabitEthernet0/1
+ ip address 203.18.62.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface Loopback0
+ ip address 192.168.1.1 255.255.255.0
+ ip router isis CORE
+!
+router isis CORE
+ net 49.0000.0000.0000.0001.00
+ is-type level-2-only
+!
+! ========================================
+! C-2 Basic Configuration
+! ========================================
+hostname C-2
+!
+interface GigabitEthernet0/0
+ ip address 203.18.61.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface GigabitEthernet1/0
+ ip address 203.18.63.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface GigabitEthernet1/1
+ ip address 203.18.64.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface Loopback0
+ ip address 192.168.2.1 255.255.255.0
+ ip router isis CORE
+!
+router isis CORE
+ net 49.0001.0000.0000.0002.00
+ is-type level-1-2
+!
+! ========================================
+! C-3 Basic Configuration
+! ========================================
+hostname C-3
+!
+interface GigabitEthernet0/1
+ ip address 203.18.62.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface GigabitEthernet1/0
+ ip address 203.18.63.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface GigabitEthernet0/0
+ ip address 203.18.65.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface GigabitEthernet1/1
+ ip address 203.18.66.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface Loopback0
+ ip address 192.168.3.1 255.255.255.0
+ ip router isis CORE
+!
+router isis CORE
+ net 49.0002.0000.0000.0003.00
+ is-type level-1-2
+!
+! ========================================
+! S-1 Basic Configuration
+! ========================================
+hostname S-1
+!
+interface GigabitEthernet0/0
+ ip address 203.18.65.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface Loopback0
+ ip address 192.168.4.1 255.255.255.0
+ ip router isis CORE
+!
+router isis CORE
+ net 49.0002.0000.0000.0004.00
+ is-type level-1
+!
+! ========================================
+! S-2 Basic Configuration
+! ========================================
+hostname S-2
+!
+interface GigabitEthernet1/1
+ ip address 203.18.66.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface Loopback0
+ ip address 192.168.5.1 255.255.255.0
+ ip router isis CORE
+!
+router isis CORE
+ net 49.0002.0000.0000.0005.00
+ is-type level-1
+!
+! ========================================
+! S-3 Basic Configuration
+! ========================================
+hostname S-3
+!
+interface GigabitEthernet1/1
+ ip address 203.18.64.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ no shutdown
+!
+interface Loopback0
+ ip address 192.168.6.1 255.255.255.0
+ ip router isis CORE
+!
+router isis CORE
+ net 49.0001.0000.0000.0006.00
+ is-type level-1
+!</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 1:</strong>
+<div class="code-block" style="margin-top: 10px;">! Verify basic IS-IS is operational
+Router# show isis neighbors
+! All neighbors should be UP
+
+Router# show ip route isis
+! All networks should be reachable via IS-IS</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 2: Configure IS-IS Authentication</div>
+<p><strong>Objective:</strong> Implement MD5 authentication on all IS-IS adjacencies for security.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ IS-IS Authentication Types:</strong><br>
+• <strong>Interface Authentication:</strong> Applied per-interface (most secure)<br>
+• <strong>Area Authentication:</strong> Applied globally under router isis<br>
+• <strong>Domain Authentication:</strong> For Level 2 backbone security<br>
+<br>
+This lab uses <strong>interface-level MD5 authentication</strong> for maximum security and flexibility.
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.1: Configure Authentication on C-1 (Level 2 Links)</strong></p>
+<div class="code-block">! ========================================
+! C-1 IS-IS Authentication Configuration
+! Password: cisco123 (for Level 2 backbone)
+! ========================================
+
+C-1(config)# interface GigabitEthernet0/0
+C-1(config-if)# isis authentication mode md5
+C-1(config-if)# isis authentication key-chain ISIS_L2_KEY
+C-1(config-if)# exit
+!
+C-1(config)# interface GigabitEthernet0/1
+C-1(config-if)# isis authentication mode md5
+C-1(config-if)# isis authentication key-chain ISIS_L2_KEY
+C-1(config-if)# exit
+!
+! Create key chain for Level 2 authentication
+C-1(config)# key chain ISIS_L2_KEY
+C-1(config-keychain)# key 1
+C-1(config-keychain-key)# key-string cisco123
+C-1(config-keychain-key)# exit
+C-1(config-keychain)# exit
+
+! Configuration Explained:
+! - "isis authentication mode md5" = Enable MD5 authentication on interface
+! - "isis authentication key-chain" = Reference to key chain
+! - Key chain contains actual password
+! - Must match on both ends of link</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.2: Configure Authentication on C-2 (Level 2 + Level 1 Links)</strong></p>
+<div class="code-block">! ========================================
+! C-2 IS-IS Authentication Configuration
+! Level 2 Password: cisco123
+! Level 1 (Area 49.0001) Password: secure456
+! ========================================
+
+! Level 2 Backbone Links (G0/0 and G1/0)
+C-2(config)# interface GigabitEthernet0/0
+C-2(config-if)# isis authentication mode md5
+C-2(config-if)# isis authentication key-chain ISIS_L2_KEY
+C-2(config-if)# exit
+!
+C-2(config)# interface GigabitEthernet1/0
+C-2(config-if)# isis authentication mode md5
+C-2(config-if)# isis authentication key-chain ISIS_L2_KEY
+C-2(config-if)# exit
+!
+! Level 1 Link to S-3 (G1/1)
+C-2(config)# interface GigabitEthernet1/1
+C-2(config-if)# isis authentication mode md5
+C-2(config-if)# isis authentication key-chain ISIS_L1_AREA1_KEY
+C-2(config-if)# exit
+!
+! Create key chain for Level 2 authentication
+C-2(config)# key chain ISIS_L2_KEY
+C-2(config-keychain)# key 1
+C-2(config-keychain-key)# key-string cisco123
+C-2(config-keychain-key)# exit
+C-2(config-keychain)# exit
+!
+! Create key chain for Level 1 Area 49.0001 authentication
+C-2(config)# key chain ISIS_L1_AREA1_KEY
+C-2(config-keychain)# key 1
+C-2(config-keychain-key)# key-string secure456
+C-2(config-keychain-key)# exit
+C-2(config-keychain)# exit
+
+! Configuration Explained:
+! - C-2 is ABR, needs TWO different passwords
+! - G0/0 and G1/0: Level 2 password (cisco123)
+! - G1/1: Level 1 password for Area 49.0001 (secure456)</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.3: Configure Authentication on C-3 (Level 2 + Level 1 Links)</strong></p>
+<div class="code-block">! ========================================
+! C-3 IS-IS Authentication Configuration
+! Level 2 Password: cisco123
+! Level 1 (Area 49.0002) Password: secure789
+! ========================================
+
+! Level 2 Backbone Links (G0/1 and G1/0)
+C-3(config)# interface GigabitEthernet0/1
+C-3(config-if)# isis authentication mode md5
+C-3(config-if)# isis authentication key-chain ISIS_L2_KEY
+C-3(config-if)# exit
+!
+C-3(config)# interface GigabitEthernet1/0
+C-3(config-if)# isis authentication mode md5
+C-3(config-if)# isis authentication key-chain ISIS_L2_KEY
+C-3(config-if)# exit
+!
+! Level 1 Link to S-1 (G0/0)
+C-3(config)# interface GigabitEthernet0/0
+C-3(config-if)# isis authentication mode md5
+C-3(config-if)# isis authentication key-chain ISIS_L1_AREA2_KEY
+C-3(config-if)# exit
+!
+! Level 1 Link to S-2 (G1/1)
+C-3(config)# interface GigabitEthernet1/1
+C-3(config-if)# isis authentication mode md5
+C-3(config-if)# isis authentication key-chain ISIS_L1_AREA2_KEY
+C-3(config-if)# exit
+!
+! Create key chain for Level 2 authentication
+C-3(config)# key chain ISIS_L2_KEY
+C-3(config-keychain)# key 1
+C-3(config-keychain-key)# key-string cisco123
+C-3(config-keychain-key)# exit
+C-3(config-keychain)# exit
+!
+! Create key chain for Level 1 Area 49.0002 authentication
+C-3(config)# key chain ISIS_L1_AREA2_KEY
+C-3(config-keychain)# key 1
+C-3(config-keychain-key)# key-string secure789
+C-3(config-keychain-key)# exit
+C-3(config-keychain)# exit
+
+! Configuration Explained:
+! - C-3 is ABR, needs TWO different passwords
+! - G0/1 and G1/0: Level 2 password (cisco123)
+! - G0/0 and G1/1: Level 1 password for Area 49.0002 (secure789)</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.4: Configure Authentication on S-1 (Level 1 Only)</strong></p>
+<div class="code-block">! ========================================
+! S-1 IS-IS Authentication Configuration
+! Level 1 (Area 49.0002) Password: secure789
+! ========================================
+
+S-1(config)# interface GigabitEthernet0/0
+S-1(config-if)# isis authentication mode md5
+S-1(config-if)# isis authentication key-chain ISIS_L1_KEY
+S-1(config-if)# exit
+!
+! Create key chain for Level 1 authentication
+S-1(config)# key chain ISIS_L1_KEY
+S-1(config-keychain)# key 1
+S-1(config-keychain-key)# key-string secure789
+S-1(config-keychain-key)# exit
+S-1(config-keychain)# exit
+
+! Configuration Explained:
+! - S-1 in Area 49.0002, uses password: secure789
+! - Must match C-3's Level 1 password for this area</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.5: Configure Authentication on S-2 (Level 1 Only)</strong></p>
+<div class="code-block">! ========================================
+! S-2 IS-IS Authentication Configuration
+! Level 1 (Area 49.0002) Password: secure789
+! ========================================
+
+S-2(config)# interface GigabitEthernet1/1
+S-2(config-if)# isis authentication mode md5
+S-2(config-if)# isis authentication key-chain ISIS_L1_KEY
+S-2(config-if)# exit
+!
+! Create key chain for Level 1 authentication
+S-2(config)# key chain ISIS_L1_KEY
+S-2(config-keychain)# key 1
+S-2(config-keychain-key)# key-string secure789
+S-2(config-keychain-key)# exit
+S-2(config-keychain)# exit
+
+! Configuration Explained:
+! - S-2 in Area 49.0002, uses password: secure789
+! - Must match C-3's Level 1 password for this area</div>
+
+<p style="margin-top: 15px;"><strong>Step 2.6: Configure Authentication on S-3 (Level 1 Only)</strong></p>
+<div class="code-block">! ========================================
+! S-3 IS-IS Authentication Configuration
+! Level 1 (Area 49.0001) Password: secure456
+! ========================================
+
+S-3(config)# interface GigabitEthernet1/1
+S-3(config-if)# isis authentication mode md5
+S-3(config-if)# isis authentication key-chain ISIS_L1_KEY
+S-3(config-if)# exit
+!
+! Create key chain for Level 1 authentication
+S-3(config)# key chain ISIS_L1_KEY
+S-3(config-keychain)# key 1
+S-3(config-keychain-key)# key-string secure456
+S-3(config-keychain-key)# exit
+S-3(config-keychain)# exit
+
+! Configuration Explained:
+! - S-3 in Area 49.0001, uses password: secure456
+! - Must match C-2's Level 1 password for this area</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 2:</strong>
+<div class="code-block" style="margin-top: 10px;">! Verify IS-IS neighbors are still UP with authentication
+Router# show isis neighbors
+
+! All neighbors should remain UP
+! Authentication is transparent once configured correctly
+
+! Verify key chains
+Router# show key chain
+
+! Should display configured key chains
+
+! Debug authentication (use carefully)
+Router# debug isis adj-packets
+! Look for "authentication successful" messages
+Router# undebug all</div>
+</div>
+
+<div class="alert alert-danger">
+<strong>⚠️ Common Authentication Issues:</strong><br>
+• Neighbor drops if passwords don't match<br>
+• Key chain name must be consistent (locally significant)<br>
+• Actual key-string must match on both sides<br>
+• Different passwords for Level 1 vs Level 2<br>
+• ABRs (C-2, C-3) need multiple key chains
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 3: Configure Passive Interfaces</div>
+<p><strong>Objective:</strong> Optimize IS-IS by making loopback interfaces passive (no hello packets).</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ Passive Interface Purpose:</strong><br>
+• Prevents IS-IS hello packets on interfaces without neighbors<br>
+• Reduces CPU and bandwidth usage<br>
+• Network is still advertised in IS-IS<br>
+• Best practice for loopback and LAN interfaces
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.1: Configure Passive Interface on C-1</strong></p>
+<div class="code-block">! ========================================
+! C-1 Passive Interface Configuration
+! ========================================
+
+C-1(config)# router isis CORE
+C-1(config-router)# passive-interface Loopback0
+C-1(config-router)# exit
+
+! Configuration Explained:
+! - "passive-interface Loopback0" = No IS-IS hellos on Lo0
+! - Network 192.168.1.0/24 still advertised in IS-IS
+! - Saves CPU and bandwidth</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.2: Configure Passive Interface on C-2</strong></p>
+<div class="code-block">! ========================================
+! C-2 Passive Interface Configuration
+! ========================================
+
+C-2(config)# router isis CORE
+C-2(config-router)# passive-interface Loopback0
+C-2(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.3: Configure Passive Interface on C-3</strong></p>
+<div class="code-block">! ========================================
+! C-3 Passive Interface Configuration
+! ========================================
+
+C-3(config)# router isis CORE
+C-3(config-router)# passive-interface Loopback0
+C-3(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.4: Configure Passive Interface on S-1</strong></p>
+<div class="code-block">! ========================================
+! S-1 Passive Interface Configuration
+! ========================================
+
+S-1(config)# router isis CORE
+S-1(config-router)# passive-interface Loopback0
+S-1(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.5: Configure Passive Interface on S-2</strong></p>
+<div class="code-block">! ========================================
+! S-2 Passive Interface Configuration
+! ========================================
+
+S-2(config)# router isis CORE
+S-2(config-router)# passive-interface Loopback0
+S-2(config-router)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 3.6: Configure Passive Interface on S-3</strong></p>
+<div class="code-block">! ========================================
+! S-3 Passive Interface Configuration
+! ========================================
+
+S-3(config)# router isis CORE
+S-3(config-router)# passive-interface Loopback0
+S-3(config-router)# exit</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 3:</strong>
+<div class="code-block" style="margin-top: 10px;">! Verify passive interfaces
+Router# show isis interface brief
+
+! Loopback0 should show "PASSIVE" status
+
+! Verify routes still advertised
+Router# show ip route isis
+
+! Loopback networks should still appear in routing table</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 4: Configure IS-IS Metrics (Wide Metrics)</div>
+<p><strong>Objective:</strong> Enable wide metrics and manipulate path selection with custom metric values.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ IS-IS Metrics:</strong><br>
+• <strong>Narrow Metrics:</strong> 6-bit (0-63), default = 10<br>
+• <strong>Wide Metrics:</strong> 24-bit (0-16777215), default = interface bandwidth based<br>
+• <strong>Use Wide Metrics:</strong> For large-scale networks and traffic engineering<br>
+• <strong>Custom Metrics:</strong> Influence path selection
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.1: Enable Wide Metrics on All Routers</strong></p>
+<div class="code-block">! ========================================
+! Enable Wide Metrics on All Routers
+! Must be configured on ALL routers
+! ========================================
+
+! On C-1
+C-1(config)# router isis CORE
+C-1(config-router)# metric-style wide
+C-1(config-router)# exit
+
+! On C-2
+C-2(config)# router isis CORE
+C-2(config-router)# metric-style wide
+C-2(config-router)# exit
+
+! On C-3
+C-3(config)# router isis CORE
+C-3(config-router)# metric-style wide
+C-3(config-router)# exit
+
+! On S-1
+S-1(config)# router isis CORE
+S-1(config-router)# metric-style wide
+S-1(config-router)# exit
+
+! On S-2
+S-2(config)# router isis CORE
+S-2(config-router)# metric-style wide
+S-2(config-router)# exit
+
+! On S-3
+S-3(config)# router isis CORE
+S-3(config-router)# metric-style wide
+S-3(config-router)# exit
+
+! Configuration Explained:
+! - "metric-style wide" = Enable 24-bit metrics
+! - Supports larger network topologies
+! - Better scalability than narrow metrics
+! - Must be consistent across all routers</div>
+
+<p style="margin-top: 15px;"><strong>Step 4.2: Configure Custom Metrics (Traffic Engineering Example)</strong></p>
+<div class="code-block">! ========================================
+! Custom Metric Configuration Example
+! Make C-1 ↔ C-2 link preferred over C-1 ↔ C-3
+! ========================================
+
+! On C-1: Set higher metric on G0/1 to C-3
+C-1(config)# interface GigabitEthernet0/1
+C-1(config-if)# isis metric 50 level-2
+C-1(config-if)# exit
+
+! On C-3: Set higher metric on G0/1 to C-1
+C-3(config)# interface GigabitEthernet0/1
+C-3(config-if)# isis metric 50 level-2
+C-3(config-if)# exit
+
+! Configuration Explained:
+! - Default metric = 10
+! - Custom metric = 50 (higher is less preferred)
+! - Traffic from C-1 to C-3 will prefer: C-1 → C-2 → C-3
+! - "level-2" = Apply only to Level 2 routing
+
+! ========================================
+! Example: Prefer specific path for Area 49.0002
+! ========================================
+
+! On C-3: Make link to S-1 preferred over S-2
+C-3(config)# interface GigabitEthernet1/1
+C-3(config-if)# isis metric 30 level-1
+C-3(config-if)# exit
+
+! Now S-1 link (metric 10) is preferred over S-2 link (metric 30)</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 4:</strong>
+<div class="code-block" style="margin-top: 10px;">! Verify wide metrics enabled
+Router# show isis
+
+! Should show "Metric-style: wide"
+
+! Verify interface metrics
+Router# show isis interface detail
+
+! Should show metric values per interface
+
+! Verify routing table reflects metric changes
+Router# show ip route isis
+
+! Preferred paths should use lower metric routes</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 5: Optimize IS-IS Timers</div>
+<p><strong>Objective:</strong> Tune IS-IS hello and hold timers for faster convergence.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ IS-IS Timers:</strong><br>
+• <strong>Hello Interval:</strong> How often to send hello packets (default 10 sec)<br>
+• <strong>Hold Timer:</strong> How long to wait before declaring neighbor down (default 30 sec = 3x hello)<br>
+• <strong>Faster Convergence:</strong> Reduce timers for critical links<br>
+• <strong>Trade-off:</strong> Lower timers = more CPU/bandwidth, faster failure detection
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.1: Optimize Timers on Core Links (Fast Convergence)</strong></p>
+<div class="code-block">! ========================================
+! Optimize Timers on C-1 ↔ C-2 Link (Critical Backbone)
+! Hello: 3 seconds, Hold: 9 seconds
+! ========================================
+
+! On C-1 G0/0
+C-1(config)# interface GigabitEthernet0/0
+C-1(config-if)# isis hello-interval 3
+C-1(config-if)# isis hello-multiplier 3
+C-1(config-if)# exit
+
+! On C-2 G0/0
+C-2(config)# interface GigabitEthernet0/0
+C-2(config-if)# isis hello-interval 3
+C-2(config-if)# isis hello-multiplier 3
+C-2(config-if)# exit
+
+! Configuration Explained:
+! - "isis hello-interval 3" = Send hellos every 3 seconds
+! - "isis hello-multiplier 3" = Hold time = 3 × 3 = 9 seconds
+! - Neighbor declared down after 9 seconds of no hellos
+! - Faster failure detection on critical links
+
+! ========================================
+! Optimize Timers on C-2 ↔ C-3 Link
+! ========================================
+
+! On C-2 G1/0
+C-2(config)# interface GigabitEthernet1/0
+C-2(config-if)# isis hello-interval 3
+C-2(config-if)# isis hello-multiplier 3
+C-2(config-if)# exit
+
+! On C-3 G1/0
+C-3(config)# interface GigabitEthernet1/0
+C-3(config-if)# isis hello-interval 3
+C-3(config-if)# isis hello-multiplier 3
+C-3(config-if)# exit
+
+! ========================================
+! Optimize Timers on C-1 ↔ C-3 Link
+! ========================================
+
+! On C-1 G0/1
+C-1(config)# interface GigabitEthernet0/1
+C-1(config-if)# isis hello-interval 3
+C-1(config-if)# isis hello-multiplier 3
+C-1(config-if)# exit
+
+! On C-3 G0/1
+C-3(config)# interface GigabitEthernet0/1
+C-3(config-if)# isis hello-interval 3
+C-3(config-if)# isis hello-multiplier 3
+C-3(config-if)# exit</div>
+
+<p style="margin-top: 15px;"><strong>Step 5.2: Standard Timers on Edge Links (Default Acceptable)</strong></p>
+<div class="code-block">! ========================================
+! Edge Links Can Use Default Timers
+! (No configuration needed - defaults are fine)
+! ========================================
+
+! Default timers on edge links:
+! - Hello: 10 seconds
+! - Hold: 30 seconds
+!
+! Optional: Configure custom timers if faster convergence needed
+!
+! Example on C-2 ↔ S-3 link (if desired):
+! C-2(config)# interface GigabitEthernet1/1
+! C-2(config-if)# isis hello-interval 5
+! C-2(config-if)# isis hello-multiplier 3
+! C-2(config-if)# exit
+!
+! S-3(config)# interface GigabitEthernet1/1
+! S-3(config-if)# isis hello-interval 5
+! S-3(config-if)# isis hello-multiplier 3
+! S-3(config-if)# exit</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 5:</strong>
+<div class="code-block" style="margin-top: 10px;">! Verify timer configuration
+Router# show isis interface GigabitEthernet0/0
+
+! Look for:
+! - Hello interval: X seconds
+! - Holdtime: Y seconds
+
+! Verify neighbors detect failures faster
+Router# show isis neighbors detail
+
+! Hold time should reflect configured timers
+
+! Test convergence (optional - disruptive)
+! Shutdown interface and measure convergence time
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# shutdown
+! Watch how quickly neighbor is declared down
+Router# show isis neighbors
+! Should be down within 9 seconds (3 × 3)</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 6: Configure Route Leaking</div>
+<p><strong>Objective:</strong> Leak specific Level 2 routes into Level 1 areas for inter-area optimization.</p>
+
+<div class="alert alert-info">
+<strong>ℹ️ Route Leaking Concept:</strong><br>
+• <strong>By Default:</strong> Level 1 routers only have default route to ABR for inter-area traffic<br>
+• <strong>Route Leaking:</strong> ABR advertises specific Level 2 routes into Level 1 area<br>
+• <strong>Benefits:</strong> Optimal path selection, better load balancing<br>
+• <strong>Use Case:</strong> Allow Level 1 routers to see specific destinations in other areas
+</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.1: Configure Route Leaking on C-2 (Area 49.0001)</strong></p>
+<div class="code-block">! ========================================
+! C-2 Route Leaking Configuration
+! Leak specific Level 2 routes into Area 49.0001
+! Example: Leak 192.168.4.0/24 (S-1's network)
+! ========================================
+
+! Create access list to identify routes to leak
+C-2(config)# ip access-list standard ISIS_LEAK
+C-2(config-std-nacl)# permit 192.168.4.0 0.0.0.255
+C-2(config-std-nacl)# permit 192.168.5.0 0.0.0.255
+C-2(config-std-nacl)# exit
+!
+! Create route-map to leak routes
+C-2(config)# route-map LEAK_TO_L1 permit 10
+C-2(config-route-map)# match ip address ISIS_LEAK
+C-2(config-route-map)# exit
+!
+! Apply route leaking to IS-IS
+C-2(config)# router isis CORE
+C-2(config-router)# redistribute isis ip level-2 into level-1 route-map LEAK_TO_L1
+C-2(config-router)# exit
+
+! Configuration Explained:
+! - Access list identifies networks 192.168.4.0 and 192.168.5.0
+! - Route-map matches these networks
+! - "redistribute isis ip level-2 into level-1" = Leak L2 routes to L1
+! - S-3 will now see specific routes instead of just default route</div>
+
+<p style="margin-top: 15px;"><strong>Step 6.2: Configure Route Leaking on C-3 (Area 49.0002)</strong></p>
+<div class="code-block">! ========================================
+! C-3 Route Leaking Configuration
+! Leak specific Level 2 routes into Area 49.0002
+! Example: Leak 192.168.6.0/24 (S-3's network)
+! ========================================
+
+! Create access list to identify routes to leak
+C-3(config)# ip access-list standard ISIS_LEAK
+C-3(config-std-nacl)# permit 192.168.6.0 0.0.0.255
+C-3(config-std-nacl)# permit 192.168.2.0 0.0.0.255
+C-3(config-std-nacl)# exit
+!
+! Create route-map to leak routes
+C-3(config)# route-map LEAK_TO_L1 permit 10
+C-3(config-route-map)# match ip address ISIS_LEAK
+C-3(config-route-map)# exit
+!
+! Apply route leaking to IS-IS
+C-3(config)# router isis CORE
+C-3(config-router)# redistribute isis ip level-2 into level-1 route-map LEAK_TO_L1
+C-3(config-router)# exit
+
+! Configuration Explained:
+! - Access list identifies networks 192.168.6.0 and 192.168.2.0
+! - Route-map matches these networks
+! - S-1 and S-2 will now see these specific routes
+! - Better path selection for inter-area traffic</div>
+
+<div class="alert alert-success">
+<strong>✅ Verification Task 6:</strong>
+<div class="code-block" style="margin-top: 10px;">! On S-3: Verify leaked routes
+S-3# show ip route isis
+
+! Should see specific routes:
+! i L2 192.168.4.0/24 [115/XX] via 203.18.64.1
+! i L2 192.168.5.0/24 [115/XX] via 203.18.64.1
+! (Leaked from Level 2)
+
+! On S-1: Verify leaked routes
+S-1# show ip route isis
+
+! Should see specific routes:
+! i L2 192.168.6.0/24 [115/XX] via 203.18.65.1
+! i L2 192.168.2.0/24 [115/XX] via 203.18.65.1
+! (Leaked from Level 2)
+
+! Verify route-map application
+Router# show route-map
+
+! Test connectivity with leaked routes
+S-3# traceroute 192.168.4.1
+! Should show optimal path via leaked route</div>
+</div>
+
+<div class="section-title" style="font-size: 1.3em; color: #667eea;">📝 Task 7: Complete Verification and Testing</div>
+<p><strong>Objective:</strong> Comprehensive verification of all advanced IS-IS features.</p>
+
+<div class="code-block">! ========================================
+! Complete Verification Commands
+! ========================================
+
+! 1. Verify IS-IS Neighbors with Authentication
+Router# show isis neighbors
+Router# show isis neighbors detail
+
+! All neighbors should be UP
+! Hold times should reflect configured timers
+
+! 2. Verify Authentication
+Router# show key chain
+
+! Should display all configured key chains
+
+! 3. Verify Passive Interfaces
+Router# show isis interface brief
+
+! Loopback0 should show "PASSIVE"
+
+! 4. Verify Wide Metrics
+Router# show isis
+Router# show isis interface detail
+
+! Should show "Metric-style: wide"
+! Interface metrics should display
+
+! 5. Verify Timers
+Router# show isis interface GigabitEthernet0/0
+
+! Should show configured hello-interval and hold time
+
+! 6. Verify Route Leaking (on ABRs)
+C-2# show route-map
+C-3# show route-map
+
+! Should show LEAK_TO_L1 route-map
+
+! 7. Verify Routing Table
+Router# show ip route isis
+
+! All networks reachable
+! Leaked routes visible on Level 1 routers
+
+! 8. Verify IS-IS Database
+Router# show isis database
+Router# show isis database detail
+
+! All LSPs present
+! No errors
+
+! 9. Test End-to-End Connectivity
+Router# ping 192.168.X.1 source 192.168.Y.1
+
+! All pings should succeed
+
+! 10. Verify Metric-Based Path Selection
+Router# show ip route 192.168.X.0
+
+! Should use lower-metric path
+
+! 11. Test Failover (Optional - Disruptive)
+Router# configure terminal
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# shutdown
+
+! Watch convergence time
+Router# show isis neighbors
+
+! Should reconverge within configured hold time
+
+Router(config-if)# no shutdown
+Router(config-if)# exit</div>
+
+<div class="section-title">📄 Complete Device Configurations (with Advanced Features)</div>
+
+<p style="margin-top: 15px;"><strong>C-1 Complete Advanced Configuration:</strong></p>
+<div class="code-block">! ========================================
+! C-1 Complete Advanced Configuration
+! ========================================
+hostname C-1
+!
+! Key Chains
+key chain ISIS_L2_KEY
+ key 1
+  key-string cisco123
+!
+! Interfaces
+interface GigabitEthernet0/0
+ description ** Link to C-2 - IS-IS L2 Optimized **
+ ip address 203.18.61.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L2_KEY
+ isis hello-interval 3
+ isis hello-multiplier 3
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description ** Link to C-3 - IS-IS L2 Higher Metric **
+ ip address 203.18.62.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L2_KEY
+ isis metric 50 level-2
+ isis hello-interval 3
+ isis hello-multiplier 3
+ no shutdown
+!
+interface Loopback0
+ description ** C-1 Core Network **
+ ip address 192.168.1.1 255.255.255.0
+ ip router isis CORE
+!
+! IS-IS Configuration
+router isis CORE
+ net 49.0000.0000.0000.0001.00
+ is-type level-2-only
+ metric-style wide
+ passive-interface Loopback0
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>C-2 Complete Advanced Configuration:</strong></p>
+<div class="code-block">! ========================================
+! C-2 Complete Advanced Configuration
+! ========================================
+hostname C-2
+!
+! Key Chains
+key chain ISIS_L2_KEY
+ key 1
+  key-string cisco123
+!
+key chain ISIS_L1_AREA1_KEY
+ key 1
+  key-string secure456
+!
+! Access Lists for Route Leaking
+ip access-list standard ISIS_LEAK
+ permit 192.168.4.0 0.0.0.255
+ permit 192.168.5.0 0.0.0.255
+!
+! Route Map for Route Leaking
+route-map LEAK_TO_L1 permit 10
+ match ip address ISIS_LEAK
+!
+! Interfaces
+interface GigabitEthernet0/0
+ description ** Link to C-1 - IS-IS L2 Optimized **
+ ip address 203.18.61.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L2_KEY
+ isis hello-interval 3
+ isis hello-multiplier 3
+ no shutdown
+!
+interface GigabitEthernet1/0
+ description ** Link to C-3 - IS-IS L2 Optimized **
+ ip address 203.18.63.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L2_KEY
+ isis hello-interval 3
+ isis hello-multiplier 3
+ no shutdown
+!
+interface GigabitEthernet1/1
+ description ** Link to S-3 - IS-IS L1 Area 49.0001 **
+ ip address 203.18.64.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L1_AREA1_KEY
+ no shutdown
+!
+interface Loopback0
+ description ** C-2 Core Network **
+ ip address 192.168.2.1 255.255.255.0
+ ip router isis CORE
+!
+! IS-IS Configuration
+router isis CORE
+ net 49.0001.0000.0000.0002.00
+ is-type level-1-2
+ metric-style wide
+ passive-interface Loopback0
+ redistribute isis ip level-2 into level-1 route-map LEAK_TO_L1
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>C-3 Complete Advanced Configuration:</strong></p>
+<div class="code-block">! ========================================
+! C-3 Complete Advanced Configuration
+! ========================================
+hostname C-3
+!
+! Key Chains
+key chain ISIS_L2_KEY
+ key 1
+  key-string cisco123
+!
+key chain ISIS_L1_AREA2_KEY
+ key 1
+  key-string secure789
+!
+! Access Lists for Route Leaking
+ip access-list standard ISIS_LEAK
+ permit 192.168.6.0 0.0.0.255
+ permit 192.168.2.0 0.0.0.255
+!
+! Route Map for Route Leaking
+route-map LEAK_TO_L1 permit 10
+ match ip address ISIS_LEAK
+!
+! Interfaces
+interface GigabitEthernet0/1
+ description ** Link to C-1 - IS-IS L2 Higher Metric **
+ ip address 203.18.62.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L2_KEY
+ isis metric 50 level-2
+ isis hello-interval 3
+ isis hello-multiplier 3
+ no shutdown
+!
+interface GigabitEthernet1/0
+ description ** Link to C-2 - IS-IS L2 Optimized **
+ ip address 203.18.63.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L2_KEY
+ isis hello-interval 3
+ isis hello-multiplier 3
+ no shutdown
+!
+interface GigabitEthernet0/0
+ description ** Link to S-1 - IS-IS L1 Area 49.0002 **
+ ip address 203.18.65.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L1_AREA2_KEY
+ no shutdown
+!
+interface GigabitEthernet1/1
+ description ** Link to S-2 - IS-IS L1 Area 49.0002 Higher Metric **
+ ip address 203.18.66.1 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L1_AREA2_KEY
+ isis metric 30 level-1
+ no shutdown
+!
+interface Loopback0
+ description ** C-3 Core Network **
+ ip address 192.168.3.1 255.255.255.0
+ ip router isis CORE
+!
+! IS-IS Configuration
+router isis CORE
+ net 49.0002.0000.0000.0003.00
+ is-type level-1-2
+ metric-style wide
+ passive-interface Loopback0
+ redistribute isis ip level-2 into level-1 route-map LEAK_TO_L1
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>S-1 Complete Advanced Configuration:</strong></p>
+<div class="code-block">! ========================================
+! S-1 Complete Advanced Configuration
+! ========================================
+hostname S-1
+!
+! Key Chains
+key chain ISIS_L1_KEY
+ key 1
+  key-string secure789
+!
+! Interfaces
+interface GigabitEthernet0/0
+ description ** Link to C-3 - IS-IS L1 Authenticated **
+ ip address 203.18.65.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L1_KEY
+ no shutdown
+!
+interface Loopback0
+ description ** S-1 Site Network **
+ ip address 192.168.4.1 255.255.255.0
+ ip router isis CORE
+!
+! IS-IS Configuration
+router isis CORE
+ net 49.0002.0000.0000.0004.00
+ is-type level-1
+ metric-style wide
+ passive-interface Loopback0
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>S-2 Complete Advanced Configuration:</strong></p>
+<div class="code-block">! ========================================
+! S-2 Complete Advanced Configuration
+! ========================================
+hostname S-2
+!
+! Key Chains
+key chain ISIS_L1_KEY
+ key 1
+  key-string secure789
+!
+! Interfaces
+interface GigabitEthernet1/1
+ description ** Link to C-3 - IS-IS L1 Authenticated **
+ ip address 203.18.66.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L1_KEY
+ no shutdown
+!
+interface Loopback0
+ description ** S-2 Site Network **
+ ip address 192.168.5.1 255.255.255.0
+ ip router isis CORE
+!
+! IS-IS Configuration
+router isis CORE
+ net 49.0002.0000.0000.0005.00
+ is-type level-1
+ metric-style wide
+ passive-interface Loopback0
+!
+end</div>
+
+<p style="margin-top: 15px;"><strong>S-3 Complete Advanced Configuration:</strong></p>
+<div class="code-block">! ========================================
+! S-3 Complete Advanced Configuration
+! ========================================
+hostname S-3
+!
+! Key Chains
+key chain ISIS_L1_KEY
+ key 1
+  key-string secure456
+!
+! Interfaces
+interface GigabitEthernet1/1
+ description ** Link to C-2 - IS-IS L1 Authenticated **
+ ip address 203.18.64.2 255.255.255.252
+ ip router isis CORE
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain ISIS_L1_KEY
+ no shutdown
+!
+interface Loopback0
+ description ** S-3 Site Network **
+ ip address 192.168.6.1 255.255.255.0
+ ip router isis CORE
+!
+! IS-IS Configuration
+router isis CORE
+ net 49.0001.0000.0000.0006.00
+ is-type level-1
+ metric-style wide
+ passive-interface Loopback0
+!
+end</div>
+
+<div class="section-title">✅ Complete Verification Checklist</div>
+
+<ul class="checklist">
+<li>☐ <strong>Basic IS-IS:</strong> All neighbors UP</li>
+<li>☐ <strong>Authentication:</strong> MD5 authentication configured on all links</li>
+<li>☐ <strong>Key Chains:</strong> Matching passwords on both sides</li>
+<li>☐ <strong>Passive Interfaces:</strong> All loopbacks configured as passive</li>
+<li>☐ <strong>Wide Metrics:</strong> Enabled on all routers</li>
+<li>☐ <strong>Custom Metrics:</strong> C-1 ↔ C-3 link has higher metric (50)</li>
+<li>☐ <strong>Timers:</strong> Core links use 3-second hello, 9-second hold</li>
+<li>☐ <strong>Route Leaking:</strong> C-2 leaks routes to Area 49.0001</li>
+<li>☐ <strong>Route Leaking:</strong> C-3 leaks routes to Area 49.0002</li>
+<li>☐ <strong>Routing Table:</strong> All networks reachable</li>
+<li>☐ <strong>Leaked Routes:</strong> Visible on Level 1 routers</li>
+<li>☐ <strong>Path Selection:</strong> Traffic follows expected paths based on metrics</li>
+<li>☐ <strong>Database:</strong> No errors in IS-IS LSDB</li>
+<li>☐ <strong>Connectivity:</strong> End-to-end pings successful</li>
+<li>☐ <strong>Convergence:</strong> Fast failover on core links (under 10 seconds)</li>
+<li>☐ <strong>Security:</strong> Authentication prevents unauthorized adjacencies</li>
+</ul>
+
+<div class="section-title">🔧 Troubleshooting Guide</div>
+
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Possible Cause</th>
+<th>Verification Command</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Neighbor drops after auth</td>
+<td>Password mismatch</td>
+<td>show key chain<br>debug isis adj-packets</td>
+<td>Verify key-string matches on both sides</td>
+</tr>
+<tr>
+<td>Authentication fails</td>
+<td>Key chain not applied</td>
+<td>show run interface</td>
+<td>Add "isis authentication key-chain" command</td>
+</tr>
+<tr>
+<td>Wide metrics not working</td>
+<td>Not enabled on all routers</td>
+<td>show isis</td>
+<td>Enable "metric-style wide" on all routers</td>
+</tr>
+<tr>
+<td>Custom metric not used</td>
+<td>Incorrect level specified</td>
+<td>show isis interface detail</td>
+<td>Verify "level-1" or "level-2" parameter</td>
+</tr>
+<tr>
+<td>Slow convergence</td>
+<td>Default timers too high</td>
+<td>show isis interface</td>
+<td>Lower hello-interval and multiplier</td>
+</tr>
+<tr>
+<td>Leaked routes not visible</td>
+<td>Route-map misconfigured</td>
+<td>show route-map<br>show ip route isis</td>
+<td>Verify ACL permits correct networks</td>
+</tr>
+<tr>
+<td>Route leaking fails</td>
+<td>Wrong redistribute command</td>
+<td>show run | sec isis</td>
+<td>Use "redistribute isis ip level-2 into level-1"</td>
+</tr>
+<tr>
+<td>Passive interface issue</td>
+<td>Hellos still being sent</td>
+<td>show isis interface brief</td>
+<td>Verify "PASSIVE" status on loopback</td>
+</tr>
+<tr>
+<td>ABR not leaking routes</td>
+<td>Not Level 1-2 router</td>
+<td>show isis</td>
+<td>Configure "is-type level-1-2"</td>
+</tr>
+<tr>
+<td>Neighbor flapping</td>
+<td>Timers mismatch</td>
+<td>show isis neighbors detail</td>
+<td>Match hello-interval on both sides</td>
+</tr>
+<tr>
+<td>Authentication error</td>
+<td>Wrong auth mode</td>
+<td>debug isis adj-packets</td>
+<td>Verify MD5 mode on both sides</td>
+</tr>
+<tr>
+<td>Metric not influencing path</td>
+<td>Equal-cost multipath</td>
+<td>show ip route isis</td>
+<td>Increase metric difference or verify topology</td>
+</tr>
+</tbody>
+</table>
+
+<div class="alert alert-danger">
+<strong>⚠️ Common Advanced Configuration Mistakes:</strong><br>
+1. <strong>Authentication:</strong> Key-string must match exactly (case-sensitive)<br>
+2. <strong>Key Chains:</strong> Name is local; key-string must match<br>
+3. <strong>Wide Metrics:</strong> Must be enabled on ALL routers in domain<br>
+4. <strong>Timers:</strong> Must match on both ends of link<br>
+5. <strong>Route Leaking:</strong> Only works on Level 1-2 routers (ABRs)<br>
+6. <strong>Passive Interface:</strong> Must still have "ip router isis" command<br>
+7. <strong>Metrics:</strong> Specify correct level (level-1 or level-2)<br>
+8. <strong>Route-Map:</strong> ACL must permit networks to leak
+</div>
+
+<div class="section-title">🔖 Quick Reference Summary</div>
+
+<div class="alert alert-info">
+<strong>📝 Advanced Features Configured:</strong><br>
+<br>
+<strong>🔐 Authentication:</strong><br>
+• Interface-level MD5 authentication<br>
+• Key chains: ISIS_L2_KEY, ISIS_L1_AREA1_KEY, ISIS_L1_AREA2_KEY<br>
+• Passwords: cisco123 (L2), secure456 (Area 49.0001), secure789 (Area 49.0002)<br>
+<br>
+<strong>📊 Metrics & Optimization:</strong><br>
+• Wide metrics enabled (24-bit) on all routers<br>
+• Custom metric on C-1 ↔ C-3: 50 (higher, less preferred)<br>
+• Custom metric on C-3 ↔ S-2: 30 (moderate preference)<br>
+<br>
+<strong>⏱️ Timer Optimization:</strong><br>
+• Core links: 3-second hello, 9-second hold (fast convergence)<br>
+• Edge links: Default timers (10-second hello, 30-second hold)<br>
+<br>
+<strong>🔄 Route Leaking:</strong><br>
+• C-2: Leaks 192.168.4.0/24 and 192.168.5.0/24 into Area 49.0001<br>
+• C-3: Leaks 192.168.6.0/24 and 192.168.2.0/24 into Area 49.0002<br>
+<br>
+<strong>🛡️ Passive Interfaces:</strong><br>
+• All Loopback0 interfaces configured as passive<br>
+• Reduces CPU and bandwidth usage<br>
+<br>
+<strong>✅ Production Best Practices Applied:</strong><br>
+• Security through authentication<br>
+• Performance through metric tuning<br>
+• Fast convergence through timer optimization<br>
+• Efficient routing through route leaking<br>
+• Resource conservation through passive interfaces
+</div>
+
+</div>
+</div>
+
+<footer class="protected-element" id="protectedFooter">
+<h3>🔐 Iconic InfoSec Training</h3>
+<p>Professional Cybersecurity & Networking Education</p>
+<div class="footer-divider"></div>
+<p>CCNP Enterprise Certification Program</p>
+<p>Cisco CCNP 350-401 (ENCOR) & 300-410 (ENARSI) Hands-On Laboratory Training</p>
+<p class="company-name">By ZayarMaungMaung</p>
+<div class="footer-divider"></div>
+<p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">© 2025 Iconic InfoSec Training | All Rights Reserved</p>
+<p style="opacity: 0.8; font-size: 0.85em;">Lab 14.2 - IS-IS Advanced Configuration</p>
+<div class="protection-indicator">🔒 Protected</div>
+</footer>
+
+<script>
+const MASTER_PASSWORD = "CCNP@2026";
+const SESSION_KEY = "auth_session_token";
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+let isUnlocked = false;
+let sessionTimer = null;
+
+window.addEventListener('load', function() {
+checkSession();
+initializeProtection();
+});
+
+function checkSession() {
+const sessionToken = sessionStorage.getItem(SESSION_KEY);
+const sessionTime = sessionStorage.getItem('session_time');
+const currentTime = Date.now();
+
+if (sessionToken === MASTER_PASSWORD) {
+if (currentTime - parseInt(sessionTime) < SESSION_TIMEOUT) {
+isUnlocked = true;
+unlockContent();
+resetSessionTimer();
+} else {
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+showPasswordModal();
+}
+} else {
+showPasswordModal();
+}
+}
+
+function resetSessionTimer() {
+clearTimeout(sessionTimer);
+sessionTimer = setTimeout(function() {
+lockPage();
+alert("⏱️ Session expired - Please re-enter password");
+}, SESSION_TIMEOUT);
+}
+
+function verifyPassword() {
+const inputPassword = document.getElementById('passwordInput').value;
+const errorMsg = document.getElementById('errorMsg');
+
+if (inputPassword === MASTER_PASSWORD) {
+isUnlocked = true;
+sessionStorage.setItem(SESSION_KEY, MASTER_PASSWORD);
+sessionStorage.setItem('session_time', Date.now().toString());
+errorMsg.style.display = 'none';
+unlockContent();
+resetSessionTimer();
+} else {
+errorMsg.style.display = 'block';
+document.getElementById('passwordInput').value = '';
+document.getElementById('passwordInput').focus();
+}
+}
+
+function unlockContent() {
+document.getElementById('passwordModal').classList.remove('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '1';
+element.style.pointerEvents = 'auto';
+element.style.userSelect = 'auto';
+});
+}
+
+function lockPage() {
+isUnlocked = false;
+sessionStorage.removeItem(SESSION_KEY);
+sessionStorage.removeItem('session_time');
+document.getElementById('passwordInput').value = '';
+document.getElementById('errorMsg').style.display = 'none';
+showPasswordModal();
+}
+
+function showPasswordModal() {
+const modal = document.getElementById('passwordModal');
+modal.classList.add('show');
+document.querySelectorAll('.protected-element').forEach(element => {
+element.style.opacity = '0.5';
+element.style.pointerEvents = 'none';
+});
+setTimeout(() => {
+document.getElementById('passwordInput').focus();
+}, 100);
+}
+
+function initializeProtection() {
+document.getElementById('protectedHeader').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('protectedBody').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('protectedFooter').addEventListener('contextmenu', e => e.preventDefault());
+}
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => !isUnlocked && e.preventDefault());
+document.addEventListener('copy', e => !isUnlocked && e.preventDefault());
+document.addEventListener('cut', e => !isUnlocked && e.preventDefault());
+document.addEventListener('keydown', function(e) {
+if (e.keyCode === 123 || 
+(e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) ||
+(e.ctrlKey && e.keyCode === 85)) {
+e.preventDefault();
+return false;
+}
+if (e.ctrlKey && e.keyCode === 83 && !isUnlocked) {
+e.preventDefault();
+alert('🔒 Cannot save - Content is password protected');
+return false;
+}
+});
+
+if (self !== top) {
+top.location = self.location;
+}
+</script>
+
+</body>
+</html>
