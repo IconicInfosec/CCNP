@@ -136,7 +136,7 @@ body {
 }
 
 .btn-secondary {
-    background-color: transparent;
+    background-color: green;
     color: white;
     border: 2px solid white;
 }
@@ -385,3 +385,7 @@ body {
         font-size: 1rem;
     }
 }
+
+/* Clickable training presentation feature */
+.feature-link { display: block; color: inherit; text-decoration: none; }
+.feature-link:focus-visible { outline: 3px solid #e94560; outline-offset: 4px; }
