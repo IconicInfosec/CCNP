@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 2 - CCNP Enterprise Q&amp;A</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 4px solid #667eea;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid #ddd;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        /* Password Section */
+        .password-section {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .password-section.active {
+            display: block;
+        }
+
+        .password-section input {
+            padding: 10px 15px;
+            font-size: 14px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            width: 300px;
+            max-width: 100%;
+        }
+
+        .password-section button {
+            margin-top: 15px;
+            padding: 10px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .password-section button:hover {
+            background: #764ba2;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 30px;
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Question Container */
+        .question-container {
+            background: #f9f9f9;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .question-type {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* Options */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #f5f7ff;
+            font-weight: 600;
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #f1f8f4;
+            color: #2e7d32;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #fdeaea;
+            color: #c62828;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-secondary:hover {
+            background: #efefef;
+            border-color: #bbb;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 30px auto;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .score-total {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .results-section h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .results-section p {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Answer Review */
+        .answer-review {
+            background: #f9f9f9;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .review-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .review-item.correct {
+            border-left-color: #4caf50;
+            background: #f1f8f4;
+        }
+
+        .review-item.incorrect {
+            border-left-color: #f44336;
+            background: #fdeaea;
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .review-your-answer {
+            font-size: 13px;
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .review-correct-answer {
+            font-size: 13px;
+            color: #2e7d32;
+            font-weight: 500;
+            margin: 5px 0;
+        }
+
+        .review-explanation {
+            font-size: 13px;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            color: #555;
+            border-left: 3px solid #667eea;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+
+        .matching-row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:center; margin-bottom:10px; }
+        .matching-row select { padding:10px; border:2px solid #e0e0e0; border-radius:6px; font-size:14px; background:white; }
+        .matching-label { padding:10px; background:#fff; border:2px solid #e0e0e0; border-radius:6px; }
+        @media (max-width: 600px) { .matching-row { grid-template-columns:1fr; gap:5px; } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .password-section input {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                flex: 1;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Chapter 2: Forwarding and Processing</h1>
+            <p><strong>CCNP Compound Course</strong></p>
+            <p>Easy Level • 30 Questions</p>
+        </div>
+
+        <!-- Password Section -->
+        <div class="password-section active" id="passwordSection">
+            <h2 style="color: #333; margin-bottom: 20px;">Quiz Access</h2>
+            <p style="margin-bottom: 20px; color: #666;">Please enter the password to access the quiz</p>
+            <input type="password" id="passwordInput" placeholder="Enter Password">
+            <button onclick="checkPassword()">Start Quiz</button>
+            <p style="margin-top: 15px; font-size: 12px; color: #999;">Need password? Check your materials.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content" id="quizContent">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span id="questionCounter">Question 1 of 0</span>
+                    <span id="scoreIndicator">Score: 0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Container -->
+            <div id="questionsContainer"></div>
+
+            <!-- Button Group -->
+            <div class="button-group">
+                <button class="btn-secondary" onclick="previousQuestion()" id="prevBtn">← Previous</button>
+                <button class="btn-primary" onclick="nextQuestion()" id="nextBtn">Next →</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div style="padding: 30px;">
+                <h2>Quiz Completed!</h2>
+                <div class="score-circle">
+                    <div class="score-number" id="finalScore">0</div>
+                    <div class="score-total">out of 0</div>
+                </div>
+                <p style="font-size: 18px; margin: 20px 0;">
+                    <strong>Your Score: <span id="scorePercentage">0</span>%</strong>
+                </p>
+                <p id="performanceMessage" style="font-size: 16px; margin-bottom: 30px;"></p>
+
+                <div class="answer-review">
+                    <h3 style="margin-bottom: 20px; color: #333;">Answer Review</h3>
+                    <div id="answerReviewContent"></div>
+                </div>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button class="btn-primary" onclick="restartQuiz()">Restart Quiz</button>
+                    <button class="btn-secondary" onclick="downloadResults()">Download Results</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Chapter 2: Forwarding and Processing</strong></p>
+            <p>© 2026 CCNP Enterprise Q&amp;A</p>
+            <p>Multiple Choice • True/False • Matching</p>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [{"id": 1, "question": "What is the main difference between Layer 2 and Layer 3 forwarding?", "type": "multiple", "options": ["Layer 2 uses MAC addresses within a local network; Layer 3 uses IP addresses between networks", "Layer 2 uses IP addresses; Layer 3 uses only MAC addresses", "Both use only port numbers", "Layer 3 works only at the physical layer"], "correct": 0, "explanation": "Layer 2 forwarding uses MAC addresses and switching; Layer 3 forwarding uses IP addresses and routing."}, {"id": 2, "question": "Which device information can commonly be viewed with the Cisco IOS command `show ip arp`?", "type": "multiple", "options": ["Mappings between IP addresses and MAC addresses", "Only the routing protocol timers", "Only the startup configuration", "Only interface bandwidth"], "correct": 0, "explanation": "The ARP table maps Layer 3 IP addresses to Layer 2 MAC addresses."}, {"id": 3, "question": "When the destination is on a different subnet, where does the source host send the frame?", "type": "multiple", "options": ["To the default gateway", "Directly to the final host MAC address", "To the DNS server", "To the nearest switch only"], "correct": 0, "explanation": "A remote destination is sent to the default gateway for Layer 3 routing."}, {"id": 4, "question": "What does an ARP table map?", "type": "multiple", "options": ["Layer 3 IP addresses to Layer 2 MAC addresses", "MAC addresses to usernames", "VLANs to routing protocols", "Ports to applications"], "correct": 0, "explanation": "ARP stores the IP address of a host with its corresponding MAC address."}, {"id": 5, "question": "For a remote destination, which MAC address is used as the destination MAC in the local frame?", "type": "multiple", "options": ["The next-hop MAC address", "The final host MAC address in every case", "The source host MAC address", "The broadcast MAC address in every case"], "correct": 0, "explanation": "The device learns the next-hop IP-to-MAC mapping and uses that MAC in the Layer 2 header."}, {"id": 6, "question": "What is the purpose of the Routing Information Base (RIB)?", "type": "multiple", "options": ["Store routing information learned from many sources", "Store only MAC addresses", "Perform only cable testing", "Store only ACL actions"], "correct": 0, "explanation": "The RIB stores connected, static, and dynamically learned route information."}, {"id": 7, "question": "Which route normally has the lowest administrative distance?", "type": "multiple", "options": ["A directly connected route", "An OSPF route", "An EIGRP route", "An external BGP route"], "correct": 0, "explanation": "The slides list connected routes with AD 0, the lowest value."}, {"id": 8, "question": "What happens to the best route selected in the RIB?", "type": "multiple", "options": ["It is installed in the FIB", "It is deleted from the RIB", "It is converted into an ARP request only", "It is sent to DNS"], "correct": 0, "explanation": "The best route from the RIB is copied to the FIB for forwarding."}, {"id": 9, "question": "Why do alternative routes remain in the RIB?", "type": "multiple", "options": ["For failover and redundancy", "To replace all FIB entries immediately", "To disable convergence", "For changing MAC addresses"], "correct": 0, "explanation": "Other routes remain available so the router can converge quickly if the primary path fails."}, {"id": 10, "question": "What does the FIB contain?", "type": "multiple", "options": ["Best routes selected from the RIB", "Every candidate route from every source", "Only ARP broadcasts", "Only interface descriptions"], "correct": 0, "explanation": "The FIB is a simplified, optimized table containing installed best routes."}, {"id": 11, "question": "In which plane does the FIB operate?", "type": "multiple", "options": ["Data plane", "Control plane only", "Management plane only", "Application plane only"], "correct": 0, "explanation": "The FIB exists in the data or forwarding plane where packet forwarding occurs."}, {"id": 12, "question": "What is Cisco Express Forwarding (CEF) designed to provide?", "type": "multiple", "options": ["Fast, consistent packet forwarding", "User password recovery", "Cable certification", "Only wireless encryption"], "correct": 0, "explanation": "CEF separates control and data functions and enables efficient deterministic forwarding."}, {"id": 13, "question": "What does TCAM allow a Cisco device to perform?", "type": "multiple", "options": ["Fast parallel lookups using 0, 1, and don’t-care states", "Only sequential file storage", "Only CPU temperature checks", "Only DNS resolution"], "correct": 0, "explanation": "TCAM supports ternary matching and high-speed parallel lookups for FIB, ACL, and policy entries."}, {"id": 14, "question": "What is a key advantage of distributed forwarding?", "type": "multiple", "options": ["Forwarding tasks are handled by local line-card engines", "All traffic must use one central processor", "It requires no hardware", "It works only on small networks"], "correct": 0, "explanation": "Distributed forwarding processes packets close to ingress or egress interfaces."}, {"id": 15, "question": "Which CEF load-balancing method keeps packets for the same destination on the same path?", "type": "multiple", "options": ["Per-destination load balancing", "Per-packet load balancing", "Random ARP balancing", "Control-plane balancing"], "correct": 0, "explanation": "Per-destination load balancing helps maintain packet order."}, {"id": 16, "question": "Layer 2 forwarding processes traffic within the same local network using MAC addresses.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "Layer 2 forwarding uses MAC addresses and operates within a local network."}, {"id": 17, "question": "A host always sends a remote destination directly to the final destination MAC address.", "type": "true-false", "options": ["True", "False"], "correct": 1, "explanation": "For a different subnet, the host sends the frame to the default gateway/next hop."}, {"id": 18, "question": "The RIB can learn routes from OSPF, EIGRP, BGP, static routes, and connected interfaces.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "These are examples of sources listed for RIB route learning."}, {"id": 19, "question": "The FIB normally contains every route learned by the router, including all backup routes.", "type": "true-false", "options": ["True", "False"], "correct": 1, "explanation": "The FIB contains selected best routes; other candidates remain in the RIB."}, {"id": 20, "question": "Lower administrative distance indicates a more trusted route.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "The best-path process gives priority to the lower administrative distance."}, {"id": 21, "question": "Centralized forwarding can have a central processor bottleneck in high-traffic networks.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "A central processor can limit scalability and add latency."}, {"id": 22, "question": "TCAM supports only binary values, 0 and 1, and cannot use a don’t-care state.", "type": "true-false", "options": ["True", "False"], "correct": 1, "explanation": "TCAM supports three match states: 0, 1, and don’t care (X)."}, {"id": 23, "question": "Match each term to its description.", "type": "matching", "pairs": ["Layer 2 forwarding", "Layer 3 forwarding", "ARP", "Default gateway"], "options": ["Uses IP addresses to route between networks", "Maps an IP address to a MAC address", "Forwards traffic within a local network using MAC addresses", "Next-hop device used for remote networks"], "correct": [2, 0, 1, 3], "explanation": "Layer 2 uses MAC addresses locally; Layer 3 routes with IP; ARP maps IP-to-MAC; the default gateway is the remote-network next hop."}, {"id": 24, "question": "Match each routing table term to its description.", "type": "matching", "pairs": ["RIB", "FIB", "Administrative distance", "Metric"], "options": ["Optimized table used for forwarding", "Priority that indicates route-source trust", "Stores learned and candidate routes", "Chooses among routes from the same protocol"], "correct": [2, 0, 1, 3], "explanation": "The RIB stores candidates, AD compares sources, metrics compare paths within a protocol, and the FIB supports forwarding."}, {"id": 25, "question": "Match each forwarding component to its role.", "type": "matching", "pairs": ["Control plane", "Data plane", "CEF", "TCAM"], "options": ["Performs packet forwarding", "Provides fast Cisco forwarding lookups", "Calculates routes and maintains routing information", "Provides ternary parallel hardware lookups"], "correct": [2, 0, 1, 3], "explanation": "The control plane calculates paths; the data plane forwards; CEF performs optimized forwarding; TCAM accelerates lookups."}, {"id": 26, "question": "Match each CEF term to its description.", "type": "matching", "pairs": ["cCEF", "dCEF", "FIB", "Adjacency table"], "options": ["Centralized, CPU-dependent forwarding", "Hardware/distributed forwarding on line cards", "Stores best routes for forwarding", "Stores next-hop Layer 2 information"], "correct": [0, 1, 2, 3], "explanation": "cCEF is centralized software CEF, dCEF is distributed hardware CEF, and FIB/adjacency data support forwarding."}, {"id": 27, "question": "Match each forwarding architecture to its characteristic.", "type": "matching", "pairs": ["Centralized forwarding", "Distributed forwarding", "Central processor", "Switch fabric"], "options": ["One forwarding engine handles packets", "Line-card engines process packets locally", "Can become a bottleneck", "Carries traffic between line cards"], "correct": [0, 1, 2, 3], "explanation": "Centralized designs use one engine; distributed designs use line cards; the processor may bottleneck; the fabric connects cards."}, {"id": 28, "question": "Match each TCAM entry component to its function.", "type": "matching", "pairs": ["Values", "Masks", "Result", "Feature Manager"], "options": ["Specifies what address, protocol, or port is matched", "Defines bits to match or ignore", "Specifies the action after a match", "Programs access-list entries into TCAM"], "correct": [0, 1, 2, 3], "explanation": "TCAM entries use values, masks, and results; Feature Manager programs ACL entries for hardware processing."}, {"id": 29, "question": "Match each load-balancing method to its behavior.", "type": "matching", "pairs": ["Per-destination", "Per-packet", "Packet order", "Link utilization"], "options": ["Uses the same path for a destination", "Distributes packets across paths individually", "Usually preserved by per-destination balancing", "Can be maximized by per-packet balancing"], "correct": [0, 1, 2, 3], "explanation": "Per-destination preserves order; per-packet can improve utilization but may cause out-of-order delivery."}, {"id": 30, "question": "Match each Cisco platform/example to the forwarding type presented.", "type": "matching", "pairs": ["Cisco 2960 Series", "Legacy routers", "Catalyst 9000 Series", "ASR 9000 and Nexus Series"], "options": ["Centralized forwarding example", "Centralized forwarding example", "Distributed forwarding example", "Distributed forwarding example"], "correct": [0, 1, 2, 3], "explanation": "The slides list 2960 switches and legacy routers as centralized examples; Catalyst 9000, ASR 9000, and Nexus as distributed examples."}];
+        const CORRECT_PASSWORD = "CCNP@2026";
+        let currentQuestion = 0;
+        let userAnswers = [];
+
+        function initializeAnswers() { userAnswers = quizData.map(q => q.type === "matching" ? new Array(q.pairs.length).fill(null) : null); }
+        function checkPassword() {
+            if (document.getElementById("passwordInput").value === CORRECT_PASSWORD) {
+                document.getElementById("passwordSection").classList.remove("active");
+                document.getElementById("quizContent").classList.add("active");
+                initializeAnswers(); displayQuestion(0);
+            } else { alert("❌ Incorrect password. Please try again."); document.getElementById("passwordInput").value = ""; }
+        }
+        function displayQuestion(index) {
+            const q=quizData[index], c=document.getElementById("questionsContainer");
+            let optionsHTML="";
+            if(q.type === "matching") {
+                optionsHTML=q.pairs.map((pair,i)=>`<div class="matching-row"><div class="matching-label">${i+1}. ${pair}</div><select onchange="selectMatching(${index}, ${i}, this.value)"><option value="">Choose a match...</option>${q.options.map((o,j)=>`<option value="${j}" ${userAnswers[index] && userAnswers[index][i]===j ? "selected" : ""}>${String.fromCharCode(65+j)}. ${o}</option>`).join("")}</select></div>`).join("");
+            } else if(q.type === "true-false") {
+                optionsHTML=q.options.map((o,i)=>`<div class="option" onclick="selectAnswer(${index},${i})"><input type="radio" name="answer-${index}" ${userAnswers[index]===i?"checked":""}><label>${o}</label></div>`).join("");
+            } else {
+                optionsHTML=q.options.map((o,i)=>`<div class="option" onclick="selectAnswer(${index},${i})"><input type="radio" name="answer-${index}" ${userAnswers[index]===i?"checked":""}><label>${String.fromCharCode(65+i)}. ${o}</label></div>`).join("");
+            }
+            const typeLabel=q.type === "matching" ? "MATCHING" : (q.type === "true-false" ? "TRUE/FALSE" : "MULTIPLE CHOICE");
+            c.innerHTML=`<div class="question-container"><div class="question-number">Question ${index+1}</div><div class="question-type">${typeLabel}</div><div class="question-text">${q.question}</div><div class="options">${optionsHTML}</div></div>`;
+            updateProgress(); updateButtons();
+        }
+        function selectAnswer(i,a) { userAnswers[i]=a; displayQuestion(i); }
+        function selectMatching(qi,pi,value) { userAnswers[qi][pi]=value===""?null:Number(value); updateProgress(); }
+        function isAnswered(a,q) { return q.type === "matching" ? Array.isArray(a)&&a.every(v=>v!==null) : a!==null; }
+        function updateProgress() { const answered=userAnswers.filter((a,i)=>isAnswered(a,quizData[i])).length; document.getElementById("questionCounter").textContent=`Question ${currentQuestion+1} of ${quizData.length}`; document.getElementById("scoreIndicator").textContent=`Answered: ${answered}/${quizData.length}`; document.getElementById("progressFill").style.width=((currentQuestion+1)/quizData.length*100)+"%"; }
+        function updateButtons() { document.getElementById("prevBtn").disabled=currentQuestion===0; document.getElementById("nextBtn").textContent=currentQuestion===quizData.length-1?"Submit Quiz ✓":"Next →"; }
+        function nextQuestion() { if(currentQuestion<quizData.length-1){currentQuestion++;displayQuestion(currentQuestion);}else submitQuiz(); }
+        function previousQuestion() { if(currentQuestion>0){currentQuestion--;displayQuestion(currentQuestion);} }
+        function calculateScore() { return quizData.reduce((n,q,i)=>n+(q.type==="matching" ? JSON.stringify(userAnswers[i])===JSON.stringify(q.correct) : userAnswers[i]===q.correct),0); }
+        function answerText(q,a) { if(a===null||a===undefined)return "Not answered"; if(q.type==="matching")return q.pairs.map((p,i)=>`${p} → ${a[i]===null?"Not answered":q.options[a[i]]}`).join("; "); return q.options[a]; }
+        function displayResults(score) {
+            document.getElementById("quizContent").classList.remove("active"); document.getElementById("resultsSection").classList.add("active");
+            const pct=Math.round(score/quizData.length*100); document.getElementById("finalScore").textContent=score; document.querySelector(".score-total").textContent=`out of ${quizData.length}`; document.getElementById("scorePercentage").textContent=pct; document.getElementById("performanceMessage").textContent=pct>=90?"🌟 Excellent work!":pct>=80?"✅ Great job!":pct>=70?"👍 Good effort!":pct>=60?"📚 Keep studying!":"💪 Continue learning!";
+            document.getElementById("answerReviewContent").innerHTML=quizData.map((q,i)=>{const ok=q.type==="matching"?JSON.stringify(userAnswers[i])===JSON.stringify(q.correct):userAnswers[i]===q.correct; return `<div class="review-item ${ok?"correct":"incorrect"}"><div class="review-question">Q${i+1}: ${q.question}</div><div class="review-your-answer">Your Answer: <strong>${answerText(q,userAnswers[i])}</strong></div>${!ok?`<div class="review-correct-answer">Correct Answer: <strong>${answerText(q,q.correct)}</strong></div>`:""}<div class="review-explanation"><strong>Explanation:</strong> ${q.explanation}</div></div>`;}).join("");
+        }
+        function submitQuiz() { displayResults(calculateScore()); }
+        function restartQuiz() { currentQuestion=0; initializeAnswers(); document.getElementById("resultsSection").classList.remove("active"); document.getElementById("quizContent").classList.add("active"); displayQuestion(0); }
+        function downloadResults() { const text="Chapter 1 CCNP Q&A Results\nScore: "+calculateScore()+"/"+quizData.length; const a=document.createElement("a"); a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(text); a.download="CCNP-2-E-Results.txt"; a.click(); }
+        window.onload=()=>document.getElementById("passwordInput").focus();
+        document.addEventListener("DOMContentLoaded",()=>document.getElementById("passwordInput").addEventListener("keypress",e=>{if(e.key==="Enter")checkPassword();}));
+    </script>
+</body>
+</html>

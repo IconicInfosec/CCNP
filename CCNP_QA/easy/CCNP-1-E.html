@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1 - CCNP Enterprise Q&amp;A</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 4px solid #667eea;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid #ddd;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        /* Password Section */
+        .password-section {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .password-section.active {
+            display: block;
+        }
+
+        .password-section input {
+            padding: 10px 15px;
+            font-size: 14px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            width: 300px;
+            max-width: 100%;
+        }
+
+        .password-section button {
+            margin-top: 15px;
+            padding: 10px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .password-section button:hover {
+            background: #764ba2;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 30px;
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Question Container */
+        .question-container {
+            background: #f9f9f9;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .question-type {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* Options */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #f5f7ff;
+            font-weight: 600;
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #f1f8f4;
+            color: #2e7d32;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #fdeaea;
+            color: #c62828;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-secondary:hover {
+            background: #efefef;
+            border-color: #bbb;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 30px auto;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .score-total {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .results-section h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .results-section p {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Answer Review */
+        .answer-review {
+            background: #f9f9f9;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .review-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .review-item.correct {
+            border-left-color: #4caf50;
+            background: #f1f8f4;
+        }
+
+        .review-item.incorrect {
+            border-left-color: #f44336;
+            background: #fdeaea;
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .review-your-answer {
+            font-size: 13px;
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .review-correct-answer {
+            font-size: 13px;
+            color: #2e7d32;
+            font-weight: 500;
+            margin: 5px 0;
+        }
+
+        .review-explanation {
+            font-size: 13px;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            color: #555;
+            border-left: 3px solid #667eea;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+
+        .matching-row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:center; margin-bottom:10px; }
+        .matching-row select { padding:10px; border:2px solid #e0e0e0; border-radius:6px; font-size:14px; background:white; }
+        .matching-label { padding:10px; background:#fff; border:2px solid #e0e0e0; border-radius:6px; }
+        @media (max-width: 600px) { .matching-row { grid-template-columns:1fr; gap:5px; } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .password-section input {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                flex: 1;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Chapter 1: General Networking Concepts for CCNP Enterprise</h1>
+            <p><strong>CCNP Compound Course</strong></p>
+            <p>Easy Level • 30 Questions</p>
+        </div>
+
+        <!-- Password Section -->
+        <div class="password-section active" id="passwordSection">
+            <h2 style="color: #333; margin-bottom: 20px;">Quiz Access</h2>
+            <p style="margin-bottom: 20px; color: #666;">Please enter the password to access the quiz</p>
+            <input type="password" id="passwordInput" placeholder="Enter Password">
+            <button onclick="checkPassword()">Start Quiz</button>
+            <p style="margin-top: 15px; font-size: 12px; color: #999;">Need password? Check your materials.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content" id="quizContent">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span id="questionCounter">Question 1 of 0</span>
+                    <span id="scoreIndicator">Score: 0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Container -->
+            <div id="questionsContainer"></div>
+
+            <!-- Button Group -->
+            <div class="button-group">
+                <button class="btn-secondary" onclick="previousQuestion()" id="prevBtn">← Previous</button>
+                <button class="btn-primary" onclick="nextQuestion()" id="nextBtn">Next →</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div style="padding: 30px;">
+                <h2>Quiz Completed!</h2>
+                <div class="score-circle">
+                    <div class="score-number" id="finalScore">0</div>
+                    <div class="score-total">out of 0</div>
+                </div>
+                <p style="font-size: 18px; margin: 20px 0;">
+                    <strong>Your Score: <span id="scorePercentage">0</span>%</strong>
+                </p>
+                <p id="performanceMessage" style="font-size: 16px; margin-bottom: 30px;"></p>
+
+                <div class="answer-review">
+                    <h3 style="margin-bottom: 20px; color: #333;">Answer Review</h3>
+                    <div id="answerReviewContent"></div>
+                </div>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button class="btn-primary" onclick="restartQuiz()">Restart Quiz</button>
+                    <button class="btn-secondary" onclick="downloadResults()">Download Results</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Chapter 1: General Networking Concepts for CCNP Enterprise</strong></p>
+            <p>© 2026 CCNP Enterprise Q&amp;A</p>
+            <p>Multiple Choice • True/False • Matching</p>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [{"id": 1, "question": "Who founded Cisco Systems?", "type": "multiple", "options": ["Leonard Bosack and Sandra Lerner", "Bill Gates and Paul Allen", "Steve Jobs and Steve Wozniak", "Larry Page and Sergey Brin"], "correct": 0, "explanation": "Leonard Bosack and Sandra Lerner founded Cisco Systems in December 1984."}, {"id": 2, "question": "What does the command `show version` commonly help display on a Cisco device?", "type": "multiple", "options": ["Device and Cisco IOS software information", "Only connected wireless clients", "Only VLAN names", "Only the MAC address table"], "correct": 0, "explanation": "The slides identify show version as a Cisco IOS command used to view device and software information."}, {"id": 3, "question": "Which topology describes how data moves across a network regardless of the physical layout?", "type": "multiple", "options": ["Logical topology", "Physical topology", "Bus topology", "Ring topology"], "correct": 0, "explanation": "Logical topology describes data flow, while physical topology describes the actual arrangement of devices and cables."}, {"id": 4, "question": "Which network design divides the enterprise network into access, distribution, and core layers?", "type": "multiple", "options": ["Hierarchical network", "Flat network", "Point-to-point network", "Single-host network"], "correct": 0, "explanation": "The hierarchical model commonly uses access, distribution, and core layers."}, {"id": 5, "question": "Which layer gives endpoints and users direct access to the network?", "type": "multiple", "options": ["Access layer", "Core layer", "Internet edge", "Control plane"], "correct": 0, "explanation": "The access layer is where end devices connect to the network."}, {"id": 6, "question": "What is a key role of the distribution layer?", "type": "multiple", "options": ["Policy control and aggregation between access and core", "Connecting only a single user device", "Replacing all network cables", "Storing application data"], "correct": 0, "explanation": "The distribution layer aggregates access traffic and provides policy-based connectivity and routing."}, {"id": 7, "question": "What is the main purpose of the core layer?", "type": "multiple", "options": ["High-speed transport across the network backbone", "User authentication at every desk", "Creating end-user VLAN names", "Providing only wireless access"], "correct": 0, "explanation": "The core provides fast, reliable connectivity between distribution layers and other major network segments."}, {"id": 8, "question": "In a two-tier design, which layers are combined into a collapsed core?", "type": "multiple", "options": ["Core and distribution", "Access and core", "Management and data", "Physical and logical"], "correct": 0, "explanation": "A two-tier design combines the core and distribution functions into one layer."}, {"id": 9, "question": "Which technology allows two physical Cisco switches to operate as one logical switch?", "type": "multiple", "options": ["VSS", "SNMP", "Syslog", "LISP"], "correct": 0, "explanation": "Virtual Switching System (VSS) combines two physical switches into one logical switch."}, {"id": 10, "question": "What is the physical connection between two switches in a VSS pair called?", "type": "multiple", "options": ["Virtual Switch Link (VSL)", "Virtual Network (VN)", "Network Control Plane (NCP)", "Security Group Tag (SGT)"], "correct": 0, "explanation": "The VSL carries control traffic, state synchronization, and sometimes data traffic between VSS switches."}, {"id": 11, "question": "What does StackWise allow multiple Catalyst switches to operate as?", "type": "multiple", "options": ["A single logical entity", "Separate Internet providers", "A firewall-only cluster", "A data center storage array"], "correct": 0, "explanation": "StackWise uses stacking cables so multiple switches operate as one logical unit with shared management and control."}, {"id": 12, "question": "Which data-center architecture uses spine switches and leaf switches?", "type": "multiple", "options": ["Spine-leaf (Clos) architecture", "Flat access architecture", "Ring-only architecture", "Collapsed WAN architecture"], "correct": 0, "explanation": "Spine-leaf, also called Clos topology, connects every leaf to the spine layer for scalable, low-latency transport."}, {"id": 13, "question": "Which plane calculates routes and maintains routing information?", "type": "multiple", "options": ["Control plane", "Data plane", "Physical plane", "Power plane"], "correct": 0, "explanation": "The control plane runs routing protocols, computes topology, and populates forwarding information."}, {"id": 14, "question": "Which Cisco platform is the centralized management platform for SD-Access?", "type": "multiple", "options": ["Cisco DNA Center", "Cisco vBond only", "Cisco Nexus 7000", "Cisco StackWise"], "correct": 0, "explanation": "SD-Access is built on Cisco DNA Center for orchestration, policy, automation, and assurance."}, {"id": 15, "question": "Which Cisco SD-WAN component distributes routing and policy information across the fabric?", "type": "multiple", "options": ["vSmart Controller", "vManage NMS", "vBond Orchestrator", "Fabric Edge Node"], "correct": 0, "explanation": "The vSmart Controller is the centralized SD-WAN control-plane component."}, {"id": 16, "question": "A physical topology describes the actual arrangement of devices and cables.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "Physical topology represents the physical layout of devices and connections."}, {"id": 17, "question": "A flat network is normally divided into access, distribution, and core layers.", "type": "true-false", "options": ["True", "False"], "correct": 1, "explanation": "A flat network has little physical separation or segmentation; the three-layer structure describes a hierarchical network."}, {"id": 18, "question": "The access layer can use VLANs to create separate broadcast domains.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "The slides state that each VLAN can have its own broadcast domain."}, {"id": 19, "question": "VSS requires both switches to appear as separate logical devices to connected equipment.", "type": "true-false", "options": ["True", "False"], "correct": 1, "explanation": "VSS makes the two switches appear as a single logical switch."}, {"id": 20, "question": "The underlay network is the physical foundation that provides basic connectivity.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "The underlay includes physical devices, cabling, and basic routing used to transport traffic."}, {"id": 21, "question": "The data plane makes the actual packet-forwarding decisions using forwarding information.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "The data plane performs packet processing and forwarding based on control-plane information."}, {"id": 22, "question": "Cisco SD-WAN can use multiple transports such as MPLS, broadband, and LTE.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "Multi-transport support is listed as a Cisco SD-WAN capability."}, {"id": 23, "question": "Match each network layer or technology to its description.", "type": "matching", "pairs": ["Access layer", "Distribution layer", "Core layer", "Overlay network"], "options": ["High-speed backbone transport", "Virtual network built over the underlay", "Direct endpoint connectivity", "Aggregation and policy control"], "correct": [2, 3, 0, 1], "explanation": "The access layer connects endpoints; distribution aggregates and applies policy; core transports traffic; an overlay is built over an underlay."}, {"id": 24, "question": "Match each VSS or StackWise term to its description.", "type": "matching", "pairs": ["VSL", "Active switch", "MEC", "StackWise"], "options": ["Cisco switch stacking technology", "Link between VSS switches", "Multi-Chassis EtherChannel", "Handles the VSS control plane"], "correct": [1, 3, 2, 0], "explanation": "VSL links VSS peers; the active switch handles control; MEC spans both switches; StackWise forms a logical switch stack."}, {"id": 25, "question": "Match each data-center type to its description.", "type": "matching", "pairs": ["Enterprise data center", "Colocation data center", "Cloud data center", "Edge data center"], "options": ["Provider-managed, scalable services", "Owned and operated by one organization", "Shared facility where customers rent space", "Located close to users to reduce latency"], "correct": [1, 2, 0, 3], "explanation": "These descriptions correspond to enterprise, colocation, cloud, and edge data-center models."}, {"id": 26, "question": "Match each plane to its primary function.", "type": "matching", "pairs": ["Control plane", "Management plane", "Data plane", "Application plane"], "options": ["Runs forwarding and packet processing", "Provides administrative access and monitoring", "Runs network applications and policy tools", "Calculates paths and routing information"], "correct": [3, 1, 0, 2], "explanation": "The control plane computes paths; management provides administration; data forwards packets; applications express policy and automation needs."}, {"id": 27, "question": "Match each SD-Access component to its role.", "type": "matching", "pairs": ["Fabric Edge Node", "Fabric Border Node", "Fabric Control Plane Node", "Fabric Intermediate Node"], "options": ["Internal fabric transport", "Connects fabric to external networks", "Connects endpoints and applies access policy", "Maintains endpoint-to-location mappings"], "correct": [2, 1, 3, 0], "explanation": "Edge connects endpoints, border connects external networks, control plane maintains mappings, and intermediate nodes transport fabric traffic."}, {"id": 28, "question": "Match each Cisco SD-WAN component to its function.", "type": "matching", "pairs": ["vManage", "vSmart", "vBond", "SD-WAN routers"], "options": ["Branch devices that forward traffic and form tunnels", "Centralized management platform", "Authentication and orchestration", "Distributes routing and policy information"], "correct": [1, 3, 2, 0], "explanation": "vManage manages, vSmart controls, vBond authenticates/orchestrates, and routers forward traffic at the edge."}, {"id": 29, "question": "Match each Cisco DNA Center workflow to its purpose.", "type": "matching", "pairs": ["Design", "Policy", "Provision", "Assurance"], "options": ["Monitoring and troubleshooting", "Network topology and settings", "Identity-based access and segmentation", "Device onboarding and configuration"], "correct": [1, 2, 3, 0], "explanation": "Design plans the network; Policy defines access and segmentation; Provision deploys devices; Assurance monitors and troubleshoots."}, {"id": 30, "question": "Match each topology or fabric concept to its characteristic.", "type": "matching", "pairs": ["Spine layer", "Leaf layer", "Underlay", "Overlay"], "options": ["Physical routed foundation", "Connects directly to servers and endpoints", "Logical network built over physical infrastructure", "Backbone connecting leaf switches"], "correct": [3, 1, 0, 2], "explanation": "Spines form the backbone, leaves connect endpoints, the underlay is physical, and the overlay is logical and virtual."}];
+        const CORRECT_PASSWORD = "CCNP@2026";
+        let currentQuestion = 0;
+        let userAnswers = [];
+
+        function initializeAnswers() { userAnswers = quizData.map(q => q.type === "matching" ? new Array(q.pairs.length).fill(null) : null); }
+        function checkPassword() {
+            if (document.getElementById("passwordInput").value === CORRECT_PASSWORD) {
+                document.getElementById("passwordSection").classList.remove("active");
+                document.getElementById("quizContent").classList.add("active");
+                initializeAnswers(); displayQuestion(0);
+            } else { alert("❌ Incorrect password. Please try again."); document.getElementById("passwordInput").value = ""; }
+        }
+        function displayQuestion(index) {
+            const q=quizData[index], c=document.getElementById("questionsContainer");
+            let optionsHTML="";
+            if(q.type === "matching") {
+                optionsHTML=q.pairs.map((pair,i)=>`<div class="matching-row"><div class="matching-label">${i+1}. ${pair}</div><select onchange="selectMatching(${index}, ${i}, this.value)"><option value="">Choose a match...</option>${q.options.map((o,j)=>`<option value="${j}" ${userAnswers[index] && userAnswers[index][i]===j ? "selected" : ""}>${String.fromCharCode(65+j)}. ${o}</option>`).join("")}</select></div>`).join("");
+            } else if(q.type === "true-false") {
+                optionsHTML=q.options.map((o,i)=>`<div class="option" onclick="selectAnswer(${index},${i})"><input type="radio" name="answer-${index}" ${userAnswers[index]===i?"checked":""}><label>${o}</label></div>`).join("");
+            } else {
+                optionsHTML=q.options.map((o,i)=>`<div class="option" onclick="selectAnswer(${index},${i})"><input type="radio" name="answer-${index}" ${userAnswers[index]===i?"checked":""}><label>${String.fromCharCode(65+i)}. ${o}</label></div>`).join("");
+            }
+            const typeLabel=q.type === "matching" ? "MATCHING" : (q.type === "true-false" ? "TRUE/FALSE" : "MULTIPLE CHOICE");
+            c.innerHTML=`<div class="question-container"><div class="question-number">Question ${index+1}</div><div class="question-type">${typeLabel}</div><div class="question-text">${q.question}</div><div class="options">${optionsHTML}</div></div>`;
+            updateProgress(); updateButtons();
+        }
+        function selectAnswer(i,a) { userAnswers[i]=a; displayQuestion(i); }
+        function selectMatching(qi,pi,value) { userAnswers[qi][pi]=value===""?null:Number(value); updateProgress(); }
+        function isAnswered(a,q) { return q.type === "matching" ? Array.isArray(a)&&a.every(v=>v!==null) : a!==null; }
+        function updateProgress() { const answered=userAnswers.filter((a,i)=>isAnswered(a,quizData[i])).length; document.getElementById("questionCounter").textContent=`Question ${currentQuestion+1} of ${quizData.length}`; document.getElementById("scoreIndicator").textContent=`Answered: ${answered}/${quizData.length}`; document.getElementById("progressFill").style.width=((currentQuestion+1)/quizData.length*100)+"%"; }
+        function updateButtons() { document.getElementById("prevBtn").disabled=currentQuestion===0; document.getElementById("nextBtn").textContent=currentQuestion===quizData.length-1?"Submit Quiz ✓":"Next →"; }
+        function nextQuestion() { if(currentQuestion<quizData.length-1){currentQuestion++;displayQuestion(currentQuestion);}else submitQuiz(); }
+        function previousQuestion() { if(currentQuestion>0){currentQuestion--;displayQuestion(currentQuestion);} }
+        function calculateScore() { return quizData.reduce((n,q,i)=>n+(q.type==="matching" ? JSON.stringify(userAnswers[i])===JSON.stringify(q.correct) : userAnswers[i]===q.correct),0); }
+        function answerText(q,a) { if(a===null||a===undefined)return "Not answered"; if(q.type==="matching")return q.pairs.map((p,i)=>`${p} → ${a[i]===null?"Not answered":q.options[a[i]]}`).join("; "); return q.options[a]; }
+        function displayResults(score) {
+            document.getElementById("quizContent").classList.remove("active"); document.getElementById("resultsSection").classList.add("active");
+            const pct=Math.round(score/quizData.length*100); document.getElementById("finalScore").textContent=score; document.querySelector(".score-total").textContent=`out of ${quizData.length}`; document.getElementById("scorePercentage").textContent=pct; document.getElementById("performanceMessage").textContent=pct>=90?"🌟 Excellent work!":pct>=80?"✅ Great job!":pct>=70?"👍 Good effort!":pct>=60?"📚 Keep studying!":"💪 Continue learning!";
+            document.getElementById("answerReviewContent").innerHTML=quizData.map((q,i)=>{const ok=q.type==="matching"?JSON.stringify(userAnswers[i])===JSON.stringify(q.correct):userAnswers[i]===q.correct; return `<div class="review-item ${ok?"correct":"incorrect"}"><div class="review-question">Q${i+1}: ${q.question}</div><div class="review-your-answer">Your Answer: <strong>${answerText(q,userAnswers[i])}</strong></div>${!ok?`<div class="review-correct-answer">Correct Answer: <strong>${answerText(q,q.correct)}</strong></div>`:""}<div class="review-explanation"><strong>Explanation:</strong> ${q.explanation}</div></div>`;}).join("");
+        }
+        function submitQuiz() { displayResults(calculateScore()); }
+        function restartQuiz() { currentQuestion=0; initializeAnswers(); document.getElementById("resultsSection").classList.remove("active"); document.getElementById("quizContent").classList.add("active"); displayQuestion(0); }
+        function downloadResults() { const text="Chapter 1 CCNP Q&A Results\nScore: "+calculateScore()+"/"+quizData.length; const a=document.createElement("a"); a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(text); a.download="CCNP-1-E-Results.txt"; a.click(); }
+        window.onload=()=>document.getElementById("passwordInput").focus();
+        document.addEventListener("DOMContentLoaded",()=>document.getElementById("passwordInput").addEventListener("keypress",e=>{if(e.key==="Enter")checkPassword();}));
+    </script>
+</body>
+</html>

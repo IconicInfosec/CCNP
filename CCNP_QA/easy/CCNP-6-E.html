@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 6 - CCNP Enterprise Q&amp;A</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 4px solid #667eea;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid #ddd;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        /* Password Section */
+        .password-section {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .password-section.active {
+            display: block;
+        }
+
+        .password-section input {
+            padding: 10px 15px;
+            font-size: 14px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            width: 300px;
+            max-width: 100%;
+        }
+
+        .password-section button {
+            margin-top: 15px;
+            padding: 10px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .password-section button:hover {
+            background: #764ba2;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 30px;
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Question Container */
+        .question-container {
+            background: #f9f9f9;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .question-type {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* Options */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #f5f7ff;
+            font-weight: 600;
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #f1f8f4;
+            color: #2e7d32;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #fdeaea;
+            color: #c62828;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-secondary:hover {
+            background: #efefef;
+            border-color: #bbb;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 30px auto;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .score-total {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .results-section h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .results-section p {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Answer Review */
+        .answer-review {
+            background: #f9f9f9;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .review-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .review-item.correct {
+            border-left-color: #4caf50;
+            background: #f1f8f4;
+        }
+
+        .review-item.incorrect {
+            border-left-color: #f44336;
+            background: #fdeaea;
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .review-your-answer {
+            font-size: 13px;
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .review-correct-answer {
+            font-size: 13px;
+            color: #2e7d32;
+            font-weight: 500;
+            margin: 5px 0;
+        }
+
+        .review-explanation {
+            font-size: 13px;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            color: #555;
+            border-left: 3px solid #667eea;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+
+        .matching-row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:center; margin-bottom:10px; }
+        .matching-row select { padding:10px; border:2px solid #e0e0e0; border-radius:6px; font-size:14px; background:white; }
+        .matching-label { padding:10px; background:#fff; border:2px solid #e0e0e0; border-radius:6px; }
+        @media (max-width: 600px) { .matching-row { grid-template-columns:1fr; gap:5px; } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .password-section input {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                flex: 1;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Chapter 6: Multiple Spanning Tree Protocol</h1>
+            <p><strong>CCNP Compound Course</strong></p>
+            <p>Easy Level • 30 Questions</p>
+        </div>
+
+        <!-- Password Section -->
+        <div class="password-section active" id="passwordSection">
+            <h2 style="color: #333; margin-bottom: 20px;">Quiz Access</h2>
+            <p style="margin-bottom: 20px; color: #666;">Please enter the password to access the quiz</p>
+            <input type="password" id="passwordInput" placeholder="Enter Password">
+            <button onclick="checkPassword()">Start Quiz</button>
+            <p style="margin-top: 15px; font-size: 12px; color: #999;">Need password? Check your materials.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content" id="quizContent">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span id="questionCounter">Question 1 of 0</span>
+                    <span id="scoreIndicator">Score: 0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Container -->
+            <div id="questionsContainer"></div>
+
+            <!-- Button Group -->
+            <div class="button-group">
+                <button class="btn-secondary" onclick="previousQuestion()" id="prevBtn">← Previous</button>
+                <button class="btn-primary" onclick="nextQuestion()" id="nextBtn">Next →</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div style="padding: 30px;">
+                <h2>Quiz Completed!</h2>
+                <div class="score-circle">
+                    <div class="score-number" id="finalScore">0</div>
+                    <div class="score-total">out of 0</div>
+                </div>
+                <p style="font-size: 18px; margin: 20px 0;">
+                    <strong>Your Score: <span id="scorePercentage">0</span>%</strong>
+                </p>
+                <p id="performanceMessage" style="font-size: 16px; margin-bottom: 30px;"></p>
+
+                <div class="answer-review">
+                    <h3 style="margin-bottom: 20px; color: #333;">Answer Review</h3>
+                    <div id="answerReviewContent"></div>
+                </div>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button class="btn-primary" onclick="restartQuiz()">Restart Quiz</button>
+                    <button class="btn-secondary" onclick="downloadResults()">Download Results</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Chapter 6: Multiple Spanning Tree Protocol</strong></p>
+            <p>© 2026 CCNP Enterprise Q&amp;A</p>
+            <p>Multiple Choice • True/False • Matching</p>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [{"id": 1, "question": "Which standard defines MST?", "type": "multiple", "options": ["IEEE 802.1s", "IEEE 802.1D", "IEEE 802.3ad", "IEEE 802.11"], "correct": 0, "explanation": "IEEE 802.1s."}, {"id": 2, "question": "What does MST group together?", "type": "multiple", "options": ["VLANs into spanning-tree instances", "MAC addresses into ports", "Routers into ASs", "Frames into packets"], "correct": 0, "explanation": "VLANs into spanning-tree instances."}, {"id": 3, "question": "What is the IST instance number?", "type": "multiple", "options": ["0", "1", "10", "4094"], "correct": 0, "explanation": "0."}, {"id": 4, "question": "What does CST connect?", "type": "multiple", "options": ["MST regions", "Only end hosts", "Only access ports", "Only VLAN 1"], "correct": 0, "explanation": "MST regions."}, {"id": 5, "question": "What do MST switches need to share to be in the same region?", "type": "multiple", "options": ["Name, revision, and VLAN mapping", "Only IP address", "Only MAC address", "Only priority"], "correct": 0, "explanation": "Name, revision, and VLAN mapping."}, {"id": 6, "question": "What is an MSTI?", "type": "multiple", "options": ["A user-defined spanning-tree instance", "A physical cable", "A routing protocol", "A port security mode"], "correct": 0, "explanation": "A user-defined spanning-tree instance."}, {"id": 7, "question": "What is the default mapping for unmapped VLANs?", "type": "multiple", "options": ["MST 0 (IST)", "MST 1", "CST only", "No instance"], "correct": 0, "explanation": "MST 0 (IST)."}, {"id": 8, "question": "How many BPDUs are sent per port in MST?", "type": "multiple", "options": ["One BPDU", "One per VLAN always", "None", "One per switch only"], "correct": 0, "explanation": "One BPDU."}, {"id": 9, "question": "What is a benefit of MST?", "type": "multiple", "options": ["Lower CPU and memory use than per-VLAN STP", "No redundancy", "No configuration", "Only one VLAN"], "correct": 0, "explanation": "Lower CPU and memory use than per-VLAN STP."}, {"id": 10, "question": "Which command enters MST configuration submode?", "type": "multiple", "options": ["spanning-tree mst configuration", "spanning-tree vlan access", "mst enable vlan", "show mst region"], "correct": 0, "explanation": "spanning-tree mst configuration."}, {"id": 11, "question": "MST is defined in IEEE 802.1s.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "802.1s defines MST."}, {"id": 12, "question": "MST runs a separate STP instance for every VLAN.", "type": "true-false", "options": ["True", "False"], "correct": 1, "explanation": "MST groups VLANs into instances."}, {"id": 13, "question": "Every MST region has an IST instance 0.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "IST is instance 0."}, {"id": 14, "question": "The IST represents the region to outside switches.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "It appears as one logical tree externally."}, {"id": 15, "question": "MSTIs carry their own separate BPDU on every port.", "type": "true-false", "options": ["True", "False"], "correct": 1, "explanation": "MSTI information is inside the IST BPDU."}, {"id": 16, "question": "MST can support load balancing.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "Different MSTIs can use different paths."}, {"id": 17, "question": "All VLANs are in MST 0 by default.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "Unmapped VLANs belong to IST."}, {"id": 18, "question": "MST regions require matching configuration attributes.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "All three attributes must match."}, {"id": 19, "question": "MST uses RSTP-based trees.", "type": "true-false", "options": ["True", "False"], "correct": 0, "explanation": "MST is RSTP-based."}, {"id": 20, "question": "MST always requires one instance for every VLAN.", "type": "true-false", "options": ["True", "False"], "correct": 1, "explanation": "That is per-VLAN behavior, not MST."}, {"id": 21, "question": "Match each term to its description.", "type": "matching", "pairs": ["MST", "MST region", "IST", "MSTI"], "options": ["802.1s spanning tree", "Group of consistently configured switches", "Instance 0", "User-defined instance"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}, {"id": 22, "question": "Match each term to its description.", "type": "matching", "pairs": ["CST", "IST", "MSTI 1", "MSTI 2"], "options": ["Connects regions", "Internal common tree", "User VLAN group tree", "Another user VLAN group tree"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}, {"id": 23, "question": "Match each term to its description.", "type": "matching", "pairs": ["Region name", "Revision number", "VLAN mapping", "Instance priority"], "options": ["Region identity", "Configuration version", "Assigns VLANs to instances", "Influences root election"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}, {"id": 24, "question": "Match each term to its description.", "type": "matching", "pairs": ["spanning-tree mode mst", "mst configuration", "instance 1 vlan", "show spanning-tree mst"], "options": ["Enables MST mode", "Enters MST submode", "Maps VLANs", "Verifies MST"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}, {"id": 25, "question": "Match each term to its description.", "type": "matching", "pairs": ["Scalability", "Load balancing", "Efficiency", "Complexity"], "options": ["Fewer STP processes", "Different paths per instance", "Fewer BPDUs", "Requires careful configuration"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}, {"id": 26, "question": "Match each term to its description.", "type": "matching", "pairs": ["MST 0", "MST 1", "CST", "RSTP"], "options": ["IST", "User-defined instance", "Inter-region tree", "Rapid tree protocol"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}, {"id": 27, "question": "Match each term to its description.", "type": "matching", "pairs": ["Primary", "Secondary", "Cost", "Port priority"], "options": ["Preferred root", "Backup root", "Path selection", "Interface tie-breaker"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}, {"id": 28, "question": "Match each term to its description.", "type": "matching", "pairs": ["PVST+ boundary", "MST region", "Legacy domain", "Boundary port"], "options": ["Can detect MST region", "Logical group of MST switches", "External STP domain", "Connects regions"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}, {"id": 29, "question": "Match each term to its description.", "type": "matching", "pairs": ["802.1s", "802.1w", "802.1D", "802.1Q"], "options": ["MSTP", "RSTP", "Classic STP", "VLAN tagging"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}, {"id": 30, "question": "Match each term to its description.", "type": "matching", "pairs": ["One BPDU", "Many VLANs", "Few MSTIs", "One region"], "options": ["Per port transmission", "Can share a tree", "Reduces overhead", "Common configuration domain"], "correct": [0, 1, 2, 3], "explanation": "The matching reflects the Chapter 6 concepts."}];
+        const CORRECT_PASSWORD = "CCNP@2026";
+        let currentQuestion = 0;
+        let userAnswers = [];
+
+        function initializeAnswers() { userAnswers = quizData.map(q => q.type === "matching" ? new Array(q.pairs.length).fill(null) : null); }
+        function checkPassword() {
+            if (document.getElementById("passwordInput").value === CORRECT_PASSWORD) {
+                document.getElementById("passwordSection").classList.remove("active");
+                document.getElementById("quizContent").classList.add("active");
+                initializeAnswers(); displayQuestion(0);
+            } else { alert("❌ Incorrect password. Please try again."); document.getElementById("passwordInput").value = ""; }
+        }
+        function displayQuestion(index) {
+            const q=quizData[index], c=document.getElementById("questionsContainer");
+            let optionsHTML="";
+            if(q.type === "matching") {
+                optionsHTML=q.pairs.map((pair,i)=>`<div class="matching-row"><div class="matching-label">${i+1}. ${pair}</div><select onchange="selectMatching(${index}, ${i}, this.value)"><option value="">Choose a match...</option>${q.options.map((o,j)=>`<option value="${j}" ${userAnswers[index] && userAnswers[index][i]===j ? "selected" : ""}>${String.fromCharCode(65+j)}. ${o}</option>`).join("")}</select></div>`).join("");
+            } else if(q.type === "true-false") {
+                optionsHTML=q.options.map((o,i)=>`<div class="option" onclick="selectAnswer(${index},${i})"><input type="radio" name="answer-${index}" ${userAnswers[index]===i?"checked":""}><label>${o}</label></div>`).join("");
+            } else {
+                optionsHTML=q.options.map((o,i)=>`<div class="option" onclick="selectAnswer(${index},${i})"><input type="radio" name="answer-${index}" ${userAnswers[index]===i?"checked":""}><label>${String.fromCharCode(65+i)}. ${o}</label></div>`).join("");
+            }
+            const typeLabel=q.type === "matching" ? "MATCHING" : (q.type === "true-false" ? "TRUE/FALSE" : "MULTIPLE CHOICE");
+            c.innerHTML=`<div class="question-container"><div class="question-number">Question ${index+1}</div><div class="question-type">${typeLabel}</div><div class="question-text">${q.question}</div><div class="options">${optionsHTML}</div></div>`;
+            updateProgress(); updateButtons();
+        }
+        function selectAnswer(i,a) { userAnswers[i]=a; displayQuestion(i); }
+        function selectMatching(qi,pi,value) { userAnswers[qi][pi]=value===""?null:Number(value); updateProgress(); }
+        function isAnswered(a,q) { return q.type === "matching" ? Array.isArray(a)&&a.every(v=>v!==null) : a!==null; }
+        function updateProgress() { const answered=userAnswers.filter((a,i)=>isAnswered(a,quizData[i])).length; document.getElementById("questionCounter").textContent=`Question ${currentQuestion+1} of ${quizData.length}`; document.getElementById("scoreIndicator").textContent=`Answered: ${answered}/${quizData.length}`; document.getElementById("progressFill").style.width=((currentQuestion+1)/quizData.length*100)+"%"; }
+        function updateButtons() { document.getElementById("prevBtn").disabled=currentQuestion===0; document.getElementById("nextBtn").textContent=currentQuestion===quizData.length-1?"Submit Quiz ✓":"Next →"; }
+        function nextQuestion() { if(currentQuestion<quizData.length-1){currentQuestion++;displayQuestion(currentQuestion);}else submitQuiz(); }
+        function previousQuestion() { if(currentQuestion>0){currentQuestion--;displayQuestion(currentQuestion);} }
+        function calculateScore() { return quizData.reduce((n,q,i)=>n+(q.type==="matching" ? JSON.stringify(userAnswers[i])===JSON.stringify(q.correct) : userAnswers[i]===q.correct),0); }
+        function answerText(q,a) { if(a===null||a===undefined)return "Not answered"; if(q.type==="matching")return q.pairs.map((p,i)=>`${p} → ${a[i]===null?"Not answered":q.options[a[i]]}`).join("; "); return q.options[a]; }
+        function displayResults(score) {
+            document.getElementById("quizContent").classList.remove("active"); document.getElementById("resultsSection").classList.add("active");
+            const pct=Math.round(score/quizData.length*100); document.getElementById("finalScore").textContent=score; document.querySelector(".score-total").textContent=`out of ${quizData.length}`; document.getElementById("scorePercentage").textContent=pct; document.getElementById("performanceMessage").textContent=pct>=90?"🌟 Excellent work!":pct>=80?"✅ Great job!":pct>=70?"👍 Good effort!":pct>=60?"📚 Keep studying!":"💪 Continue learning!";
+            document.getElementById("answerReviewContent").innerHTML=quizData.map((q,i)=>{const ok=q.type==="matching"?JSON.stringify(userAnswers[i])===JSON.stringify(q.correct):userAnswers[i]===q.correct; return `<div class="review-item ${ok?"correct":"incorrect"}"><div class="review-question">Q${i+1}: ${q.question}</div><div class="review-your-answer">Your Answer: <strong>${answerText(q,userAnswers[i])}</strong></div>${!ok?`<div class="review-correct-answer">Correct Answer: <strong>${answerText(q,q.correct)}</strong></div>`:""}<div class="review-explanation"><strong>Explanation:</strong> ${q.explanation}</div></div>`;}).join("");
+        }
+        function submitQuiz() { displayResults(calculateScore()); }
+        function restartQuiz() { currentQuestion=0; initializeAnswers(); document.getElementById("resultsSection").classList.remove("active"); document.getElementById("quizContent").classList.add("active"); displayQuestion(0); }
+        function downloadResults() { const text="Chapter 1 CCNP Q&A Results\nScore: "+calculateScore()+"/"+quizData.length; const a=document.createElement("a"); a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(text); a.download="CCNP-6-E-Results.txt"; a.click(); }
+        window.onload=()=>document.getElementById("passwordInput").focus();
+        document.addEventListener("DOMContentLoaded",()=>document.getElementById("passwordInput").addEventListener("keypress",e=>{if(e.key==="Enter")checkPassword();}));
+    </script>
+</body>
+</html>
