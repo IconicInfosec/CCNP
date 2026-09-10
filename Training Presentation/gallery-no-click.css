@@ -1,0 +1,16 @@
+/* Informational gallery cards: no link underline, click flash, or hover movement. */
+.gallery-grid .thumbnail-card {
+    cursor: default;
+    transition: none;
+}
+.gallery-grid .thumbnail-card:hover {
+    transform: none;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: transparent;
+}
+.gallery-grid .thumbnail-card:hover::before {
+    opacity: 0;
+}
+.gallery-grid .thumbnail-card:hover .thumbnail-image img {
+    transform: none;
+}
